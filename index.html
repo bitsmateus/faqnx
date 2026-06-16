@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central de Ajuda — NX Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#5A64F2;--brand-dark:#4550d4;--brand-bg:#f0f1fe;
+  --t1:#1f2937;--t2:#374151;--t3:#6b7280;--t4:#9ca3af;
+  --bd:#e5e7eb;--bd2:#f3f4f6;--bg:#fff;--bg2:#f9fafb;
+  --font:'Inter',-apple-system,sans-serif;
+  --sb:268px;--hh:56px;--rp:240px;
+}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--t2);background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font)}
+
+/* ═══ HEADER ═══ */
+.hdr{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--hh);background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0}
+.hdr-logo{width:var(--sb);flex-shrink:0;display:flex;align-items:center;padding:0 20px;border-right:1px solid var(--bd);height:100%;gap:10px}
+.logo-mark{width:28px;height:28px;border-radius:6px;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-name{font-size:13.5px;font-weight:600;color:var(--t1)}
+.logo-sep{color:var(--bd);margin:0 2px}
+.logo-sub{font-size:13px;color:var(--t3)}
+.hdr-mid{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:4px;padding:0 16px}
+.hdr-search{display:flex;align-items:center;gap:8px;border:1px solid var(--bd);border-radius:8px;padding:0 10px;height:34px;min-width:220px;background:var(--bg);cursor:text;transition:border-color .15s,box-shadow .15s}
+.hdr-search:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(90,100,242,.12)}
+.hdr-search svg{width:13px;height:13px;color:var(--t4);flex-shrink:0}
+.hdr-search input{border:none;outline:none;background:transparent;font-size:13px;color:var(--t1);font-family:var(--font);width:100%}
+.hdr-search input::placeholder{color:var(--t4)}
+.kbd{font-size:11px;color:var(--t4);background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:1px 5px;white-space:nowrap}
+.hdr-nav{display:flex;align-items:center;gap:4px;padding-right:16px}
+.hdr-nav a{font-size:13px;color:var(--t3);padding:5px 10px;border-radius:6px;transition:background .13s,color .13s}
+.hdr-nav a:hover{background:var(--bg2);color:var(--t1)}
+.btn-admin{font-size:12px;color:var(--t4)!important;border:1px solid var(--bd)!important;padding:4px 10px!important;border-radius:6px}
+.btn-admin:hover{color:var(--brand)!important;border-color:var(--brand)!important;background:var(--brand-bg)!important}
+
+/* ═══ LAYOUT ═══ */
+.layout{display:flex;padding-top:var(--hh);min-height:100vh}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:var(--sb);flex-shrink:0;position:fixed;top:var(--hh);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--bd);background:var(--bg);display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
+.sb-inner{flex:1;padding:12px 0 24px}
+.sb-group{font-size:11px;font-weight:600;color:var(--t4);letter-spacing:.5px;text-transform:uppercase;padding:12px 20px 4px}
+.sb-item{display:flex;align-items:center;justify-content:space-between;padding:6px 20px;font-size:13.5px;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--font);transition:color .12s;border-left:2px solid transparent}
+.sb-item:hover{color:var(--t1)}
+.sb-item.active{color:var(--brand);font-weight:500;border-left-color:var(--brand);background:var(--brand-bg)}
+.sb-item svg{width:11px;height:11px;color:var(--t4);flex-shrink:0;transition:transform .2s}
+.sb-item.open svg{transform:rotate(90deg)}
+.sb-sub{display:none}
+.sb-sub.open{display:block}
+.sb-sub-item{display:block;width:100%;padding:5px 20px 5px 32px;font-size:13px;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);transition:color .12s;border-left:2px solid transparent}
+.sb-sub-item:hover{color:var(--t1)}
+.sb-sub-item.active{color:var(--brand);font-weight:500;border-left-color:var(--brand)}
+.sb-footer{border-top:1px solid var(--bd);padding:10px 20px;font-size:12px;color:var(--t4);display:flex;align-items:center;gap:6px}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:var(--sb);flex:1;min-width:0;display:flex}
+.content{flex:1;min-width:0;padding:40px 48px 80px;max-width:860px}
+
+/* ═══ TYPOGRAPHY ═══ */
+.eyebrow{font-size:12px;color:var(--t4);margin-bottom:8px}
+.page-title{font-size:32px;font-weight:700;color:var(--t1);letter-spacing:-.5px;line-height:1.2;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.page-lead{font-size:15px;color:var(--t3);line-height:1.7;margin-bottom:32px}
+h2.sh{font-size:20px;font-weight:600;color:var(--t1);margin:40px 0 20px;scroll-margin-top:72px}
+h3.sh3{font-size:15px;font-weight:600;color:var(--t1);margin:24px 0 12px;scroll-margin-top:72px}
+hr.div{border:none;border-top:1px solid var(--bd);margin:32px 0}
+p.prose{font-size:14px;color:var(--t2);margin-bottom:10px;line-height:1.7}
+ul.prose,ol.prose{font-size:14px;color:var(--t2);padding-left:18px;margin:8px 0}
+ul.prose li,ol.prose li{margin-bottom:4px}
+code.ic{font-size:12.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:1px 6px;color:var(--brand);font-family:'Courier New',monospace}
+
+/* ═══ ACCORDION ═══ */
+.acc-btn{width:100%;background:none;border:none;border-bottom:1px solid var(--bd);padding:14px 0;display:flex;align-items:flex-start;gap:8px;text-align:left;cursor:pointer;font-size:14px;font-weight:500;color:var(--t1);transition:color .13s}
+.acc-btn:hover{color:var(--brand)}
+.acc-btn.open{color:var(--brand)}
+.acc-icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;border-radius:50%;background:var(--bg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center}
+.acc-icon svg{width:10px;height:10px;color:var(--t4);transition:transform .2s}
+.acc-btn.open .acc-icon{background:var(--brand-bg);border-color:var(--brand)}
+.acc-btn.open .acc-icon svg{transform:rotate(90deg);color:var(--brand)}
+.acc-body{display:none;padding:14px 0 18px 26px;font-size:14px;color:var(--t2);line-height:1.75;border-bottom:1px solid var(--bd)}
+.acc-body.open{display:block}
+.acc-body p{margin-bottom:8px}
+.acc-body p:last-child{margin-bottom:0}
+.acc-body ul,.acc-body ol{padding-left:18px;margin:6px 0}
+.acc-body li{margin-bottom:3px}
+.acc-body strong{font-weight:600;color:var(--t1)}
+.acc-body code{font-size:12.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:1px 6px;color:var(--brand);font-family:'Courier New',monospace}
+.acc-body table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+.acc-body th{background:var(--bg2);font-weight:600;color:var(--t1);padding:7px 12px;text-align:left;border:1px solid var(--bd);font-size:12px}
+.acc-body td{padding:6px 12px;border:1px solid var(--bd);vertical-align:top}
+
+/* ═══ HINT BOXES ═══ */
+.hint{border-radius:6px;padding:10px 14px;font-size:13px;line-height:1.6;display:flex;gap:10px;align-items:flex-start;margin:8px 0}
+.hint-info{background:#eff6ff;border-left:3px solid #3b82f6}
+.hint-warn{background:#fffbeb;border-left:3px solid #f59e0b}
+.hint-danger{background:#fef2f2;border-left:3px solid #ef4444}
+.hint-ok{background:#f0fdf4;border-left:3px solid #22c55e}
+.hi{flex-shrink:0;font-size:15px;margin-top:1px}
+.hint-b{color:var(--t2)}
+.hint-b strong{color:var(--t1)}
+
+/* ═══ RIGHT PANEL ═══ */
+.rp{width:var(--rp);flex-shrink:0;padding:40px 24px 40px 16px;position:sticky;top:var(--hh);height:calc(100vh - var(--hh));overflow-y:auto}
+.rp-title{font-size:11px;font-weight:600;color:var(--t4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.rp-link{display:block;font-size:13px;color:var(--t3);padding:3px 0;cursor:pointer;transition:color .12s}
+.rp-link:hover{color:var(--brand)}
+.rp-link.active{color:var(--brand);font-weight:500}
+.rp-div{border:none;border-top:1px solid var(--bd);margin:14px 0}
+.rp-fb-label{font-size:13px;color:var(--t3);margin-bottom:8px}
+.rp-stars{display:flex;gap:6px}
+.rp-star{background:none;border:1px solid var(--bd);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:16px;transition:border-color .13s,background .13s}
+.rp-star:hover{border-color:var(--brand);background:var(--brand-bg)}
+
+/* ═══ SEARCH DROPDOWN ═══ */
+.sdrop{display:none;position:fixed;top:calc(var(--hh) + 6px);left:calc(var(--sb) + 24px);width:420px;background:var(--bg);border:1px solid var(--bd);border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.1);z-index:400;overflow:hidden}
+.sd-hdr{padding:8px 14px;font-size:11px;color:var(--t4);border-bottom:1px solid var(--bd)}
+.sd-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--bd2);transition:background .12s}
+.sd-item:last-child{border-bottom:none}
+.sd-item:hover{background:var(--bg2)}
+.sd-q{font-size:13.5px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.sd-cat{font-size:12px;color:var(--t4)}
+.sd-empty{padding:20px;text-align:center;font-size:13px;color:var(--t3)}
+mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
+
+/* ═══ FEEDBACK ROW ═══ */
+.fb-row{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:12px}
+.fb-label{font-size:13px;color:var(--t3)}
+
+/* ═══ ADMIN OVERLAY ═══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--bg);border-radius:12px;width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-hdr{padding:20px 24px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-hdr h2{font-size:16px;font-weight:600;color:var(--t1)}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--t4);font-size:20px;line-height:1;padding:0}
+.modal-close:hover{color:var(--t1)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px}
+
+/* Form elements */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12.5px;font-weight:500;color:var(--t2);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;border:1px solid var(--bd);border-radius:6px;padding:8px 12px;font-size:13.5px;font-family:var(--font);color:var(--t1);outline:none;transition:border-color .15s,box-shadow .15s;background:var(--bg)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(90,100,242,.1)}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.6}
+.form-select{cursor:pointer}
+.form-hint{font-size:12px;color:var(--t4);margin-top:4px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:6px;padding:8px 16px;font-size:13.5px;font-weight:500;cursor:pointer;font-family:var(--font);transition:background .13s,opacity .13s}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-dark)}
+.btn-secondary{background:var(--bg2);color:var(--t2);border:1px solid var(--bd)}
+.btn-secondary:hover{background:var(--bd2)}
+.btn-danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.btn-danger:hover{background:#fee2e2}
+.btn-sm{padding:5px 10px;font-size:12.5px}
+
+/* Admin panel inside modal */
+.admin-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:20px}
+.admin-tab{padding:8px 16px;font-size:13px;font-weight:500;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .13s}
+.admin-tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.admin-tab-panel{display:none}
+.admin-tab-panel.active{display:block}
+
+/* FAQ list in admin */
+.admin-faq-item{border:1px solid var(--bd);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.admin-faq-q{font-size:13.5px;font-weight:500;color:var(--t1);margin-bottom:3px}
+.admin-faq-sec{font-size:12px;color:var(--t4)}
+.admin-faq-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* Section list in admin */
+.admin-sec-item{border:1px solid var(--bd);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-sec-name{font-size:13.5px;font-weight:500;color:var(--t1)}
+.admin-sec-id{font-size:12px;color:var(--t4);font-family:monospace}
+
+/* Login screen */
+.login-box{background:var(--bg);border-radius:12px;padding:32px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);text-align:center}
+.login-box h2{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.login-box p{font-size:13.5px;color:var(--t3);margin-bottom:24px}
+.login-err{font-size:13px;color:#dc2626;margin-top:10px;display:none}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--t1);color:#fff;padding:10px 18px;border-radius:8px;font-size:13.5px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:1100px){.rp{display:none}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="logo-mark">NX</div>
+    <span class="logo-name">NX Digital</span>
+    <span class="logo-sep">/</span>
+    <span class="logo-sub">Ajuda</span>
+  </div>
+  <div class="hdr-mid">
+    <div class="hdr-search">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5"/></svg>
+      <input id="searchInput" type="text" placeholder="Perguntar ou pesquisar..." oninput="doSearch(this.value)" autocomplete="off">
+      <span class="kbd">Ctrl K</span>
+    </div>
+  </div>
+  <nav class="hdr-nav">
+    <a href="mailto:suporte@nxdigital.com.br">SUPORTE</a>
+    <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙ Admin</a>
+  </nav>
+</header>
+
+<!-- Search dropdown -->
+<div class="search-drop sdrop" id="searchDrop"></div>
+
+<!-- ═══════════ LAYOUT ═══════════ -->
+<div class="layout">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <nav class="sb-inner" id="sidebarNav"></nav>
+  <div class="sb-footer">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
+    Suporte NX Digital
+  </div>
+</aside>
+
+<!-- ═══════════ CONTENT ═══════════ -->
+<div class="main">
+  <article class="content" id="mainContent"></article>
+
+  <!-- RIGHT PANEL -->
+  <aside class="rp">
+    <div class="rp-title">Nesta página</div>
+    <div id="rpLinks"></div>
+    <hr class="rp-div">
+    <div class="rp-fb-label">Isto foi útil?</div>
+    <div class="rp-stars">
+      <button class="rp-star" onclick="fbk(this)">😊</button>
+      <button class="rp-star" onclick="fbk(this)">😐</button>
+      <button class="rp-star" onclick="fbk(this)">😞</button>
+    </div>
+  </aside>
+</div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════ ADMIN OVERLAY ═══════════ -->
+<div class="overlay" id="adminOverlay">
+  <!-- LOGIN -->
+  <div class="login-box" id="loginBox">
+    <h2>🔒 Área administrativa</h2>
+    <p>Insira a senha para acessar o painel de edição do FAQ.</p>
+    <div class="form-group">
+      <input class="form-input" type="password" id="adminPwInput" placeholder="Senha" onkeydown="if(event.key==='Enter')checkPw()">
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="checkPw()">Entrar</button>
+    <div class="login-err" id="loginErr">Senha incorreta.</div>
+    <div style="margin-top:16px">
+      <button class="btn btn-secondary btn-sm" onclick="closeAdmin()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="modal" id="adminPanel" style="display:none">
+    <div class="modal-hdr">
+      <h2>⚙️ Painel de administração</h2>
+      <button class="modal-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="switchTab(this,'tab-faqs')">Perguntas</div>
+        <div class="admin-tab" onclick="switchTab(this,'tab-sections')">Seções</div>
+        <div class="admin-tab" onclick="switchTab(this,'tab-settings')">Configurações</div>
+      </div>
+
+      <!-- TAB: PERGUNTAS -->
+      <div class="admin-tab-panel active" id="tab-faqs">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span style="font-size:13px;color:var(--t3)" id="faqCount"></span>
+          <button class="btn btn-primary btn-sm" onclick="openFaqForm()">+ Nova pergunta</button>
+        </div>
+        <div id="faqList"></div>
+      </div>
+
+      <!-- TAB: SEÇÕES -->
+      <div class="admin-tab-panel" id="tab-sections">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span style="font-size:13px;color:var(--t3)">Gerencie os grupos do menu lateral</span>
+          <button class="btn btn-primary btn-sm" onclick="openSecForm()">+ Nova seção</button>
+        </div>
+        <div id="secList"></div>
+      </div>
+
+      <!-- TAB: CONFIGURAÇÕES -->
+      <div class="admin-tab-panel" id="tab-settings">
+        <div class="form-group">
+          <label class="form-label">Nome da empresa (exibido no header)</label>
+          <input class="form-input" id="cfgCompany" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subtítulo do header</label>
+          <input class="form-input" id="cfgSubtitle" type="text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor principal (hex)</label>
+          <input class="form-input" id="cfgColor" type="text" placeholder="#5A64F2">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail de suporte</label>
+          <input class="form-input" id="cfgEmail" type="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Alterar senha do admin</label>
+          <input class="form-input" id="cfgPw" type="password" placeholder="Nova senha (deixe em branco para manter)">
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings()">Salvar configurações</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ FORM MODAL -->
+  <div class="modal" id="faqForm" style="display:none">
+    <div class="modal-hdr">
+      <h2 id="faqFormTitle">Nova pergunta</h2>
+      <button class="modal-close" onclick="closeFaqForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="faqFormId">
+      <div class="form-group">
+        <label class="form-label">Pergunta *</label>
+        <input class="form-input" id="faqFormQ" type="text" placeholder="Ex: Como conecto meu WhatsApp?">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Seção *</label>
+        <select class="form-select" id="faqFormSec"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resposta * (suporta HTML simples)</label>
+        <textarea class="form-textarea" id="faqFormA" placeholder="Escreva a resposta aqui...&#10;&#10;Dicas:&#10;• Use &lt;strong&gt;texto&lt;/strong&gt; para negrito&#10;• Use &lt;ul&gt;&lt;li&gt;item&lt;/li&gt;&lt;/ul&gt; para listas&#10;• Use &lt;code&gt;codigo&lt;/code&gt; para código inline" style="min-height:160px"></textarea>
+        <div class="form-hint">Dica rápida: **negrito**, `código`, - item de lista → será formatado automaticamente</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags de busca (separadas por espaço)</label>
+        <input class="form-input" id="faqFormTags" type="text" placeholder="Ex: whatsapp conectar qr code canal">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeFaqForm()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveFaq()">Salvar pergunta</button>
+    </div>
+  </div>
+
+  <!-- SECTION FORM MODAL -->
+  <div class="modal" id="secForm" style="display:none">
+    <div class="modal-hdr">
+      <h2 id="secFormTitle">Nova seção</h2>
+      <button class="modal-close" onclick="closeSecForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="secFormId">
+      <div class="form-group">
+        <label class="form-label">Nome da seção *</label>
+        <input class="form-input" id="secFormName" type="text" placeholder="Ex: 📱 Canais de comunicação">
+        <div class="form-hint">Use emojis no início para ficar igual ao padrão. Ex: 🤖 Chat Flow</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Grupo do menu lateral</label>
+        <select class="form-select" id="secFormGroup">
+          <option value="geral">Geral (sem grupo)</option>
+          <option value="primeiro-acesso">Primeiro acesso</option>
+          <option value="config-admin">Configuração Administrador</option>
+          <option value="ferramentas">Ferramentas do atendimento</option>
+          <option value="erros">Erros comuns</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Texto introdutório (opcional)</label>
+        <textarea class="form-textarea" id="secFormDesc" placeholder="Breve descrição desta seção..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeSecForm()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSec()">Salvar seção</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════════
+
+const STORE_KEY = 'nx_faq_data';
+const DEFAULT_PW = 'nx@admin2024';
+
+const DEFAULT_DATA = {
+  settings: {
+    company: 'NX Digital',
+    subtitle: 'Ajuda',
+    color: '#5A64F2',
+    email: 'suporte@nxdigital.com.br',
+    pw: DEFAULT_PW
+  },
+  sections: [
+    { id: 'intro', name: '🖐️ Central de Ajuda NX Digital', group: 'geral', desc: 'Esta Central contém a documentação para consulta e orientação sobre todas as funcionalidades da plataforma.', order: 0 },
+    { id: 'primeiro-acesso', name: '🔑 Acessando o sistema', group: 'primeiro-acesso', desc: '', order: 1 },
+    { id: 'perfis', name: '👥 Perfis de acesso', group: 'primeiro-acesso', desc: '', order: 2 },
+    { id: 'filas', name: '📋 Filas de atendimento', group: 'primeiro-acesso', desc: '', order: 3 },
+    { id: 'canais', name: '📱 Canais de comunicação', group: 'config-admin', desc: 'A plataforma centraliza mensagens de diferentes canais em uma única caixa de entrada.', order: 4 },
+    { id: 'chatflow', name: '🤖 Chat Flow', group: 'config-admin', desc: 'O Chat Flow é o construtor de chatbots nativo da plataforma. Monte fluxos automáticos sem precisar programar.', order: 5 },
+    { id: 'gestao', name: '📊 Gestão comercial', group: 'config-admin', desc: '', order: 6 },
+    { id: 'configuracoes', name: '⚙️ Configurações', group: 'config-admin', desc: '', order: 7 },
+    { id: 'atendimento', name: '💬 Ferramentas do atendimento', group: 'ferramentas', desc: '', order: 8 },
+    { id: 'disparos', name: '📢 Comunicação e marketing', group: 'ferramentas', desc: '', order: 9 },
+    { id: 'erros', name: '🔧 Erros comuns', group: 'erros', desc: '', order: 10 }
+  ],
+  faqs: [
+    // PRIMEIRO ACESSO
+    { id: 'f1', secId: 'primeiro-acesso', q: 'Como acesso o sistema e o que fazer se esquecer a senha?', tags: 'login acesso entrar senha esqueci redefinir', a: '<p>Acesse pelo link fornecido pela NX Digital. Na tela de login, insira seu e-mail e senha cadastrados.</p><p><strong>Esqueceu a senha?</strong> Clique em "Esqueci minha senha" — um link de redefinição será enviado para o seu e-mail.</p><div class="hint hint-info"><span class="hi">💡</span><div class="hint-b"><strong>Dica:</strong> Instale o sistema como app no celular — acesse pelo navegador e salve na tela inicial para funcionar como aplicativo nativo.</div></div>' },
+    { id: 'f2', secId: 'primeiro-acesso', q: 'Como vejo a versão do sistema?', tags: 'versão sistema ver atualização', a: '<p>A versão aparece no <strong>canto superior direito</strong> da plataforma. Clique no número para ver o changelog de cada atualização. As atualizações são aplicadas automaticamente pela NX Digital.</p>' },
+    // PERFIS
+    { id: 'f3', secId: 'perfis', q: 'Qual a diferença entre Administrador, Supervisor e Atendente?', tags: 'perfil admin supervisor atendente diferença permissão acesso', a: '<table><tr><th>Perfil</th><th>Função</th><th>Permissões</th></tr><tr><td><strong>Administrador</strong></td><td>Gestor da conta</td><td>Acesso total: canais, chatbots, usuários, filas, relatórios, API e webhooks</td></tr><tr><td><strong>Supervisor</strong></td><td>Gestão de pessoas</td><td>Monitora todos os atendimentos, transfere tickets — sem acesso a configurações estruturais</td></tr><tr><td><strong>Atendente</strong></td><td>Operação diária</td><td>Responde conversas nas filas atribuídas, sem acesso a configurações</td></tr></table><p>O Administrador pode criar <strong>perfis de acesso personalizados</strong> habilitando ou bloqueando funcionalidades individualmente.</p>' },
+    // FILAS
+    { id: 'f4', secId: 'filas', q: 'O que são filas e por que preciso delas?', tags: 'fila setor departamento o que é criar para que serve', a: '<p>Filas são os departamentos do seu atendimento — por exemplo: <em>Comercial</em>, <em>Suporte</em>, <em>Financeiro</em>. Elas servem para:</p><ul><li>Direcionar automaticamente o cliente para o setor certo via chatbot</li><li>Controlar quais atendentes respondem cada tipo de conversa</li><li>Separar relatórios e métricas por setor</li></ul><p><strong>Para criar:</strong> Admin → Gestão Comercial → Filas → "Nova Fila".</p>' },
+    { id: 'f5', secId: 'filas', q: 'Como crio e configuro filas de atendimento?', tags: 'criar fila setor configurar atendentes associar', a: '<p>Acesse <strong>Admin → Gestão Comercial → Filas → "Nova Fila"</strong>. Defina:</p><ul><li>Nome da fila (ex: "Suporte Técnico")</li><li>Usuários responsáveis por essa fila</li><li>Horário de atendimento associado (opcional)</li></ul>' },
+    // CANAIS
+    { id: 'f6', secId: 'canais', q: 'Como conecto meu número de WhatsApp ao sistema?', tags: 'whatsapp conectar qr code número canal novo adicionar baileys', a: '<p>Acesse <strong>Admin → Canais → Adicionar Canal</strong>. Selecione o tipo (ex: Baileys) e preencha:</p><ol><li><strong>Nome do canal</strong> (ex: "WhatsApp Comercial")</li><li><strong>Fila padrão</strong> e <strong>Chatbot padrão</strong> para esse número (opcional)</li><li>Clique em <strong>Salvar</strong> — um QR Code aparecerá na tela</li><li>No celular: WhatsApp → <strong>Aparelhos conectados → Conectar aparelho</strong></li><li>Aponte a câmera para o QR Code na tela</li></ol><p>Quando o status mudar para <strong>"Conectado"</strong> (ícone verde), o número está funcionando.</p><div class="hint hint-warn"><span class="hi">⚠️</span><div class="hint-b"><strong>Atenção:</strong> O celular precisa permanecer com internet ativa. Se ficar sem bateria ou sinal, o canal desconecta.</div></div>' },
+    { id: 'f7', secId: 'canais', q: 'O canal aparece como desconectado. Como reconecto?', tags: 'canal desconectado reconectar qr code vermelho status reiniciar', a: '<p>Vá em <strong>Admin → Canais</strong>, localize o canal e clique em <strong>"Reiniciar"</strong> ou <strong>"Gerar QR Code"</strong>. Escaneie com o celular normalmente.</p><div class="hint hint-info"><span class="hi">💡</span><div class="hint-b"><strong>Prevenção:</strong> Mantenha o celular sempre carregado e conectado ao Wi-Fi. Evite usar o mesmo número em outro aparelho simultaneamente.</div></div>' },
+    { id: 'f8', secId: 'canais', q: 'Não consigo ler o QR Code com a câmera. Tem outra forma?', tags: 'código pareamento sem câmera celular alternativa conectar', a: '<p>Para canais do tipo <strong>Baileys, WebJS e Meow</strong>, existe o <strong>Código de Pareamento</strong>.</p><p>Na criação do canal, ative "Código de pareamento". O sistema exibe um código como <code>ABC1-DEF2</code>. No celular: WhatsApp → <strong>Aparelhos conectados → Conectar com número de telefone</strong> e insira o código.</p>' },
+    { id: 'f9', secId: 'canais', q: 'Como conecto Instagram, Telegram, e-mail e outros canais?', tags: 'instagram facebook telegram email webchat outros canais conectar', a: '<p>Em <strong>Admin → Canais → Adicionar Canal</strong>, escolha o tipo:</p><ul><li><strong>Instagram / Facebook Messenger</strong> — login OAuth com sua conta Meta</li><li><strong>Telegram</strong> — crie um bot no BotFather (t.me/botfather), copie o token e cole no sistema</li><li><strong>E-mail (Gmail/IMAP)</strong> — receba e responda e-mails pela plataforma</li><li><strong>Webchat</strong> — gera um widget de chat para embutir no seu site</li></ul><div class="hint hint-info"><span class="hi">💡</span><div class="hint-b">Para Instagram e Facebook, entre em contato com o suporte da NX Digital para configurar o App Meta.</div></div>' },
+    { id: 'f10', secId: 'canais', q: 'Quais recursos extras posso ativar em um canal?', tags: 'recursos canal avaliação transcrição áudio distribuição automática configurações extras', a: '<table><tr><th>Opção</th><th>O que faz</th></tr><tr><td><strong>Avaliação automática</strong></td><td>Pesquisa de satisfação ao encerrar cada atendimento</td></tr><tr><td><strong>Transcrição de áudio</strong></td><td>Converte mensagens de voz em texto automaticamente</td></tr><tr><td><strong>Auto distribuir</strong></td><td>Distribui novos tickets entre atendentes online automaticamente</td></tr><tr><td><strong>Posição na fila</strong></td><td>Avisa o cliente sua posição e tempo estimado de espera</td></tr><tr><td><strong>Desligar IA ao assumir</strong></td><td>Quando um atendente abre o ticket, o bot para de responder</td></tr><tr><td><strong>Mensagem de despedida</strong></td><td>Texto enviado automaticamente ao encerrar o atendimento</td></tr><tr><td><strong>Palavra-chave de fechamento</strong></td><td>Uma palavra específica fecha o ticket automaticamente</td></tr></table>' },
+    // CHATFLOW
+    { id: 'f11', secId: 'chatflow', q: 'Os 4 conceitos fundamentais do Chat Flow', tags: 'chat flow o que é conceito como funciona chatbot nativo fluxo etapa interação condição', a: '<table><tr><th>Conceito</th><th>O que é</th><th>Exemplo</th></tr><tr><td><strong>Fluxo</strong></td><td>O chatbot completo</td><td>"Atendimento Inicial"</td></tr><tr><td><strong>Etapa (Nó)</strong></td><td>Um momento da conversa</td><td>"Menu principal"</td></tr><tr><td><strong>Interação</strong></td><td>O que o bot faz nessa etapa</td><td>Enviar mensagem, aplicar etiqueta</td></tr><tr><td><strong>Condição</strong></td><td>Para onde ir com base na resposta</td><td>Se digitou "1" → ir para Comercial</td></tr></table>' },
+    { id: 'f12', secId: 'chatflow', q: 'Como crio um fluxo do zero?', tags: 'criar chatbot novo fluxo passo a passo como começar canvas', a: '<p>Acesse <strong>Admin → Automação → Chat Flow → + Novo Fluxo</strong>. Configure:</p><ul><li><strong>Nome do fluxo</strong> — ex: "Atendimento Inicial"</li><li><strong>Número para teste</strong> — coloque seu número pessoal. O bot responde apenas para ele enquanto você testa</li><li><strong>Ativo</strong> — deixe desativado enquanto estiver construindo</li></ul><p>O canvas começa com 3 nós fixos: <em>Início</em>, <em>Configurações</em> e <em>Boas-vindas</em>. Adicione novos passos clicando em <strong>"+ Passo"</strong>.</p><div class="hint hint-danger"><span class="hi">🔴</span><div class="hint-b"><strong>Atenção:</strong> Clique em <strong>Salvar</strong> antes de sair do editor. Alterações não salvas são perdidas permanentemente.</div></div>' },
+    { id: 'f13', secId: 'chatflow', q: 'Interação vs Condição — a distinção mais importante', tags: 'interação condição diferença bot para errado não avança dúvida comum', a: '<ul><li><strong>Interação</strong> = o que o bot <em>faz</em>. Ex: envia a mensagem "Digite 1 para Comercial ou 2 para Suporte".</li><li><strong>Condição</strong> = o que decide o <em>próximo caminho</em>. Ex: se o cliente respondeu "1" → ir para etapa Comercial.</li></ul><p>Sem a condição, o bot envia a mensagem mas não sabe para onde seguir — fica parado. <strong>Toda etapa que aguarda resposta precisa de pelo menos uma condição.</strong></p><div class="hint hint-info"><span class="hi">💡</span><div class="hint-b">Sempre adicione uma condição <strong>"Qualquer resposta"</strong> como última opção — ela funciona como fallback para respostas inesperadas.</div></div>' },
+    { id: 'f14', secId: 'chatflow', q: 'Criei o fluxo mas o chatbot não está respondendo', tags: 'vincular fluxo canal chatbot não dispara não funciona ativo', a: '<p>Um fluxo criado <strong>não dispara automaticamente</strong>. Verifique:</p><ol><li><strong>Fluxo ativo?</strong> Em Chat Flow, o card deve mostrar "Ativo"</li><li><strong>Vinculado ao canal?</strong> Admin → Canais → edite o canal → campo "Chatbot" → selecione o fluxo</li><li><strong>Canal conectado?</strong> O ícone do canal deve estar verde</li><li><strong>Ticket em aberto?</strong> Para contatos com atendimento já aberto, o chatbot não reinicia. Feche o ticket e teste</li></ol>' },
+    { id: 'f15', secId: 'chatflow', q: 'Variáveis disponíveis nas mensagens', tags: 'variáveis nome cliente protocolo saudação personalizar mensagem', a: '<table><tr><th>Variável</th><th>Conteúdo</th></tr><tr><td><code>{{name}}</code></td><td>Nome completo do contato</td></tr><tr><td><code>{{firstName}}</code></td><td>Primeiro nome</td></tr><tr><td><code>{{greeting}}</code></td><td>Bom dia / Boa tarde / Boa noite (automático)</td></tr><tr><td><code>{{protocol}}</code></td><td>Número do protocolo de atendimento</td></tr><tr><td><code>{{user}}</code></td><td>Nome do atendente responsável</td></tr><tr><td><code>{{email}}</code></td><td>E-mail do contato</td></tr><tr><td><code>{{phoneNumber}}</code></td><td>Telefone do contato</td></tr></table>' },
+    { id: 'f16', secId: 'chatflow', q: 'O bot continua respondendo depois do atendente assumir', tags: 'bot responde depois atendente humano assumiu desligar parar bloquear', a: '<p><strong>Solução 1 — No canal:</strong> Ative "Habilitar desligamento automático das integrações externas". Quando um atendente abre o ticket, o bot para automaticamente.</p><p><strong>Solução 2 — No fluxo:</strong> No nó de transferência, adicione a interação <strong>"Bloquear Chatbot"</strong>.</p>' },
+    { id: 'f17', secId: 'chatflow', q: 'Roteamento por horário no Chat Flow', tags: 'horário atendimento fora expediente fluxo roteamento tabela horários', a: '<p>No canvas, clique em <strong>"Tabela de horários"</strong>. Isso adiciona um nó que roteia por dia da semana e hora:</p><ul><li><strong>Dentro do horário:</strong> segue o fluxo normal</li><li><strong>Fora do horário:</strong> envia mensagem e encerra ou coloca em espera</li></ul>' },
+    // GESTÃO
+    { id: 'f18', secId: 'gestao', q: 'Como configuro horário de atendimento e mensagem fora do expediente?', tags: 'horário atendimento expediente fora mensagem configurar setor fila', a: '<p>Acesse <strong>Admin → Gestão Comercial → Horários de Atendimento</strong>:</p><ol><li>Selecione a fila</li><li>Defina os dias e horários de funcionamento</li><li>Escreva a mensagem que será enviada fora do horário</li><li>Escolha: colocar em espera ou encerrar o atendimento</li></ol>' },
+    { id: 'f19', secId: 'gestao', q: 'Como uso etiquetas para organizar atendimentos?', tags: 'etiqueta tag criar aplicar organizar filtrar atendimento', a: '<p><strong>Para criar:</strong> Admin → Gestão Comercial → Etiquetas → "Nova etiqueta". Defina nome e cor.</p><p><strong>Para aplicar:</strong> Dentro do atendimento, clique no ícone de etiqueta. Você também pode aplicar etiquetas automaticamente via Chat Flow.</p>' },
+    { id: 'f20', secId: 'gestao', q: 'Como acompanho o desempenho da equipe com relatórios?', tags: 'relatório desempenho métricas equipe atendentes tempo resposta avaliação', a: '<p>Acesse <strong>Admin → Gestão Comercial → Relatórios</strong>:</p><ul><li>Total de atendimentos por período, canal e fila</li><li>Por atendente: quantidade de tickets e tempo médio de resposta</li><li>Avaliações de satisfação dos clientes</li><li>Painel em tempo real dos tickets abertos</li></ul>' },
+    // CONFIGURAÇÕES
+    { id: 'f21', secId: 'configuracoes', q: 'Como conecto uma IA (ChatGPT, Gemini, Claude…) ao sistema?', tags: 'chatgpt openai gemini claude ia integrar chave api configurar modelo', a: '<p>Modelos suportados: ChatGPT (OpenAI), Claude (Anthropic), Gemini (Google), Grok, Deepseek, Qwen, Ollama e LM Studio.</p><ol><li>Gere sua chave de API no site do provedor</li><li>Acesse <strong>Admin → Configurações → Bots e IA</strong></li><li>Selecione o provedor, insira a chave e escolha o modelo</li><li>No canal ou Chat Flow, associe a IA configurada</li></ol><div class="hint hint-info"><span class="hi">💡</span><div class="hint-b"><strong>Custo:</strong> Cobranças de IA são feitas diretamente pelo provedor (OpenAI, Google…) por tokens consumidos.</div></div>' },
+    { id: 'f22', secId: 'configuracoes', q: 'Copiloto de IA — como funciona?', tags: 'copiloto ia sugestão atendente humano ajuda redação', a: '<p>O Copiloto sugere respostas em tempo real para o atendente durante o atendimento — sem enviar automaticamente. O atendente aceita, edita ou ignora.</p><p><strong>Para ativar:</strong> Admin → Configurações → Bots e IA → Copiloto de IA. Configure o provedor e escreva as instruções.</p>' },
+    { id: 'f23', secId: 'configuracoes', q: 'Como habilito Webhooks?', tags: 'webhook integração n8n url notificação evento configurar', a: '<p>Acesse <strong>Admin → Configurações → Integrações → Habilitar Webhooks</strong>. Configure a URL do seu sistema (ex: n8n) para receber eventos: nova mensagem, ticket aberto/fechado/transferido, canal conectado/desconectado, novo contato.</p>' },
+    // ATENDIMENTO
+    { id: 'f24', secId: 'atendimento', q: 'Como transfiro um atendimento para outro atendente ou setor?', tags: 'transferir atendimento fila usuário outro atendente setor', a: '<p>Dentro do atendimento, clique no ícone de <strong>transferência</strong> (seta). Selecione a <strong>Fila de destino</strong> e, opcionalmente, um <strong>Usuário destino</strong> específico. O histórico é mantido e o cliente não percebe a transferência.</p>' },
+    { id: 'f25', secId: 'atendimento', q: 'Mensagens rápidas — como criar e usar?', tags: 'mensagem rápida atalho resposta barra criar usar oi', a: '<p><strong>Para criar:</strong> Admin → Mensagens Rápidas → "Nova mensagem". Defina um atalho como <code>/oi</code> e o texto completo.</p><p><strong>Para usar:</strong> Na caixa de mensagem, digite <code>/</code> — a lista de atalhos aparece. Selecione e envie.</p>' },
+    { id: 'f26', secId: 'atendimento', q: 'Como importo minha lista de contatos?', tags: 'contatos importar csv sincronizar lista criar formato número', a: '<p>Acesse <strong>Contatos → botão "Sincronizar"</strong>:</p><ul><li><strong>Importar CSV</strong> — planilha com colunas <code>nome</code> e <code>numero</code></li><li><strong>Sincronizar do WhatsApp</strong> — importa os contatos do número conectado</li></ul><p>Formato do número: DDI + DDD + número sem espaços. Exemplo: <code>5511999999999</code></p>' },
+    // DISPAROS
+    { id: 'f27', secId: 'disparos', q: 'Como faço um envio em massa?', tags: 'disparo massa envio lista contatos como fazer campanha canal aba', a: '<table><tr><th>Aba</th><th>Quando usar</th></tr><tr><td><strong>Template</strong></td><td>Templates WABA aprovados pela Meta (API Oficial)</td></tr><tr><td><strong>Texto</strong></td><td>Mensagem livre via WhatsApp QR Code</td></tr><tr><td><strong>Texto Variável</strong></td><td>Texto personalizado por contato via CSV</td></tr><tr><td><strong>SMS</strong></td><td>Envio de SMS em massa</td></tr></table><div class="hint hint-warn"><span class="hi">⚠️</span><div class="hint-b"><strong>Delay:</strong> Configure intervalo entre mensagens (mín. 15s, máx. 45s) para evitar risco de ban.</div></div>' },
+    { id: 'f28', secId: 'disparos', q: 'Como personalizo o disparo com o nome de cada contato?', tags: 'csv variável personalizar nome disparo massa planilha', a: '<p>Use a aba <strong>"Texto Variável"</strong>. Prepare um CSV: <code>numero,variavel1,variavel2</code></p><p>Exemplo: <code>5511999999999,João,R$ 150,00</code></p><p>Na mensagem: <code>{{1}}</code>, <code>{{2}}</code> etc.</p><p>Exemplo: <em>"Olá, {{1}}! Sua fatura de {{2}} vence amanhã."</em></p>' },
+    { id: 'f29', secId: 'disparos', q: 'Como agendar uma campanha para data/hora específica?', tags: 'agendar campanha data horário programar disparo futuro', a: '<p>Use <strong>Comunicação e Marketing → Campanhas</strong> para disparos agendados com data e hora. Para lembretes individuais: <strong>Admin → Automação → Agendamentos</strong>.</p>' },
+    // ERROS
+    { id: 'f30', secId: 'erros', q: 'As mensagens não estão sendo enviadas', tags: 'mensagem não envia não chega erro envio canal problema', a: '<ol><li><strong>Canal conectado?</strong> Admin → Canais. Ícone verde = OK. Se não, reconecte via QR Code</li><li><strong>Celular com internet?</strong> O aparelho precisa ter sinal ou Wi-Fi ativo</li><li><strong>Número banido?</strong> Ícone de erro no canal = número bloqueado. Contate o suporte NX Digital</li><li><strong>Fila ativa?</strong> O canal precisa ter ao menos uma fila ativa associada</li></ol>' },
+    { id: 'f31', secId: 'erros', q: 'O sistema está lento ou travando', tags: 'sistema lento travando demora carregar navegador cache internet', a: '<ol><li><strong>Limpe o cache:</strong> <code>Ctrl+Shift+R</code> (Windows) ou <code>Cmd+Shift+R</code> (Mac)</li><li><strong>Tente Chrome ou Edge</strong> — têm melhor desempenho</li><li><strong>Verifique sua internet</strong></li></ol><p>Se persistir para toda a equipe, entre em contato com o suporte informando o horário e comportamento observado.</p>' },
+    { id: 'f32', secId: 'erros', q: 'O chatbot parou de funcionar de repente', tags: 'chatbot parou não responde fluxo inativo problema verificar', a: '<ol><li><strong>Canal desconectado?</strong> Se o número caiu, o chatbot não recebe mensagens</li><li><strong>Fluxo ativo?</strong> Alguém pode ter desativado — verifique em Admin → Chat Flow</li><li><strong>Ticket em aberto?</strong> Para contatos com atendimento em andamento, o chatbot não reinicia automaticamente</li><li><strong>Fluxo com erros?</strong> Abra o canvas e verifique o botão <strong>"Avisos"</strong></li></ol>' },
+    { id: 'f33', secId: 'erros', q: 'O cliente enviou mensagem mas não apareceu no sistema', tags: 'não recebe mensagem cliente enviou não apareceu sumiu ticket filtro', a: '<ul><li><strong>Canal estava desconectado</strong> — o sistema não captura mensagens enquanto offline</li><li><strong>Filtros ativos na tela</strong> — verifique filtros por fila, status ou atendente</li><li><strong>Atribuído a outro atendente</strong> — verifique na aba "Todos" ou "Pendentes"</li></ul>' }
+  ]
+};
+
+// ═══════════════════════════════════════════
+// LOAD / SAVE
+// ═══════════════════════════════════════════
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    return JSON.parse(raw);
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+}
+function saveData(d) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(d));
+}
+let DATA = loadData();
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function render() {
+  applySettings();
+  renderSidebar();
+  renderContent();
+  renderRpLinks();
+}
+
+function applySettings() {
+  const s = DATA.settings;
+  document.title = 'Central de Ajuda — ' + s.company;
+  document.querySelector('.logo-name').textContent = s.company;
+  document.querySelector('.logo-sub').textContent = s.subtitle;
+  document.querySelector('a[href^="mailto"]').href = 'mailto:' + s.email;
+  const c = s.color || '#5A64F2';
+  const hex2rgb = h => { const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return r+','+g+','+b; };
+  document.documentElement.style.setProperty('--brand', c);
+  document.documentElement.style.setProperty('--brand-dark', shadeColor(c, -20));
+  document.documentElement.style.setProperty('--brand-bg', hexToRgba(c, 0.08));
+}
+
+function shadeColor(col, amt) {
+  let num = parseInt(col.slice(1), 16);
+  let r = Math.min(255, Math.max(0, (num >> 16) + amt));
+  let g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amt));
+  let b = Math.min(255, Math.max(0, (num & 0xff) + amt));
+  return '#' + ((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);
+}
+function hexToRgba(hex, a) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+const GROUP_LABELS = {
+  'geral': null,
+  'primeiro-acesso': 'Primeiro acesso',
+  'config-admin': 'Configuração Administrador',
+  'ferramentas': 'Ferramentas do atendimento',
+  'erros': 'Erros comuns'
+};
+const GROUP_ORDER = ['geral','primeiro-acesso','config-admin','ferramentas','erros'];
+
+function renderSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
+  let html = '';
+  let lastGroup = null;
+  GROUP_ORDER.forEach(grp => {
+    const grpSecs = secs.filter(s => (s.group || 'geral') === grp);
+    if (!grpSecs.length) return;
+    const label = GROUP_LABELS[grp];
+    if (label) html += `<div class="sb-group">${label}</div>`;
+    grpSecs.forEach(sec => {
+      const faqs = DATA.faqs.filter(f => f.secId === sec.id);
+      if (faqs.length > 0) {
+        html += `<button class="sb-item" onclick="toggleSub(this,'sub-${sec.id}')">
+          <span>${sec.name}</span>
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>
+        </button>
+        <div class="sb-sub" id="sub-${sec.id}">`;
+        faqs.forEach(f => {
+          html += `<button class="sb-sub-item" onclick="jumpToFaq('${f.id}')">${f.q}</button>`;
+        });
+        html += `</div>`;
+      } else {
+        html += `<button class="sb-item" onclick="scrollToSec('${sec.id}',this)"><span>${sec.name}</span></button>`;
+      }
+    });
+  });
+  nav.innerHTML = html;
+}
+
+function renderContent() {
+  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
+  let html = '';
+  secs.forEach((sec, idx) => {
+    const faqs = DATA.faqs.filter(f => f.secId === sec.id);
+    html += `<div id="sec-${sec.id}">`;
+    if (idx === 0) {
+      html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
+               <h1 class="page-title">${sec.name}</h1>
+               <p class="page-lead">${sec.desc || ''}</p>`;
+    } else {
+      html += `<h2 class="sh">${sec.name}</h2>`;
+      if (sec.desc) html += `<p class="prose">${sec.desc}</p>`;
+    }
+    faqs.forEach(faq => {
+      html += `<div id="faq-${faq.id}" data-tags="${faq.tags||''}">
+        <button class="acc-btn" onclick="accToggle(this)">
+          <span class="acc-icon"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4l3 3 3-3"/></svg></span>
+          ${faq.q}
+        </button>
+        <div class="acc-body">${faq.a}</div>
+      </div>`;
+    });
+    if (idx < secs.length - 1) html += `<hr class="div">`;
+    html += `</div>`;
+  });
+  // feedback
+  html += `<div class="fb-row"><span class="fb-label">Isto foi útil?</span>
+    <button class="rp-star" onclick="fbk(this)">😊</button>
+    <button class="rp-star" onclick="fbk(this)">😐</button>
+    <button class="rp-star" onclick="fbk(this)">😞</button>
+  </div>`;
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function renderRpLinks() {
+  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
+  let html = '';
+  secs.forEach(sec => {
+    html += `<a class="rp-link" href="#sec-${sec.id}" onclick="rpClick(this)">${sec.name}</a>`;
+  });
+  document.getElementById('rpLinks').innerHTML = html;
+  if (document.querySelector('.rp-link')) document.querySelector('.rp-link').classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════
+function accToggle(btn) {
+  const body = btn.nextElementSibling, open = btn.classList.contains('open');
+  document.querySelectorAll('.acc-btn.open').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
+  if (!open) { btn.classList.add('open'); body.classList.add('open'); }
+}
+function toggleSub(btn, id) {
+  const sub = document.getElementById(id);
+  if (!sub) return;
+  sub.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function scrollToSec(id, btn) {
+  document.querySelectorAll('.sb-item,.sb-sub-item').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const el = document.getElementById('sec-'+id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function jumpToFaq(id) {
+  const el = document.getElementById('faq-'+id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => accToggle(el.querySelector('.acc-btn')), 300);
+}
+function rpClick(a) {
+  document.querySelectorAll('.rp-link').forEach(l => l.classList.remove('active'));
+  a.classList.add('active');
+}
+function fbk(btn) {
+  const row = btn.closest('.fb-row,.rp-stars');
+  row.querySelectorAll('.rp-star').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
+  btn.style.opacity = '1';
+  btn.textContent = btn.textContent === '😊' ? '✅' : '📩';
+  showToast('Obrigado pelo seu feedback!');
+}
+
+// scroll sync
+window.addEventListener('scroll', () => {
+  const secs = DATA.sections.map(s => document.getElementById('sec-'+s.id)).filter(Boolean);
+  let cur = secs[0];
+  secs.forEach(el => { if (el && el.getBoundingClientRect().top < 100) cur = el; });
+  if (!cur) return;
+  const id = cur.id.replace('sec-','');
+  document.querySelectorAll('.rp-link').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+cur.id);
+  });
+}, { passive: true });
+
+// ═══════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════
+function doSearch(val) {
+  const drop = document.getElementById('searchDrop');
+  if (!val || val.length < 2) { drop.style.display = 'none'; return; }
+  const v = val.toLowerCase();
+  const hits = DATA.faqs.filter(f =>
+    f.q.toLowerCase().includes(v) ||
+    (f.tags||'').toLowerCase().includes(v) ||
+    f.a.toLowerCase().includes(v)
+  ).slice(0, 8);
+  const secMap = {};
+  DATA.sections.forEach(s => secMap[s.id] = s.name);
+  if (!hits.length) {
+    drop.style.display = 'block';
+    drop.innerHTML = '<div class="sd-empty">Nenhum resultado encontrado.</div>';
+    return;
+  }
+  drop.style.display = 'block';
+  drop.innerHTML = `<div class="sd-hdr">${hits.length} resultado(s) para "<strong>${val}</strong>"</div>` +
+    hits.map(h => `<div class="sd-item" onclick="jumpToFaq('${h.id}');document.getElementById('searchDrop').style.display='none';document.getElementById('searchInput').value=''">
+      <div class="sd-q">${h.q.replace(new RegExp(val,'gi'), s => `<mark>${s}</mark>`)}</div>
+      <div class="sd-cat">${secMap[h.secId] || ''}</div>
+    </div>`).join('');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#searchDrop') && !e.target.closest('#searchInput'))
+    document.getElementById('searchDrop').style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+});
+
+// ═══════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════
+let adminUnlocked = false;
+
+function openAdmin(e) {
+  e.preventDefault();
+  document.getElementById('adminOverlay').classList.add('open');
+  if (!adminUnlocked) {
+    document.getElementById('loginBox').style.display = '';
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('faqForm').style.display = 'none';
+    document.getElementById('secForm').style.display = 'none';
+    setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+  } else {
+    showAdminPanel();
+  }
+}
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+function checkPw() {
+  const pw = document.getElementById('adminPwInput').value;
+  if (pw === DATA.settings.pw) {
+    adminUnlocked = true;
+    showAdminPanel();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+function showAdminPanel() {
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('faqForm').style.display = 'none';
+  document.getElementById('secForm').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'flex';
+  renderAdminFaqs();
+  renderAdminSecs();
+  loadSettings();
+}
+function switchTab(tab, panelId) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ── FAQ ADMIN ──
+function renderAdminFaqs() {
+  const list = document.getElementById('faqList');
+  const secMap = {}; DATA.sections.forEach(s => secMap[s.id] = s.name);
+  document.getElementById('faqCount').textContent = DATA.faqs.length + ' perguntas cadastradas';
+  if (!DATA.faqs.length) { list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t4);font-size:13px">Nenhuma pergunta ainda. Clique em "+ Nova pergunta".</div>'; return; }
+  list.innerHTML = DATA.faqs.map(f => `
+    <div class="admin-faq-item">
+      <div style="min-width:0">
+        <div class="admin-faq-q">${f.q}</div>
+        <div class="admin-faq-sec">${secMap[f.secId] || f.secId}</div>
+      </div>
+      <div class="admin-faq-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editFaq('${f.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFaq('${f.id}')">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function openFaqForm(id) {
+  document.getElementById('adminPanel').style.display = 'none';
+  const frm = document.getElementById('faqForm');
+  frm.style.display = 'flex';
+  // populate section select
+  const sel = document.getElementById('faqFormSec');
+  sel.innerHTML = DATA.sections.sort((a,b)=>a.order-b.order).map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  if (id) {
+    const f = DATA.faqs.find(x => x.id === id);
+    document.getElementById('faqFormTitle').textContent = 'Editar pergunta';
+    document.getElementById('faqFormId').value = f.id;
+    document.getElementById('faqFormQ').value = f.q;
+    document.getElementById('faqFormSec').value = f.secId;
+    document.getElementById('faqFormA').value = f.a;
+    document.getElementById('faqFormTags').value = f.tags || '';
+  } else {
+    document.getElementById('faqFormTitle').textContent = 'Nova pergunta';
+    document.getElementById('faqFormId').value = '';
+    document.getElementById('faqFormQ').value = '';
+    document.getElementById('faqFormA').value = '';
+    document.getElementById('faqFormTags').value = '';
+  }
+}
+function closeFaqForm() {
+  document.getElementById('faqForm').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'flex';
+}
+function editFaq(id) { openFaqForm(id); }
+function deleteFaq(id) {
+  if (!confirm('Excluir esta pergunta?')) return;
+  DATA.faqs = DATA.faqs.filter(f => f.id !== id);
+  saveData(DATA); render(); renderAdminFaqs();
+  showToast('Pergunta excluída.');
+}
+function saveFaq() {
+  const q = document.getElementById('faqFormQ').value.trim();
+  const a = document.getElementById('faqFormA').value.trim();
+  const secId = document.getElementById('faqFormSec').value;
+  if (!q || !a) { alert('Preencha a pergunta e a resposta.'); return; }
+  const id = document.getElementById('faqFormId').value;
+  if (id) {
+    const f = DATA.faqs.find(x => x.id === id);
+    f.q = q; f.a = a; f.secId = secId; f.tags = document.getElementById('faqFormTags').value.trim();
+  } else {
+    DATA.faqs.push({ id: 'f' + Date.now(), secId, q, a, tags: document.getElementById('faqFormTags').value.trim() });
+  }
+  saveData(DATA); render(); closeFaqForm(); renderAdminFaqs();
+  showToast(id ? 'Pergunta atualizada!' : 'Pergunta criada!');
+}
+
+// ── SECTION ADMIN ──
+function renderAdminSecs() {
+  const list = document.getElementById('secList');
+  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
+  list.innerHTML = secs.map(s => `
+    <div class="admin-sec-item">
+      <div>
+        <div class="admin-sec-name">${s.name}</div>
+        <div class="admin-sec-id">grupo: ${s.group}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-secondary btn-sm" onclick="editSec('${s.id}')">Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSec('${s.id}')">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+function openSecForm(id) {
+  document.getElementById('adminPanel').style.display = 'none';
+  const frm = document.getElementById('secForm');
+  frm.style.display = 'flex';
+  if (id) {
+    const s = DATA.sections.find(x => x.id === id);
+    document.getElementById('secFormTitle').textContent = 'Editar seção';
+    document.getElementById('secFormId').value = s.id;
+    document.getElementById('secFormName').value = s.name;
+    document.getElementById('secFormGroup').value = s.group;
+    document.getElementById('secFormDesc').value = s.desc || '';
+  } else {
+    document.getElementById('secFormTitle').textContent = 'Nova seção';
+    document.getElementById('secFormId').value = '';
+    document.getElementById('secFormName').value = '';
+    document.getElementById('secFormGroup').value = 'geral';
+    document.getElementById('secFormDesc').value = '';
+  }
+}
+function closeSecForm() {
+  document.getElementById('secForm').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'flex';
+}
+function editSec(id) { openSecForm(id); }
+function deleteSec(id) {
+  if (DATA.faqs.some(f => f.secId === id)) { alert('Esta seção tem perguntas. Mova ou exclua as perguntas antes de excluir a seção.'); return; }
+  if (!confirm('Excluir esta seção?')) return;
+  DATA.sections = DATA.sections.filter(s => s.id !== id);
+  saveData(DATA); render(); renderAdminSecs();
+  showToast('Seção excluída.');
+}
+function saveSec() {
+  const name = document.getElementById('secFormName').value.trim();
+  if (!name) { alert('Preencha o nome da seção.'); return; }
+  const id = document.getElementById('secFormId').value;
+  if (id) {
+    const s = DATA.sections.find(x => x.id === id);
+    s.name = name; s.group = document.getElementById('secFormGroup').value;
+    s.desc = document.getElementById('secFormDesc').value.trim();
+  } else {
+    const newId = 'sec-' + Date.now();
+    DATA.sections.push({ id: newId, name, group: document.getElementById('secFormGroup').value, desc: document.getElementById('secFormDesc').value.trim(), order: DATA.sections.length });
+  }
+  saveData(DATA); render(); closeSecForm(); renderAdminSecs();
+  showToast(id ? 'Seção atualizada!' : 'Seção criada!');
+}
+
+// ── SETTINGS ──
+function loadSettings() {
+  const s = DATA.settings;
+  document.getElementById('cfgCompany').value = s.company;
+  document.getElementById('cfgSubtitle').value = s.subtitle;
+  document.getElementById('cfgColor').value = s.color;
+  document.getElementById('cfgEmail').value = s.email;
+  document.getElementById('cfgPw').value = '';
+}
+function saveSettings() {
+  const newPw = document.getElementById('cfgPw').value.trim();
+  DATA.settings.company = document.getElementById('cfgCompany').value.trim();
+  DATA.settings.subtitle = document.getElementById('cfgSubtitle').value.trim();
+  DATA.settings.color = document.getElementById('cfgColor').value.trim();
+  DATA.settings.email = document.getElementById('cfgEmail').value.trim();
+  if (newPw) DATA.settings.pw = newPw;
+  saveData(DATA); render();
+  showToast('Configurações salvas!');
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══ INIT ═══
+render();
+</script>
+</body>
+</html>
