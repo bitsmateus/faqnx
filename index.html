@@ -77,25 +77,33 @@ ul.prose,ol.prose{font-size:15.5px;color:var(--t2);padding-left:18px;margin:8px 
 ul.prose li,ol.prose li{margin-bottom:4px}
 code.ic{font-size:12.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:1px 6px;color:var(--brand);font-family:'Courier New',monospace}
 
-/* ═══ ACCORDION ═══ */
-.acc-btn{width:100%;background:none;border:none;border-bottom:1px solid var(--bd);padding:15px 0;display:flex;align-items:flex-start;gap:8px;text-align:left;cursor:pointer;font-size:15.5px;font-weight:500;color:var(--t1);transition:color .13s}
-.acc-btn:hover{color:var(--brand)}
-.acc-btn.open{color:var(--brand)}
-.acc-icon{width:18px;height:18px;flex-shrink:0;margin-top:1px;border-radius:50%;background:var(--bg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center}
-.acc-icon svg{width:10px;height:10px;color:var(--t4);transition:transform .2s}
-.acc-btn.open .acc-icon{background:var(--brand-bg);border-color:var(--brand)}
-.acc-btn.open .acc-icon svg{transform:rotate(90deg);color:var(--brand)}
-.acc-body{display:none;padding:14px 0 18px 26px;font-size:15px;color:var(--t2);line-height:1.8;border-bottom:1px solid var(--bd)}
-.acc-body.open{display:block}
-.acc-body p{margin-bottom:8px}
-.acc-body p:last-child{margin-bottom:0}
-.acc-body ul,.acc-body ol{padding-left:18px;margin:6px 0}
-.acc-body li{margin-bottom:3px}
+/* ═══ CONTENT BODY (página por seção) ═══ */
+.sec-heading{font-size:22px;font-weight:700;color:var(--t1);margin:40px 0 12px;padding-bottom:12px;border-bottom:2px solid var(--bd);scroll-margin-top:72px;line-height:1.3}
+.sec-heading:first-of-type{margin-top:8px}
+.content-body{padding:4px 0 32px 0}
+.content-body p{font-size:16px;color:var(--t2);line-height:1.85;margin-bottom:14px}
+.content-body ul,.content-body ol{font-size:16px;color:var(--t2);padding-left:24px;margin:10px 0 16px}
+.content-body li{margin-bottom:8px;line-height:1.75}
+.content-body strong{font-weight:600;color:var(--t1)}
+.content-body code{font-size:13.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:2px 7px;color:var(--brand);font-family:'Courier New',monospace}
+.content-body pre{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:14px 18px;margin:12px 0;overflow-x:auto}
+.content-body pre code{background:none;border:none;padding:0;font-size:13px}
+.content-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+.content-body th{background:var(--bg2);font-weight:600;color:var(--t1);padding:10px 14px;text-align:left;border:1px solid var(--bd)}
+.content-body td{padding:10px 14px;border:1px solid var(--bd);vertical-align:top;line-height:1.65}
+.content-body .hint{margin:14px 0}
+/* manter acc para compatibilidade (busca) */
+.acc-btn{display:none}
+.acc-body{display:block;padding:0;border:none;font-size:16px;color:var(--t2);line-height:1.85}
+.acc-body p{margin-bottom:14px}
+.acc-body ul,.acc-body ol{padding-left:24px;margin:10px 0 16px;font-size:16px}
+.acc-body li{margin-bottom:8px;line-height:1.75}
 .acc-body strong{font-weight:600;color:var(--t1)}
-.acc-body code{font-size:12.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:1px 6px;color:var(--brand);font-family:'Courier New',monospace}
-.acc-body table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
-.acc-body th{background:var(--bg2);font-weight:600;color:var(--t1);padding:7px 12px;text-align:left;border:1px solid var(--bd);font-size:12px}
-.acc-body td{padding:6px 12px;border:1px solid var(--bd);vertical-align:top}
+.acc-body code{font-size:13.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:2px 7px;color:var(--brand);font-family:'Courier New',monospace}
+.acc-body pre{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:14px 18px;margin:12px 0;overflow-x:auto}
+.acc-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+.acc-body th{background:var(--bg2);font-weight:600;color:var(--t1);padding:10px 14px;text-align:left;border:1px solid var(--bd)}
+.acc-body td{padding:10px 14px;border:1px solid var(--bd);vertical-align:top}
 
 /* ═══ HINT BOXES ═══ */
 .hint{border-radius:6px;padding:11px 14px;font-size:14px;line-height:1.65;display:flex;gap:10px;align-items:flex-start;margin:8px 0}
@@ -659,26 +667,25 @@ function renderSidebar() {
   const nav = document.getElementById('sidebarNav');
   const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
   let html = '';
-  let lastGroup = null;
   GROUP_ORDER.forEach(grp => {
     const grpSecs = secs.filter(s => (s.group || 'geral') === grp);
     if (!grpSecs.length) return;
     const label = GROUP_LABELS[grp];
     if (label) html += `<div class="sb-group">${label}</div>`;
     grpSecs.forEach(sec => {
+      const isActive = sec.id === currentSec;
       const faqs = DATA.faqs.filter(f => f.secId === sec.id);
-      if (faqs.length > 0) {
-        html += `<button class="sb-item" onclick="toggleSub(this,'sub-${sec.id}')">
-          <span>${sec.name}</span>
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>
-        </button>
-        <div class="sb-sub" id="sub-${sec.id}">`;
+      const hasChildren = faqs.length > 0;
+      html += `<button class="sb-item${isActive ? ' active' : ''}" onclick="navigateTo('${sec.id}')">
+        <span>${sec.name}</span>
+        ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
+      </button>`;
+      if (isActive && hasChildren) {
+        html += `<div class="sb-sub open" id="sub-${sec.id}">`;
         faqs.forEach(f => {
-          html += `<button class="sb-sub-item" onclick="jumpToFaq('${f.id}')">${f.q}</button>`;
+          html += `<button class="sb-sub-item" onclick="scrollToAnchor('faq-${f.id}')">${f.q}</button>`;
         });
         html += `</div>`;
-      } else {
-        html += `<button class="sb-item" onclick="scrollToSec('${sec.id}',this)"><span>${sec.name}</span></button>`;
       }
     });
   });
@@ -686,101 +693,112 @@ function renderSidebar() {
 }
 
 function renderContent() {
-  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
-  let html = '';
-  secs.forEach((sec, idx) => {
-    const faqs = DATA.faqs.filter(f => f.secId === sec.id);
-    html += `<div id="sec-${sec.id}">`;
-    if (idx === 0) {
-      html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
-               <h1 class="page-title">${sec.name}</h1>
-               <p class="intro-desc">A <strong>NX Digital</strong> é um sistema de atendimento e automação projetado para centralizar a comunicação de múltiplos canais, com foco principal no WhatsApp. Suas funcionalidades incluem gestão de múltiplos atendentes e criação de chatbots para automação de conversas. A plataforma suporta tanto a API Oficial do WhatsApp quanto APIs não oficiais (via QR Code), além de integrar com Instagram, Facebook Messenger e Telegram. Também oferece integrações com ferramentas de inteligência artificial, como ChatGPT e Gemini, e plataformas de automação como N8N e Typebot.</p>
-               <div class="intro-how">
-                 <p class="intro-how-title">Como encontrar as informações</p>
-                 <div class="intro-cards">
-                   <div class="intro-card">
-                     <div class="intro-card-icon">🔍</div>
-                     <div class="intro-card-title">Barra de Busca</div>
-                     <div class="intro-card-body">Para uma resposta rápida, utilize a barra de busca no topo da página. Pesquise por termos relacionados à sua dúvida, como:
-                       <div class="intro-card-tags">
-                         <span class="intro-tag">Conectar canal</span>
-                         <span class="intro-tag">Chatbot</span>
-                         <span class="intro-tag">Filas</span>
-                       </div>
+  const sec = DATA.sections.find(s => s.id === currentSec) || DATA.sections.sort((a,b)=>a.order-b.order)[0];
+  if (!sec) return;
+  const faqs = DATA.faqs.filter(f => f.secId === sec.id);
+  let html = `<div id="sec-${sec.id}">`;
+
+  if (sec.id === 'intro') {
+    html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
+             <h1 class="page-title">${sec.name}</h1>
+             <p class="intro-desc">A <strong>NX Digital</strong> é um sistema de atendimento e automação projetado para centralizar a comunicação de múltiplos canais, com foco principal no WhatsApp. Suas funcionalidades incluem gestão de múltiplos atendentes e criação de chatbots para automação de conversas. A plataforma suporta tanto a API Oficial do WhatsApp quanto APIs não oficiais (via QR Code), além de integrar com Instagram, Facebook Messenger e Telegram. Também oferece integrações com ferramentas de inteligência artificial, como ChatGPT e Gemini, e plataformas de automação como N8N e Typebot.</p>
+             <div class="intro-how">
+               <p class="intro-how-title">Como encontrar as informações</p>
+               <div class="intro-cards">
+                 <div class="intro-card">
+                   <div class="intro-card-icon">🔍</div>
+                   <div class="intro-card-title">Barra de Busca</div>
+                   <div class="intro-card-body">Para uma resposta rápida, utilize a barra de busca no topo da página. Pesquise por termos relacionados à sua dúvida, como:
+                     <div class="intro-card-tags">
+                       <span class="intro-tag">Conectar canal</span>
+                       <span class="intro-tag">Chatbot</span>
+                       <span class="intro-tag">Filas</span>
                      </div>
                    </div>
-                   <div class="intro-card">
-                     <div class="intro-card-icon">📂</div>
-                     <div class="intro-card-title">Navegação por Categorias</div>
-                     <div class="intro-card-body">Para explorar uma área específica, navegue pelas categorias temáticas na barra lateral esquerda. Elas estão organizadas por função para guiar o usuário.</div>
-                   </div>
                  </div>
-               </div>`;
-    } else {
-      html += `<h2 class="sh">${sec.name}</h2>`;
-      if (sec.desc) html += `<p class="prose">${sec.desc}</p>`;
-    }
-    faqs.forEach(faq => {
-      html += `<div id="faq-${faq.id}" data-tags="${faq.tags||''}">
-        <button class="acc-btn" onclick="accToggle(this)">
-          <span class="acc-icon"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4l3 3 3-3"/></svg></span>
-          ${faq.q}
-        </button>
-        <div class="acc-body">${faq.a}</div>
-      </div>`;
-    });
-    if (idx < secs.length - 1) html += `<hr class="div">`;
-    html += `</div>`;
+                 <div class="intro-card">
+                   <div class="intro-card-icon">📂</div>
+                   <div class="intro-card-title">Navegação por Categorias</div>
+                   <div class="intro-card-body">Para explorar uma área específica, navegue pelas categorias temáticas na barra lateral esquerda. Elas estão organizadas por função para guiar o usuário.</div>
+                 </div>
+               </div>
+             </div>`;
+  } else {
+    const grpLabel = GROUP_LABELS[sec.group] || 'Central de Ajuda';
+    html += `<div class="eyebrow">${grpLabel} · ${DATA.settings.company}</div>
+             <h1 class="page-title">${sec.name}</h1>`;
+    if (sec.desc) html += `<p class="intro-desc">${sec.desc}</p>`;
+  }
+
+  faqs.forEach(faq => {
+    html += `<div id="faq-${faq.id}" data-tags="${faq.tags||''}">
+      <h2 class="sec-heading">${faq.q}</h2>
+      <div class="content-body">${faq.a}</div>
+    </div>`;
   });
-  // feedback
+
+  html += `</div>`;
   html += `<div class="fb-row"><span class="fb-label">Isto foi útil?</span>
     <button class="rp-star" onclick="fbk(this)">😊</button>
     <button class="rp-star" onclick="fbk(this)">😐</button>
     <button class="rp-star" onclick="fbk(this)">😞</button>
   </div>`;
   document.getElementById('mainContent').innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
 function renderRpLinks() {
-  const secs = [...DATA.sections].sort((a,b) => a.order - b.order);
+  const sec = DATA.sections.find(s => s.id === currentSec);
+  const faqs = sec ? DATA.faqs.filter(f => f.secId === sec.id) : [];
   let html = '';
-  secs.forEach(sec => {
-    html += `<a class="rp-link" href="#sec-${sec.id}" onclick="rpClick(this)">${sec.name}</a>`;
+  faqs.forEach(f => {
+    html += `<a class="rp-link" href="#faq-${f.id}" onclick="rpClick(this);scrollToAnchor('faq-${f.id}')">${f.q}</a>`;
   });
   document.getElementById('rpLinks').innerHTML = html;
   if (document.querySelector('.rp-link')) document.querySelector('.rp-link').classList.add('active');
 }
 
 // ═══════════════════════════════════════════
-// INTERACTIONS
+// NAVEGAÇÃO
 // ═══════════════════════════════════════════
-function accToggle(btn) {
-  const body = btn.nextElementSibling, open = btn.classList.contains('open');
-  document.querySelectorAll('.acc-btn.open').forEach(b => { b.classList.remove('open'); b.nextElementSibling.classList.remove('open'); });
-  if (!open) { btn.classList.add('open'); body.classList.add('open'); }
+let currentSec = 'intro';
+
+function navigateTo(secId) {
+  currentSec = secId;
+  renderContent();
+  renderRpLinks();
+  renderSidebar();
 }
-function toggleSub(btn, id) {
-  const sub = document.getElementById(id);
-  if (!sub) return;
-  sub.classList.toggle('open');
-  btn.classList.toggle('open');
+
+function scrollToAnchor(id) {
+  const el = document.getElementById(id);
+  if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
-function scrollToSec(id, btn) {
-  document.querySelectorAll('.sb-item,.sb-sub-item').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  const el = document.getElementById('sec-'+id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+function jumpToFaq(faqId) {
+  const faq = DATA.faqs.find(f => f.id === faqId);
+  if (!faq) return;
+  if (faq.secId !== currentSec) {
+    currentSec = faq.secId;
+    renderContent();
+    renderRpLinks();
+    renderSidebar();
+    setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
+  } else {
+    scrollToAnchor('faq-' + faqId);
+  }
+  document.getElementById('searchDrop').style.display = 'none';
+  document.getElementById('searchInput').value = '';
 }
-function jumpToFaq(id) {
-  const el = document.getElementById('faq-'+id);
-  if (!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setTimeout(() => accToggle(el.querySelector('.acc-btn')), 300);
-}
+
 function rpClick(a) {
   document.querySelectorAll('.rp-link').forEach(l => l.classList.remove('active'));
   a.classList.add('active');
 }
+
+function accToggle(btn) {}
+function toggleSub(btn, id) {}
+function scrollToSec(id) { navigateTo(id); }
 function fbk(btn) {
   const row = btn.closest('.fb-row,.rp-stars');
   row.querySelectorAll('.rp-star').forEach(b => { b.disabled = true; b.style.opacity = '.4'; });
@@ -789,15 +807,14 @@ function fbk(btn) {
   showToast('Obrigado pelo seu feedback!');
 }
 
-// scroll sync
+// scroll sync — destaca item do TOC conforme scroll
 window.addEventListener('scroll', () => {
-  const secs = DATA.sections.map(s => document.getElementById('sec-'+s.id)).filter(Boolean);
-  let cur = secs[0];
-  secs.forEach(el => { if (el && el.getBoundingClientRect().top < 100) cur = el; });
+  const faqs = document.querySelectorAll('[id^="faq-"]');
+  let cur = null;
+  faqs.forEach(el => { if (el.getBoundingClientRect().top < 120) cur = el; });
   if (!cur) return;
-  const id = cur.id.replace('sec-','');
   document.querySelectorAll('.rp-link').forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#'+cur.id);
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id);
   });
 }, { passive: true });
 
