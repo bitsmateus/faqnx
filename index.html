@@ -130,6 +130,19 @@ code.ic{font-size:12.5px;background:var(--bg2);border:1px solid var(--bd);border
 .sd-empty{padding:20px;text-align:center;font-size:13px;color:var(--t3)}
 mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
 
+/* ═══ INTRO BLOCK ═══ */
+.intro-desc{font-size:15.5px;color:var(--t2);line-height:1.8;margin-bottom:32px}
+.intro-how{margin-top:8px;margin-bottom:8px}
+.intro-how-title{font-size:16px;font-weight:600;color:var(--t1);margin-bottom:16px}
+.intro-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.intro-card{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:18px 20px}
+.intro-card-icon{font-size:22px;margin-bottom:8px}
+.intro-card-title{font-size:14.5px;font-weight:600;color:var(--t1);margin-bottom:6px}
+.intro-card-body{font-size:14px;color:var(--t3);line-height:1.65}
+.intro-card-tags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.intro-tag{font-size:12px;background:var(--brand-bg);color:var(--brand);border-radius:4px;padding:2px 8px;font-weight:500}
+@media(max-width:600px){.intro-cards{grid-template-columns:1fr}}
+
 /* ═══ FEEDBACK ROW ═══ */
 .fb-row{margin-top:48px;padding-top:20px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:12px}
 .fb-label{font-size:13px;color:var(--t3)}
@@ -414,7 +427,7 @@ const DEFAULT_DATA = {
     pw: DEFAULT_PW
   },
   sections: [
-    { id: 'intro', name: '🖐️ Central de Ajuda NX Digital', group: 'geral', desc: 'Esta Central contém a documentação para consulta e orientação sobre todas as funcionalidades da plataforma.', order: 0 },
+    { id: 'intro', name: '🖐️ Central de Ajuda NX Digital', group: 'geral', desc: 'Esta Central contém a documentação para consulta e orientação sobre todas as funcionalidades da plataforma.', intro: true, order: 0 },
     { id: 'primeiro-acesso', name: '🔑 Acessando o sistema', group: 'primeiro-acesso', desc: '', order: 1 },
     { id: 'perfis', name: '👥 Perfis de acesso', group: 'primeiro-acesso', desc: '', order: 2 },
     { id: 'filas', name: '📋 Filas de atendimento', group: 'primeiro-acesso', desc: '', order: 3 },
@@ -571,7 +584,28 @@ function renderContent() {
     if (idx === 0) {
       html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
                <h1 class="page-title">${sec.name}</h1>
-               <p class="page-lead">${sec.desc || ''}</p>`;
+               <p class="intro-desc">A <strong>NX Digital</strong> é um sistema de atendimento e automação projetado para centralizar a comunicação de múltiplos canais, com foco principal no WhatsApp. Suas funcionalidades incluem gestão de múltiplos atendentes e criação de chatbots para automação de conversas. A plataforma suporta tanto a API Oficial do WhatsApp quanto APIs não oficiais (via QR Code), além de integrar com Instagram, Facebook Messenger e Telegram. Também oferece integrações com ferramentas de inteligência artificial, como ChatGPT e Gemini, e plataformas de automação como N8N e Typebot.</p>
+               <div class="intro-how">
+                 <p class="intro-how-title">Como encontrar as informações</p>
+                 <div class="intro-cards">
+                   <div class="intro-card">
+                     <div class="intro-card-icon">🔍</div>
+                     <div class="intro-card-title">Barra de Busca</div>
+                     <div class="intro-card-body">Para uma resposta rápida, utilize a barra de busca no topo da página. Pesquise por termos relacionados à sua dúvida, como:
+                       <div class="intro-card-tags">
+                         <span class="intro-tag">Conectar canal</span>
+                         <span class="intro-tag">Chatbot</span>
+                         <span class="intro-tag">Filas</span>
+                       </div>
+                     </div>
+                   </div>
+                   <div class="intro-card">
+                     <div class="intro-card-icon">📂</div>
+                     <div class="intro-card-title">Navegação por Categorias</div>
+                     <div class="intro-card-body">Para explorar uma área específica, navegue pelas categorias temáticas na barra lateral esquerda. Elas estão organizadas por função para guiar o usuário.</div>
+                   </div>
+                 </div>
+               </div>`;
     } else {
       html += `<h2 class="sh">${sec.name}</h2>`;
       if (sec.desc) html += `<p class="prose">${sec.desc}</p>`;
