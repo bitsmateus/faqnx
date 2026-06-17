@@ -47,18 +47,20 @@ button{font-family:var(--font)}
 .sidebar{width:var(--sb);flex-shrink:0;position:fixed;top:var(--hh);bottom:0;left:0;overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--bd);background:var(--bg);display:flex;flex-direction:column}
 .sidebar::-webkit-scrollbar{width:4px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
-.sb-inner{flex:1;padding:12px 0 24px}
-.sb-group{font-size:11.5px;font-weight:600;color:var(--t4);letter-spacing:.5px;text-transform:uppercase;padding:14px 20px 5px}
-.sb-item{display:flex;align-items:center;justify-content:space-between;padding:7px 20px;font-size:14.5px;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--font);transition:color .12s;border-left:2px solid transparent}
-.sb-item:hover{color:var(--t1)}
-.sb-item.active{color:var(--brand);font-weight:500;border-left-color:var(--brand);background:var(--brand-bg)}
-.sb-item svg{width:11px;height:11px;color:var(--t4);flex-shrink:0;transition:transform .2s}
+.sb-inner{flex:1;padding:8px 0 24px}
+.sb-group{font-size:10.5px;font-weight:700;color:var(--t4);letter-spacing:.6px;text-transform:uppercase;padding:16px 16px 4px}
+.sb-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 14px 5px 16px;font-size:13px;line-height:1.35;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent}
+.sb-item span{flex:1;min-width:0}
+.sb-item:hover{color:var(--t1);background:var(--bg2)}
+.sb-item.active{color:var(--brand);font-weight:600;border-left-color:var(--brand);background:var(--brand-bg)}
+.sb-item svg{width:9px;height:9px;color:var(--t4);flex-shrink:0;transition:transform .2s}
+.sb-item.active svg{color:var(--brand)}
 .sb-item.open svg{transform:rotate(90deg)}
 .sb-sub{display:none}
 .sb-sub.open{display:block}
-.sb-sub-item{display:block;width:100%;padding:6px 20px 6px 32px;font-size:14px;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);transition:color .12s;border-left:2px solid transparent}
-.sb-sub-item:hover{color:var(--t1)}
-.sb-sub-item.active{color:var(--brand);font-weight:500;border-left-color:var(--brand)}
+.sb-sub-item{display:block;width:100%;padding:5px 14px 5px 28px;font-size:12.5px;line-height:1.35;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent}
+.sb-sub-item:hover{color:var(--t1);background:var(--bg2)}
+.sb-sub-item.active{color:var(--brand);font-weight:600;border-left-color:var(--brand);background:var(--brand-bg)}
 .sb-footer{border-top:1px solid var(--bd);padding:10px 20px;font-size:12px;color:var(--t4);display:flex;align-items:center;gap:6px}
 
 /* ═══ MAIN ═══ */
@@ -685,8 +687,8 @@ function renderNavNode(sec, depth) {
   const kids = childSections(sec.id);
   const faqs = DATA.faqs.filter(f => f.secId === sec.id);
   const hasChildren = kids.length > 0 || faqs.length > 0;
-  const expanded = isActive || isAncestorOf(sec.id, currentSec);
-  let html = `<button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${20 + depth*14}px" onclick="navigateTo('${sec.id}')">
+  const expanded = openSecs.has(sec.id);
+  let html = `<button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${16 + depth*13}px" onclick="navigateTo('${sec.id}')">
       <span>${sec.name}</span>
       ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
     </button>`;
@@ -694,7 +696,7 @@ function renderNavNode(sec, depth) {
     html += `<div class="sb-sub open">`;
     kids.forEach(k => { html += renderNavNode(k, depth + 1); });
     faqs.forEach(f => {
-      html += `<button class="sb-sub-item" style="padding-left:${32 + depth*14}px" onclick="scrollToAnchor('faq-${f.id}')">${f.q}</button>`;
+      html += `<button class="sb-sub-item" style="padding-left:${28 + depth*13}px" onclick="scrollToAnchor('faq-${f.id}')">${f.q}</button>`;
     });
     html += `</div>`;
   }
@@ -787,8 +789,19 @@ function renderRpLinks() {
 // NAVEGAÇÃO
 // ═══════════════════════════════════════════
 let currentSec = 'intro';
+let openSecs = new Set();
+
+function openAncestors(secId) {
+  let cur = DATA.sections.find(s => s.id === secId);
+  while (cur && cur.parentId) { openSecs.add(cur.parentId); cur = DATA.sections.find(s => s.id === cur.parentId); }
+}
 
 function navigateTo(secId) {
+  const hasChildren = childSections(secId).length > 0 || DATA.faqs.some(f => f.secId === secId);
+  openAncestors(secId);
+  if (hasChildren) {
+    if (openSecs.has(secId)) openSecs.delete(secId); else openSecs.add(secId);
+  }
   currentSec = secId;
   renderContent();
   renderRpLinks();
@@ -805,6 +818,8 @@ function jumpToFaq(faqId) {
   if (!faq) return;
   if (faq.secId !== currentSec) {
     currentSec = faq.secId;
+    openAncestors(faq.secId);
+    openSecs.add(faq.secId);
     renderContent();
     renderRpLinks();
     renderSidebar();
