@@ -1,0 +1,14 @@
+{
+  "name": "faqnx",
+  "version": "1.0.0",
+  "description": "Central de Ajuda NX Digital - backend com Postgres",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

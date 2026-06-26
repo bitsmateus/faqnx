@@ -1,4 +1,13 @@
-FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/index.html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instala dependências primeiro (melhor cache de build)
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev
+
+# Copia o restante da aplicação
+COPY server.js index.html seed.json ./
+
 EXPOSE 80
+CMD ["node", "server.js"]

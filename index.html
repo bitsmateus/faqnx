@@ -759,22 +759,42 @@ const DEFAULT_DATA = {
 };
 
 // ═══════════════════════════════════════════
-// LOAD / SAVE
+// LOAD / SAVE  (servidor + banco de dados)
 // ═══════════════════════════════════════════
-function loadData() {
+let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); // fallback até o servidor responder
+let ADMIN_TOKEN = null;
+
+async function loadFromServer() {
   try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_DATA));
-    const parsed = JSON.parse(raw);
-    if (parsed.version !== DATA_VERSION) return JSON.parse(JSON.stringify(DEFAULT_DATA));
-    return parsed;
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+    const r = await fetch('/api/data', { cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.sections && d.faqs) DATA = d;
+    }
+  } catch (e) { /* mantém o conteúdo padrão se o servidor não responder */ }
+  render();
 }
-function saveData(d) {
-  d.version = DATA_VERSION;
-  localStorage.setItem(STORE_KEY, JSON.stringify(d));
+
+// salva no servidor — publica para todos os visitantes
+async function saveData(d) {
+  try {
+    const r = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ADMIN_TOKEN || '') },
+      body: JSON.stringify(d)
+    });
+    if (r.status === 401) {
+      ADMIN_TOKEN = null; adminUnlocked = false;
+      showToast('Sessão expirou. Abra o painel e entre novamente.');
+      return false;
+    }
+    if (!r.ok) throw new Error('falha');
+    return true;
+  } catch (e) {
+    showToast('Erro ao salvar no servidor. Verifique a conexão.');
+    return false;
+  }
 }
-let DATA = loadData();
 
 // ═══════════════════════════════════════════
 // RENDER
@@ -1067,12 +1087,23 @@ function closeAdmin() {
   document.getElementById('adminPwInput').value = '';
   document.getElementById('loginErr').style.display = 'none';
 }
-function checkPw() {
+async function checkPw() {
   const pw = document.getElementById('adminPwInput').value;
-  if (pw === DATA.settings.pw) {
-    adminUnlocked = true;
-    showAdminPanel();
-  } else {
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    if (r.ok) {
+      const j = await r.json();
+      ADMIN_TOKEN = j.token;
+      adminUnlocked = true;
+      showAdminPanel();
+    } else {
+      document.getElementById('loginErr').style.display = 'block';
+    }
+  } catch (e) {
     document.getElementById('loginErr').style.display = 'block';
   }
 }
@@ -1476,7 +1507,8 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
-render();
+render();            // pinta imediatamente com o conteúdo padrão
+loadFromServer();    // depois substitui pelo conteúdo do banco de dados
 </script>
 </body>
 </html>
