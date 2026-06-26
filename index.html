@@ -415,7 +415,7 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
       <input type="hidden" id="faqFormId">
       <div class="form-group">
         <label class="form-label">Título / Pergunta *</label>
-        <input class="form-input" id="faqFormQ" type="text" placeholder="Ex: Como conecto meu WhatsApp?">
+        <input class="form-input" id="faqFormQ" type="text" placeholder="Ex: Como conecto meu WhatsApp?" oninput="faqSlugPreview()">
       </div>
       <div class="form-group">
         <label class="form-label">Seção *</label>
@@ -471,6 +471,11 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
         <label class="form-label">Tags de busca (separadas por espaço)</label>
         <input class="form-input" id="faqFormTags" type="text" placeholder="Ex: whatsapp conectar qr code canal">
       </div>
+      <div class="form-group">
+        <label class="form-label">Link personalizado (opcional)</label>
+        <input class="form-input" id="faqFormSlug" type="text" placeholder="Ex: como-conectar-whatsapp (gerado do título se vazio)" oninput="faqSlugPreview()">
+        <div class="form-hint" id="faqSlugPreview"></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeFaqForm()">Cancelar</button>
@@ -488,7 +493,7 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
       <input type="hidden" id="secFormId">
       <div class="form-group">
         <label class="form-label">Nome da seção *</label>
-        <input class="form-input" id="secFormName" type="text" placeholder="Ex: 📱 Canais de comunicação">
+        <input class="form-input" id="secFormName" type="text" placeholder="Ex: 📱 Canais de comunicação" oninput="secSlugPreview()">
         <div class="form-hint">Use emojis no início para ficar igual ao padrão. Ex: 🤖 Chat Flow</div>
       </div>
       <div class="form-group">
@@ -504,6 +509,11 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
       <div class="form-group">
         <label class="form-label">Texto introdutório (opcional)</label>
         <textarea class="form-textarea" id="secFormDesc" placeholder="Breve descrição desta seção..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link personalizado (opcional)</label>
+        <input class="form-input" id="secFormSlug" type="text" placeholder="Ex: central-de-ajuda (gerado do nome se vazio)" oninput="secSlugPreview()">
+        <div class="form-hint" id="secSlugPreview"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -772,7 +782,12 @@ async function loadFromServer() {
       if (d && d.sections && d.faqs) DATA = d;
     }
   } catch (e) { /* mantém o conteúdo padrão se o servidor não responder */ }
+  buildSlugs();
+  const { secId, faqId } = resolvePath(location.pathname);
+  currentSec = secId;
+  openAncestors(secId);
   render();
+  if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
 }
 
 // salva no servidor — publica para todos os visitantes
@@ -800,6 +815,7 @@ async function saveData(d) {
 // RENDER
 // ═══════════════════════════════════════════
 function render() {
+  buildSlugs();
   applySettings();
   renderSidebar();
   renderContent();
@@ -868,7 +884,7 @@ function renderNavNode(sec, depth) {
     html += `<div class="sb-sub open">`;
     kids.forEach(k => { html += renderNavNode(k, depth + 1); });
     faqs.forEach(f => {
-      html += `<button class="sb-sub-item" style="padding-left:${28 + depth*13}px" onclick="scrollToAnchor('faq-${f.id}')">${f.q}</button>`;
+      html += `<button class="sb-sub-item" style="padding-left:${28 + depth*13}px" onclick="jumpToFaq('${f.id}')">${f.q}</button>`;
     });
     html += `</div>`;
   }
@@ -951,7 +967,13 @@ function renderRpLinks() {
   let html = '';
   heads.forEach((h, i) => {
     if (!h.id) h.id = 'h-' + i;
-    html += `<a class="rp-link" href="#${h.id}" onclick="rpClick(this);scrollToAnchor('${h.id}')">${h.textContent}</a>`;
+    const wrap = h.closest('[id^="faq-"]');
+    const faqId = wrap ? wrap.id.replace('faq-', '') : null;
+    if (faqId) {
+      html += `<a class="rp-link" href="${urlForFaq(faqId)}" onclick="event.preventDefault();rpClick(this);jumpToFaq('${faqId}')">${h.textContent}</a>`;
+    } else {
+      html += `<a class="rp-link" href="#${h.id}" onclick="rpClick(this);scrollToAnchor('${h.id}')">${h.textContent}</a>`;
+    }
   });
   document.getElementById('rpLinks').innerHTML = html;
   if (document.querySelector('.rp-link')) document.querySelector('.rp-link').classList.add('active');
@@ -962,6 +984,58 @@ function renderRpLinks() {
 // ═══════════════════════════════════════════
 let currentSec = 'intro';
 let openSecs = new Set();
+
+// ─── Links personalizados (slugs) ───
+let SEC_SLUG = {}, FAQ_SLUG = {}, SEC_BY_SLUG = {}, FAQ_BY_SLUG = {};
+
+function slugify(str) {
+  return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\s-]/g, '').trim().toLowerCase()
+    .replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function buildSlugs() {
+  SEC_SLUG = {}; FAQ_SLUG = {}; SEC_BY_SLUG = {}; FAQ_BY_SLUG = {};
+  const usedSec = new Set();
+  DATA.sections.forEach(s => {
+    let base = (s.slug && slugify(s.slug)) || slugify(s.name) || s.id;
+    if (!base) base = s.id;
+    let slug = base, n = 2;
+    while (usedSec.has(slug)) { slug = base + '-' + n; n++; }
+    usedSec.add(slug);
+    SEC_SLUG[s.id] = slug; SEC_BY_SLUG[slug] = s.id;
+  });
+  const usedFaq = {};
+  DATA.faqs.forEach(f => {
+    if (!usedFaq[f.secId]) usedFaq[f.secId] = new Set();
+    let base = (f.slug && slugify(f.slug)) || slugify(f.q) || f.id;
+    if (!base) base = f.id;
+    base = base.slice(0, 60).replace(/-+$/, '');
+    let slug = base, n = 2;
+    while (usedFaq[f.secId].has(slug)) { slug = base + '-' + n; n++; }
+    usedFaq[f.secId].add(slug);
+    FAQ_SLUG[f.id] = slug; FAQ_BY_SLUG[f.secId + '/' + slug] = f.id;
+  });
+}
+
+function urlForSec(secId) {
+  if (secId === 'intro') return '/';
+  return '/' + (SEC_SLUG[secId] || secId);
+}
+function urlForFaq(faqId) {
+  const f = DATA.faqs.find(x => x.id === faqId);
+  if (!f) return '/';
+  return '/' + (SEC_SLUG[f.secId] || f.secId) + '/' + (FAQ_SLUG[faqId] || faqId);
+}
+function resolvePath(pathname) {
+  const parts = decodeURIComponent(pathname || '/').replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+  if (parts.length === 0) return { secId: 'intro' };
+  const secId = SEC_BY_SLUG[parts[0]];
+  if (!secId) return { secId: 'intro' };
+  let faqId = null;
+  if (parts[1]) faqId = FAQ_BY_SLUG[secId + '/' + parts[1]] || null;
+  return { secId, faqId };
+}
 
 function openAncestors(secId) {
   let cur = DATA.sections.find(s => s.id === secId);
@@ -978,6 +1052,7 @@ function navigateTo(secId) {
   renderContent();
   renderRpLinks();
   renderSidebar();
+  history.pushState({ secId }, '', urlForSec(secId));
 }
 
 function scrollToAnchor(id) {
@@ -999,9 +1074,21 @@ function jumpToFaq(faqId) {
   } else {
     scrollToAnchor('faq-' + faqId);
   }
+  history.pushState({ secId: faq.secId, faqId }, '', urlForFaq(faqId));
   document.getElementById('searchDrop').style.display = 'none';
   document.getElementById('searchInput').value = '';
 }
+
+// botão voltar/avançar do navegador
+window.addEventListener('popstate', () => {
+  const { secId, faqId } = resolvePath(location.pathname);
+  currentSec = secId;
+  openAncestors(secId);
+  renderContent();
+  renderRpLinks();
+  renderSidebar();
+  if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 60);
+});
 
 function rpClick(a) {
   document.querySelectorAll('.rp-link').forEach(l => l.classList.remove('active'));
@@ -1162,13 +1249,23 @@ function openFaqForm(id) {
     document.getElementById('faqFormSec').value = f.secId;
     document.getElementById('faqFormA').innerHTML = f.a;
     document.getElementById('faqFormTags').value = f.tags || '';
+    document.getElementById('faqFormSlug').value = f.slug || '';
   } else {
     document.getElementById('faqFormTitle').textContent = 'Nova pergunta';
     document.getElementById('faqFormId').value = '';
     document.getElementById('faqFormQ').value = '';
     document.getElementById('faqFormA').innerHTML = '';
     document.getElementById('faqFormTags').value = '';
+    document.getElementById('faqFormSlug').value = '';
   }
+  faqSlugPreview();
+}
+function faqSlugPreview() {
+  const q = document.getElementById('faqFormQ').value;
+  const slug = document.getElementById('faqFormSlug').value;
+  const final = slugify(slug) || slugify(q) || 'pergunta';
+  const el = document.getElementById('faqSlugPreview');
+  if (el) el.textContent = 'Link: ' + location.origin + '/secao/' + final;
 }
 function closeFaqForm() {
   document.getElementById('faqForm').style.display = 'none';
@@ -1191,11 +1288,13 @@ function saveFaq() {
   const secId = document.getElementById('faqFormSec').value;
   if (!q || !a || a === '<br>') { alert('Preencha o título e o conteúdo.'); return; }
   const id = document.getElementById('faqFormId').value;
+  const slug = slugify(document.getElementById('faqFormSlug').value.trim());
+  const tags = document.getElementById('faqFormTags').value.trim();
   if (id) {
     const f = DATA.faqs.find(x => x.id === id);
-    f.q = q; f.a = a; f.secId = secId; f.tags = document.getElementById('faqFormTags').value.trim();
+    f.q = q; f.a = a; f.secId = secId; f.tags = tags; f.slug = slug;
   } else {
-    DATA.faqs.push({ id: 'f' + Date.now(), secId, q, a, tags: document.getElementById('faqFormTags').value.trim() });
+    DATA.faqs.push({ id: 'f' + Date.now(), secId, q, a, tags, slug });
   }
   saveData(DATA); render(); closeFaqForm(); renderAdminFaqs();
   showToast(id ? 'Pergunta atualizada!' : 'Pergunta criada!');
@@ -1410,13 +1509,23 @@ function openSecForm(id) {
     document.getElementById('secFormName').value = s.name;
     document.getElementById('secFormGroup').value = s.group;
     document.getElementById('secFormDesc').value = s.desc || '';
+    document.getElementById('secFormSlug').value = s.slug || '';
   } else {
     document.getElementById('secFormTitle').textContent = 'Nova seção';
     document.getElementById('secFormId').value = '';
     document.getElementById('secFormName').value = '';
     document.getElementById('secFormGroup').value = 'geral';
     document.getElementById('secFormDesc').value = '';
+    document.getElementById('secFormSlug').value = '';
   }
+  secSlugPreview();
+}
+function secSlugPreview() {
+  const name = document.getElementById('secFormName').value;
+  const slug = document.getElementById('secFormSlug').value;
+  const final = slugify(slug) || slugify(name) || 'secao';
+  const el = document.getElementById('secSlugPreview');
+  if (el) el.textContent = 'Link: ' + location.origin + '/' + final;
 }
 function closeSecForm() {
   document.getElementById('secForm').style.display = 'none';
@@ -1434,13 +1543,15 @@ function saveSec() {
   const name = document.getElementById('secFormName').value.trim();
   if (!name) { alert('Preencha o nome da seção.'); return; }
   const id = document.getElementById('secFormId').value;
+  const slug = slugify(document.getElementById('secFormSlug').value.trim());
   if (id) {
     const s = DATA.sections.find(x => x.id === id);
     s.name = name; s.group = document.getElementById('secFormGroup').value;
     s.desc = document.getElementById('secFormDesc').value.trim();
+    s.slug = slug;
   } else {
     const newId = 'sec-' + Date.now();
-    DATA.sections.push({ id: newId, name, group: document.getElementById('secFormGroup').value, desc: document.getElementById('secFormDesc').value.trim(), order: DATA.sections.length });
+    DATA.sections.push({ id: newId, name, group: document.getElementById('secFormGroup').value, desc: document.getElementById('secFormDesc').value.trim(), slug, order: DATA.sections.length });
   }
   saveData(DATA); render(); closeSecForm(); renderAdminSecs();
   showToast(id ? 'Seção atualizada!' : 'Seção criada!');
@@ -1507,6 +1618,9 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
+buildSlugs();
+currentSec = resolvePath(location.pathname).secId;   // respeita o link aberto
+openAncestors(currentSec);
 render();            // pinta imediatamente com o conteúdo padrão
 loadFromServer();    // depois substitui pelo conteúdo do banco de dados
 </script>
