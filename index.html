@@ -216,8 +216,49 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--t1);color:#fff;padding:10px 18px;border-radius:8px;font-size:13.5px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
 .toast.show{transform:translateY(0);opacity:1}
 
+/* ═══ MÍDIA NO CONTEÚDO (front-end) ═══ */
+.content-body img,.acc-body img{max-width:100%;height:auto;border-radius:8px;margin:12px 0;border:1px solid var(--bd)}
+.content-body h2:not(.sec-heading),.acc-body h2{font-size:20px;font-weight:600;color:var(--t1);margin:24px 0 12px}
+.content-body h3,.acc-body h3{font-size:17px;font-weight:600;color:var(--t1);margin:20px 0 10px}
+.content-body a:not(.btn),.acc-body a:not(.btn){color:var(--brand);text-decoration:underline;text-underline-offset:2px}
+.content-body a:hover,.acc-body a:hover{color:var(--brand-dark)}
+.content-body blockquote,.acc-body blockquote{border-left:4px solid var(--brand);background:var(--brand-bg);padding:12px 18px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--t2)}
+.video-embed{position:relative;width:100%;max-width:720px;aspect-ratio:16/9;margin:16px 0;border-radius:10px;overflow:hidden;background:#000;border:1px solid var(--bd)}
+.video-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* ═══ EDITOR RICO (RTE) ═══ */
+.rte-wrap{border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--bg)}
+.rte-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:6px;background:var(--bg2);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+.rte-btn{min-width:30px;height:30px;padding:0 7px;border:1px solid transparent;border-radius:5px;background:none;cursor:pointer;font-size:13px;color:var(--t2);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);transition:background .12s,border-color .12s;font-weight:600}
+.rte-btn:hover{background:var(--bd2);border-color:var(--bd)}
+.rte-btn.on{background:var(--brand-bg);border-color:var(--brand);color:var(--brand)}
+.rte-sep{width:1px;background:var(--bd);margin:3px 4px}
+.rte-select{height:30px;border:1px solid var(--bd);border-radius:5px;background:var(--bg);font-size:12.5px;color:var(--t2);font-family:var(--font);padding:0 6px;cursor:pointer}
+.rte-area{min-height:300px;max-height:46vh;overflow-y:auto;padding:16px 18px;font-size:16px;line-height:1.8;color:var(--t2);outline:none}
+.rte-area:empty:before{content:attr(data-ph);color:var(--t4)}
+.rte-area p{margin-bottom:12px}
+.rte-area ul,.rte-area ol{padding-left:24px;margin:10px 0}
+.rte-area li{margin-bottom:6px}
+.rte-area strong{color:var(--t1)}
+.rte-area img{max-width:100%;height:auto;border-radius:8px;margin:10px 0;border:1px solid var(--bd)}
+.rte-area h2{font-size:20px;font-weight:600;color:var(--t1);margin:18px 0 10px}
+.rte-area h3{font-size:17px;font-weight:600;color:var(--t1);margin:16px 0 8px}
+.rte-area a{color:var(--brand);text-decoration:underline}
+.rte-area blockquote{border-left:4px solid var(--brand);background:var(--brand-bg);padding:10px 16px;margin:12px 0;border-radius:0 8px 8px 0}
+.rte-area code{font-size:13.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:2px 6px;color:var(--brand);font-family:'Courier New',monospace}
+.rte-area pre{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:12px 16px;margin:10px 0;overflow-x:auto}
+.rte-area .video-embed{pointer-events:none}
+.rte-source{width:100%;min-height:300px;max-height:46vh;border:none;outline:none;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;line-height:1.6;color:var(--t1);resize:vertical;background:#fbfbfd}
+.rte-pop{position:fixed;z-index:600;background:var(--bg);border:1px solid var(--bd);border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:16px;width:340px}
+.rte-pop h4{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:10px}
+.rte-pop .form-input{margin-bottom:8px}
+.rte-pop-row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.rte-tab{display:flex;gap:4px;margin-bottom:10px}
+.rte-tab button{flex:1;height:32px;border:1px solid var(--bd);background:var(--bg2);border-radius:6px;cursor:pointer;font-size:12.5px;color:var(--t2);font-family:var(--font)}
+.rte-tab button.on{background:var(--brand-bg);border-color:var(--brand);color:var(--brand);font-weight:600}
+
 @media(max-width:1100px){.rp{display:none}}
-@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)}}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)!important}.rte-pop{width:calc(100vw - 32px);left:16px!important}}
 </style>
 </head>
 <body>
@@ -350,12 +391,22 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
           <input class="form-input" id="cfgPw" type="password" placeholder="Nova senha (deixe em branco para manter)">
         </div>
         <button class="btn btn-primary" onclick="saveSettings()">Salvar configurações</button>
+
+        <hr style="border:none;border-top:1px solid var(--bd);margin:24px 0">
+        <label class="form-label">Backup / Publicação do conteúdo</label>
+        <div class="form-hint" style="margin-bottom:10px">As edições ficam salvas neste navegador. Exporte um arquivo para fazer backup ou enviar para publicar no site para todos.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="exportData()">⬇ Exportar conteúdo (.json)</button>
+          <label class="btn btn-secondary btn-sm" style="cursor:pointer">⬆ Importar conteúdo
+            <input type="file" accept="application/json" onchange="importData(this)" style="display:none">
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- FAQ FORM MODAL -->
-  <div class="modal" id="faqForm" style="display:none">
+  <div class="modal" id="faqForm" style="display:none;width:840px;max-width:calc(100vw - 24px)">
     <div class="modal-hdr">
       <h2 id="faqFormTitle">Nova pergunta</h2>
       <button class="modal-close" onclick="closeFaqForm()">✕</button>
@@ -363,7 +414,7 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
     <div class="modal-body">
       <input type="hidden" id="faqFormId">
       <div class="form-group">
-        <label class="form-label">Pergunta *</label>
+        <label class="form-label">Título / Pergunta *</label>
         <input class="form-input" id="faqFormQ" type="text" placeholder="Ex: Como conecto meu WhatsApp?">
       </div>
       <div class="form-group">
@@ -371,9 +422,50 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
         <select class="form-select" id="faqFormSec"></select>
       </div>
       <div class="form-group">
-        <label class="form-label">Resposta * (suporta HTML simples)</label>
-        <textarea class="form-textarea" id="faqFormA" placeholder="Escreva a resposta aqui...&#10;&#10;Dicas:&#10;• Use &lt;strong&gt;texto&lt;/strong&gt; para negrito&#10;• Use &lt;ul&gt;&lt;li&gt;item&lt;/li&gt;&lt;/ul&gt; para listas&#10;• Use &lt;code&gt;codigo&lt;/code&gt; para código inline" style="min-height:160px"></textarea>
-        <div class="form-hint">Dica rápida: **negrito**, `código`, - item de lista → será formatado automaticamente</div>
+        <label class="form-label">Conteúdo *</label>
+        <div class="rte-wrap">
+          <div class="rte-toolbar" id="rteToolbar">
+            <select class="rte-select" title="Estilo do texto" onchange="rteBlock(this.value);this.selectedIndex=0">
+              <option value="">Parágrafo</option>
+              <option value="h2">Título grande (H2)</option>
+              <option value="h3">Subtítulo (H3)</option>
+              <option value="p">Texto normal</option>
+              <option value="blockquote">Citação</option>
+            </select>
+            <select class="rte-select" title="Tamanho da letra" onchange="rteFontSize(this.value);this.selectedIndex=0">
+              <option value="">Tamanho</option>
+              <option value="13">Pequeno</option>
+              <option value="16">Normal</option>
+              <option value="20">Grande</option>
+              <option value="26">Muito grande</option>
+              <option value="34">Enorme</option>
+            </select>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Negrito" onclick="rteCmd('bold')" style="font-weight:800">B</button>
+            <button type="button" class="rte-btn" title="Itálico" onclick="rteCmd('italic')" style="font-style:italic">I</button>
+            <button type="button" class="rte-btn" title="Sublinhado" onclick="rteCmd('underline')" style="text-decoration:underline">U</button>
+            <button type="button" class="rte-btn" title="Riscado" onclick="rteCmd('strikeThrough')" style="text-decoration:line-through">S</button>
+            <label class="rte-btn" title="Cor do texto" style="padding:0;position:relative;overflow:hidden">A<input type="color" oninput="rteCmd('foreColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <label class="rte-btn" title="Cor de fundo (marca-texto)" style="padding:0;position:relative;overflow:hidden;background:#fff3a0">✎<input type="color" value="#fff3a0" oninput="rteCmd('hiliteColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Lista com marcadores" onclick="rteCmd('insertUnorderedList')">• ☰</button>
+            <button type="button" class="rte-btn" title="Lista numerada" onclick="rteCmd('insertOrderedList')">1.</button>
+            <button type="button" class="rte-btn" title="Alinhar à esquerda" onclick="rteCmd('justifyLeft')">⬅</button>
+            <button type="button" class="rte-btn" title="Centralizar" onclick="rteCmd('justifyCenter')">⬌</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Inserir link" onclick="rteLink()">🔗</button>
+            <button type="button" class="rte-btn" title="Inserir imagem" onclick="rteImage()">🖼️</button>
+            <button type="button" class="rte-btn" title="Inserir vídeo do YouTube" onclick="rteVideo()">▶️</button>
+            <button type="button" class="rte-btn" title="Caixa de destaque" onclick="rteHint()">💡</button>
+            <button type="button" class="rte-btn" title="Código inline" onclick="rteInlineCode()">&lt;/&gt;</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Limpar formatação" onclick="rteCmd('removeFormat')">⌫</button>
+            <button type="button" class="rte-btn" id="rteHtmlBtn" title="Ver/editar código HTML" onclick="rteToggleHtml()">HTML</button>
+          </div>
+          <div class="rte-area" id="faqFormA" contenteditable="true" data-ph="Escreva o conteúdo aqui... use a barra acima para formatar, inserir imagens e vídeos."></div>
+          <textarea class="rte-source" id="faqFormSource" style="display:none"></textarea>
+        </div>
+        <div class="form-hint">Selecione o texto e use os botões para formatar. Para vídeo, cole o link do YouTube — o player aparece embutido na página.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Tags de busca (separadas por espaço)</label>
@@ -1026,19 +1118,24 @@ function openFaqForm(id) {
   // populate section select
   const sel = document.getElementById('faqFormSec');
   sel.innerHTML = DATA.sections.sort((a,b)=>a.order-b.order).map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  rteShowHtml = false;
+  document.getElementById('faqFormA').style.display = '';
+  document.getElementById('faqFormSource').style.display = 'none';
+  document.getElementById('rteHtmlBtn').classList.remove('on');
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch(e){}
   if (id) {
     const f = DATA.faqs.find(x => x.id === id);
     document.getElementById('faqFormTitle').textContent = 'Editar pergunta';
     document.getElementById('faqFormId').value = f.id;
     document.getElementById('faqFormQ').value = f.q;
     document.getElementById('faqFormSec').value = f.secId;
-    document.getElementById('faqFormA').value = f.a;
+    document.getElementById('faqFormA').innerHTML = f.a;
     document.getElementById('faqFormTags').value = f.tags || '';
   } else {
     document.getElementById('faqFormTitle').textContent = 'Nova pergunta';
     document.getElementById('faqFormId').value = '';
     document.getElementById('faqFormQ').value = '';
-    document.getElementById('faqFormA').value = '';
+    document.getElementById('faqFormA').innerHTML = '';
     document.getElementById('faqFormTags').value = '';
   }
 }
@@ -1055,9 +1152,13 @@ function deleteFaq(id) {
 }
 function saveFaq() {
   const q = document.getElementById('faqFormQ').value.trim();
-  const a = document.getElementById('faqFormA').value.trim();
+  // se estiver no modo HTML, sincroniza o textarea de volta para o editor
+  if (rteShowHtml) {
+    document.getElementById('faqFormA').innerHTML = document.getElementById('faqFormSource').value;
+  }
+  const a = document.getElementById('faqFormA').innerHTML.trim();
   const secId = document.getElementById('faqFormSec').value;
-  if (!q || !a) { alert('Preencha a pergunta e a resposta.'); return; }
+  if (!q || !a || a === '<br>') { alert('Preencha o título e o conteúdo.'); return; }
   const id = document.getElementById('faqFormId').value;
   if (id) {
     const f = DATA.faqs.find(x => x.id === id);
@@ -1067,6 +1168,188 @@ function saveFaq() {
   }
   saveData(DATA); render(); closeFaqForm(); renderAdminFaqs();
   showToast(id ? 'Pergunta atualizada!' : 'Pergunta criada!');
+}
+
+// ═══════════════════════════════════════════
+// EDITOR RICO (RTE)
+// ═══════════════════════════════════════════
+let rteShowHtml = false;
+let rteRange = null;
+
+function rteEl(){ return document.getElementById('faqFormA'); }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// salva a seleção sempre que ela muda dentro do editor
+document.addEventListener('selectionchange', () => {
+  const el = document.getElementById('faqFormA');
+  if (!el) return;
+  const sel = window.getSelection();
+  if (sel.rangeCount && el.contains(sel.anchorNode)) {
+    rteRange = sel.getRangeAt(0).cloneRange();
+  }
+});
+function rteRestoreSel(){
+  const el = rteEl(); if (!el) return;
+  el.focus();
+  if (rteRange){
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(rteRange);
+  }
+}
+function rteSaveSel(){
+  const sel = window.getSelection();
+  if (sel.rangeCount && rteEl().contains(sel.anchorNode)) rteRange = sel.getRangeAt(0).cloneRange();
+}
+
+function rteCmd(cmd, val){
+  rteRestoreSel();
+  try { document.execCommand('styleWithCSS', false, true); } catch(e){}
+  // hiliteColor: alguns navegadores usam backColor
+  if (cmd === 'hiliteColor' && !document.queryCommandSupported('hiliteColor')) cmd = 'backColor';
+  document.execCommand(cmd, false, val == null ? null : val);
+  if (cmd === 'createLink') rteEl().querySelectorAll('a:not([target])').forEach(a => a.target = '_blank');
+  rteSaveSel();
+}
+
+function rteBlock(tag){
+  if (!tag) return;
+  rteRestoreSel();
+  document.execCommand('formatBlock', false, tag);
+  rteSaveSel();
+}
+
+function rteFontSize(px){
+  if (!px) return;
+  rteRestoreSel();
+  document.execCommand('fontSize', false, '7');
+  rteEl().querySelectorAll('font[size="7"]').forEach(f => {
+    const span = document.createElement('span');
+    span.style.fontSize = px + 'px';
+    while (f.firstChild) span.appendChild(f.firstChild);
+    f.parentNode.replaceChild(span, f);
+  });
+  rteSaveSel();
+}
+
+function rteInsertHTML(html){
+  rteRestoreSel();
+  document.execCommand('insertHTML', false, html);
+  rteSaveSel();
+}
+
+function rteLink(){
+  const url = prompt('Cole o endereço do link (URL):', 'https://');
+  if (!url) return;
+  rteCmd('createLink', url);
+}
+
+function rteInlineCode(){
+  rteRestoreSel();
+  const txt = window.getSelection().toString();
+  rteInsertHTML('<code>' + (txt ? escapeHtml(txt) : 'código') + '</code>');
+}
+
+function ytId(url){
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|[?&]v=)([\w-]{11})/);
+  if (m) return m[1];
+  if (/^[\w-]{11}$/.test(url.trim())) return url.trim();
+  return null;
+}
+
+function rteClosePop(){ const p = document.getElementById('rtePop'); if (p) p.remove(); }
+function rtePopTab(btn, id, ids){
+  btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ids.forEach(x => { const e = document.getElementById(x); if (e) e.style.display = (x === id ? '' : 'none'); });
+}
+function rteMakePop(inner){
+  rteSaveSel(); rteClosePop();
+  const pop = document.createElement('div');
+  pop.className = 'rte-pop'; pop.id = 'rtePop';
+  pop.style.left = '50%'; pop.style.top = '50%'; pop.style.transform = 'translate(-50%,-50%)';
+  pop.innerHTML = inner;
+  document.body.appendChild(pop);
+  return pop;
+}
+
+function rteImage(){
+  rteMakePop(`
+    <h4>Inserir imagem</h4>
+    <div class="rte-tab">
+      <button class="on" type="button" onclick="rtePopTab(this,'imgUpload',['imgUpload','imgUrl'])">Enviar do computador</button>
+      <button type="button" onclick="rtePopTab(this,'imgUrl',['imgUpload','imgUrl'])">Colar link (URL)</button>
+    </div>
+    <div id="imgUpload">
+      <input type="file" accept="image/*" id="rteImgFile" class="form-input" style="padding:7px">
+      <div class="form-hint">A imagem fica embutida na página.</div>
+    </div>
+    <div id="imgUrl" style="display:none">
+      <input type="text" class="form-input" id="rteImgUrl" placeholder="https://...">
+    </div>
+    <div class="rte-pop-row">
+      <button class="btn btn-secondary btn-sm" type="button" onclick="rteClosePop()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" type="button" onclick="rteImageInsert()">Inserir</button>
+    </div>`);
+}
+function rteImageInsert(){
+  const urlVisible = document.getElementById('imgUrl').style.display !== 'none';
+  if (urlVisible){
+    const url = document.getElementById('rteImgUrl').value.trim();
+    if (!url){ alert('Cole a URL da imagem.'); return; }
+    rteClosePop(); rteInsertHTML('<img src="' + url + '" alt="">');
+  } else {
+    const file = document.getElementById('rteImgFile').files[0];
+    if (!file){ alert('Escolha um arquivo de imagem.'); return; }
+    if (file.size > 1500000 && !confirm('Imagem grande (acima de 1,5 MB) pode deixar o site pesado. Inserir mesmo assim?')) return;
+    const reader = new FileReader();
+    reader.onload = e => { rteClosePop(); rteInsertHTML('<img src="' + e.target.result + '" alt="">'); };
+    reader.readAsDataURL(file);
+  }
+}
+
+function rteVideo(){
+  rteMakePop(`
+    <h4>Inserir vídeo do YouTube</h4>
+    <input type="text" class="form-input" id="rteVidUrl" placeholder="Cole o link do YouTube...">
+    <div class="form-hint">Ex: https://www.youtube.com/watch?v=ABC123</div>
+    <div class="rte-pop-row">
+      <button class="btn btn-secondary btn-sm" type="button" onclick="rteClosePop()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" type="button" onclick="rteVideoInsert()">Inserir</button>
+    </div>`);
+  setTimeout(() => { const i = document.getElementById('rteVidUrl'); if (i) i.focus(); }, 50);
+}
+function rteVideoInsert(){
+  const url = document.getElementById('rteVidUrl').value.trim();
+  const id = ytId(url);
+  if (!id){ alert('Link do YouTube inválido. Cole o endereço completo do vídeo.'); return; }
+  rteClosePop();
+  rteInsertHTML('<div class="video-embed"><iframe src="https://www.youtube.com/embed/' + id + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p><br></p>');
+}
+
+function rteHint(){
+  const types = [['hint-info','💡','Informação (azul)'],['hint-warn','⚠️','Aviso (amarelo)'],['hint-danger','🔴','Atenção (vermelho)'],['hint-ok','✅','Tudo certo (verde)']];
+  rteMakePop('<h4>Caixa de destaque</h4>' +
+    types.map(t => `<button class="btn btn-secondary" style="width:100%;justify-content:flex-start;margin-bottom:6px" type="button" onclick="rteHintInsert('${t[0]}','${t[1]}')">${t[1]} ${t[2]}</button>`).join('') +
+    '<div class="rte-pop-row"><button class="btn btn-secondary btn-sm" type="button" onclick="rteClosePop()">Cancelar</button></div>');
+}
+function rteHintInsert(cls, icon){
+  rteClosePop();
+  rteInsertHTML('<div class="hint ' + cls + '"><span class="hi">' + icon + '</span><div class="hint-b">Escreva aqui o texto do destaque.</div></div><p><br></p>');
+}
+
+function rteToggleHtml(){
+  const ed = document.getElementById('faqFormA');
+  const src = document.getElementById('faqFormSource');
+  const btn = document.getElementById('rteHtmlBtn');
+  rteShowHtml = !rteShowHtml;
+  if (rteShowHtml){
+    src.value = ed.innerHTML;
+    ed.style.display = 'none'; src.style.display = 'block'; btn.classList.add('on');
+  } else {
+    ed.innerHTML = src.value;
+    src.style.display = 'none'; ed.style.display = ''; btn.classList.remove('on');
+  }
 }
 
 // ── SECTION ADMIN ──
@@ -1150,6 +1433,38 @@ function saveSettings() {
   if (newPw) DATA.settings.pw = newPw;
   saveData(DATA); render();
   showToast('Configurações salvas!');
+}
+
+// ── EXPORT / IMPORT ──
+function exportData() {
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nx-conteudo-backup.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Conteúdo exportado!');
+}
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (!confirm('Isto vai SUBSTITUIR todo o conteúdo atual pelo do arquivo. Continuar?')) { input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.sections || !data.faqs) throw new Error('Arquivo inválido');
+      DATA = data;
+      saveData(DATA);
+      currentSec = 'intro';
+      render(); renderAdminFaqs(); renderAdminSecs(); loadSettings();
+      showToast('Conteúdo importado com sucesso!');
+    } catch (err) {
+      alert('Não foi possível importar: arquivo inválido ou corrompido.');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
 }
 
 // ── TOAST ──
