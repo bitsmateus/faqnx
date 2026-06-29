@@ -264,6 +264,15 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
 h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .admin-badge{position:fixed;bottom:20px;left:20px;z-index:300;background:var(--brand);color:#fff;font-size:12px;font-weight:500;padding:6px 12px;border-radius:20px;box-shadow:0 4px 16px rgba(0,0,0,.18);display:none;align-items:center;gap:6px}
 .admin-badge.on{display:inline-flex}
+/* ações de menu na sidebar (admin) */
+.sb-row{position:relative;display:flex;align-items:stretch}
+.sb-row .sb-item{flex:1;min-width:0}
+.sb-actions{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:none;gap:0;align-items:center;background:var(--bg2);border-radius:6px;padding:2px;box-shadow:-10px 0 10px -4px var(--bg2)}
+.sb-row:hover .sb-actions{display:flex}
+.sb-act{width:24px;height:24px;border:none;background:none;border-radius:5px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.sb-act:hover{background:var(--bd)}
+.sb-addmenu{margin:14px 16px 8px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px dashed var(--brand);color:var(--brand);background:var(--brand-bg);border-radius:8px;padding:8px 10px;font-size:12.5px;cursor:pointer;font-family:var(--font);font-weight:600;width:calc(100% - 32px)}
+.sb-addmenu:hover{background:var(--brand);color:#fff}
 
 @media(max-width:1100px){.rp{display:none}}
 @media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)!important}.rte-pop{width:calc(100vw - 32px);left:16px!important}}
@@ -512,13 +521,18 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
         <div class="form-hint">Use emojis no início para ficar igual ao padrão. Ex: 🤖 Chat Flow</div>
       </div>
       <div class="form-group">
-        <label class="form-label">Grupo do menu lateral</label>
+        <label class="form-label">Menu pai (deixe em "Nenhum" para virar um menu principal)</label>
+        <select class="form-select" id="secFormParent" onchange="toggleGroupVisibility()"></select>
+      </div>
+      <div class="form-group" id="secFormGroupWrap">
+        <label class="form-label">Grupo do menu lateral (só para menus principais)</label>
         <select class="form-select" id="secFormGroup">
           <option value="geral">Geral (sem grupo)</option>
-          <option value="primeiro-acesso">Primeiro acesso</option>
+          <option value="assinante">Central do Assinante</option>
           <option value="config-admin">Configuração Administrador</option>
-          <option value="ferramentas">Ferramentas do atendimento</option>
-          <option value="erros">Erros comuns</option>
+          <option value="ferramentas">Ferramentas do Atendimento</option>
+          <option value="adicionais">Ferramentas Adicionais e Integrações</option>
+          <option value="avancado">Avançado - Recursos Técnicos</option>
         </select>
       </div>
       <div class="form-group">
@@ -891,10 +905,17 @@ function renderNavNode(sec, depth) {
   const faqs = DATA.faqs.filter(f => f.secId === sec.id);
   const hasChildren = kids.length > 0 || faqs.length > 0;
   const expanded = openSecs.has(sec.id);
-  let html = `<button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${16 + depth*13}px" onclick="navigateTo('${sec.id}')">
-      <span>${sec.name}</span>
-      ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
-    </button>`;
+  const actions = isAdmin() ? `<span class="sb-actions">
+      <button class="sb-act" title="Editar menu" onclick="editSecFromNav('${sec.id}',event)">✏️</button>
+      <button class="sb-act" title="Adicionar submenu" onclick="addSubSection('${sec.id}',event)">➕</button>
+      <button class="sb-act" title="Excluir menu" onclick="deleteSecInline('${sec.id}',event)">🗑️</button>
+    </span>` : '';
+  let html = `<div class="sb-row">
+      <button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${16 + depth*13}px" onclick="navigateTo('${sec.id}')">
+        <span>${sec.name}</span>
+        ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
+      </button>${actions}
+    </div>`;
   if (expanded && hasChildren) {
     html += `<div class="sb-sub open">`;
     kids.forEach(k => { html += renderNavNode(k, depth + 1); });
@@ -915,6 +936,9 @@ function renderSidebar() {
     if (label) html += `<div class="sb-group">${label}</div>`;
     grpSecs.forEach(sec => { html += renderNavNode(sec, 0); });
   });
+  if (isAdmin()) {
+    html += `<button class="sb-addmenu" onclick="addRootSection()">➕ Adicionar menu principal</button>`;
+  }
   nav.innerHTML = html;
 }
 
@@ -1559,26 +1583,51 @@ function renderAdminSecs() {
       </div>
     </div>`).join('');
 }
-function openSecForm(id) {
+function stripEmoji(str) {
+  return (str || '').replace(/[^\w\sÀ-ÿ().,-]/g, '').trim() || str;
+}
+function fillParentSelect(currentId) {
+  // lista todas as seções como possíveis pais, exceto a própria e suas descendentes
+  const blocked = currentId ? collectDescendants(currentId) : [];
+  const opts = ['<option value="">— Nenhum (menu principal) —</option>'];
+  const byParent = (pid, depth) => {
+    childSections(pid).forEach(s => {
+      if (blocked.includes(s.id)) return;
+      opts.push(`<option value="${s.id}">${'— '.repeat(depth)}${s.name}</option>`);
+      byParent(s.id, depth + 1);
+    });
+  };
+  byParent(null, 0);
+  document.getElementById('secFormParent').innerHTML = opts.join('');
+}
+function toggleGroupVisibility() {
+  const parent = document.getElementById('secFormParent').value;
+  document.getElementById('secFormGroupWrap').style.display = parent ? 'none' : '';
+}
+function openSecForm(id, presetParent) {
   document.getElementById('adminPanel').style.display = 'none';
   const frm = document.getElementById('secForm');
   frm.style.display = 'flex';
+  fillParentSelect(id || null);
   if (id) {
     const s = DATA.sections.find(x => x.id === id);
-    document.getElementById('secFormTitle').textContent = 'Editar seção';
+    document.getElementById('secFormTitle').textContent = 'Editar menu';
     document.getElementById('secFormId').value = s.id;
     document.getElementById('secFormName').value = s.name;
-    document.getElementById('secFormGroup').value = s.group;
+    document.getElementById('secFormGroup').value = s.group || 'geral';
+    document.getElementById('secFormParent').value = s.parentId || '';
     document.getElementById('secFormDesc').value = s.desc || '';
     document.getElementById('secFormSlug').value = s.slug || '';
   } else {
-    document.getElementById('secFormTitle').textContent = 'Nova seção';
+    document.getElementById('secFormTitle').textContent = 'Novo menu';
     document.getElementById('secFormId').value = '';
     document.getElementById('secFormName').value = '';
     document.getElementById('secFormGroup').value = 'geral';
+    document.getElementById('secFormParent').value = presetParent || '';
     document.getElementById('secFormDesc').value = '';
     document.getElementById('secFormSlug').value = '';
   }
+  toggleGroupVisibility();
   secSlugPreview();
 }
 function secSlugPreview() {
@@ -1594,29 +1643,79 @@ function closeSecForm() {
   else { document.getElementById('adminPanel').style.display = 'flex'; }
 }
 function editSec(id) { openSecForm(id); }
-function deleteSec(id) {
-  if (DATA.faqs.some(f => f.secId === id)) { alert('Esta seção tem perguntas. Mova ou exclua as perguntas antes de excluir a seção.'); return; }
-  if (!confirm('Excluir esta seção?')) return;
-  DATA.sections = DATA.sections.filter(s => s.id !== id);
-  saveData(DATA); render(); renderAdminSecs();
-  showToast('Seção excluída.');
+
+// reúne a seção + todos os submenus descendentes
+function collectDescendants(id) {
+  const ids = [id];
+  const queue = [id];
+  while (queue.length) {
+    const p = queue.shift();
+    DATA.sections.filter(s => (s.parentId || null) === p).forEach(c => { ids.push(c.id); queue.push(c.id); });
+  }
+  return ids;
 }
+
+function deleteSec(id) {
+  const ids = collectDescendants(id);
+  const nSubs = ids.length - 1;
+  const nFaqs = DATA.faqs.filter(f => ids.includes(f.secId)).length;
+  const sec = DATA.sections.find(s => s.id === id);
+  let msg = 'Excluir o menu "' + (sec ? sec.name : '') + '"';
+  if (nSubs || nFaqs) msg += ' e TUDO dentro dele (' + nSubs + ' submenu(s) e ' + nFaqs + ' pergunta(s))';
+  msg += '?';
+  if (!confirm(msg)) return;
+  DATA.sections = DATA.sections.filter(s => !ids.includes(s.id));
+  DATA.faqs = DATA.faqs.filter(f => !ids.includes(f.secId));
+  if (ids.includes(currentSec)) currentSec = 'intro';
+  saveData(DATA); render(); renderAdminSecs();
+  showToast('Menu excluído.');
+}
+
+// excluir a partir do menu lateral
+function deleteSecInline(id, ev) {
+  if (ev) ev.stopPropagation();
+  if (!isAdmin()) return;
+  deleteSec(id);
+}
+function addSubSection(parentId, ev) {
+  if (ev) ev.stopPropagation();
+  if (!isAdmin()) return;
+  formFromPage = true;
+  document.getElementById('adminOverlay').classList.add('open');
+  openSecForm(null, parentId);
+}
+function editSecFromNav(id, ev) {
+  if (ev) ev.stopPropagation();
+  if (!isAdmin()) return;
+  formFromPage = true;
+  document.getElementById('adminOverlay').classList.add('open');
+  openSecForm(id);
+}
+function addRootSection() {
+  if (!isAdmin()) return;
+  formFromPage = true;
+  document.getElementById('adminOverlay').classList.add('open');
+  openSecForm(null, '');
+}
+
 function saveSec() {
   const name = document.getElementById('secFormName').value.trim();
-  if (!name) { alert('Preencha o nome da seção.'); return; }
+  if (!name) { alert('Preencha o nome do menu.'); return; }
   const id = document.getElementById('secFormId').value;
   const slug = slugify(document.getElementById('secFormSlug').value.trim());
+  const parentId = document.getElementById('secFormParent').value || null;
+  const group = parentId ? (DATA.sections.find(s => s.id === parentId)?.group || 'geral') : document.getElementById('secFormGroup').value;
+  const desc = document.getElementById('secFormDesc').value.trim();
   if (id) {
     const s = DATA.sections.find(x => x.id === id);
-    s.name = name; s.group = document.getElementById('secFormGroup').value;
-    s.desc = document.getElementById('secFormDesc').value.trim();
-    s.slug = slug;
+    s.name = name; s.group = group; s.parentId = parentId; s.desc = desc; s.slug = slug;
   } else {
-    const newId = 'sec-' + Date.now();
-    DATA.sections.push({ id: newId, name, group: document.getElementById('secFormGroup').value, desc: document.getElementById('secFormDesc').value.trim(), slug, order: DATA.sections.length });
+    const siblings = DATA.sections.filter(s => (s.parentId || null) === parentId);
+    const order = siblings.length ? Math.max(...siblings.map(s => s.order || 0)) + 1 : 0;
+    DATA.sections.push({ id: 'sec-' + Date.now(), name, group, parentId, desc, slug, order });
   }
   saveData(DATA); render(); closeSecForm(); renderAdminSecs();
-  showToast(id ? 'Seção atualizada!' : 'Seção criada!');
+  showToast(id ? 'Menu atualizado!' : 'Menu criado!');
 }
 
 // ── SETTINGS ──
