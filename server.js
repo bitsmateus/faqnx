@@ -62,6 +62,7 @@ app.get('/api/data', async (req, res) => {
     if (!doc) return res.status(503).json({ error: 'sem dados' });
     const safe = JSON.parse(JSON.stringify(doc));
     if (safe.settings) delete safe.settings.pw;
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     res.json(safe);
   } catch (e) {
     console.error(e);
