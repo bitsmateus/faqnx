@@ -508,7 +508,7 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
   </div>
 
   <!-- SECTION FORM MODAL -->
-  <div class="modal" id="secForm" style="display:none">
+  <div class="modal" id="secForm" style="display:none;width:840px;max-width:calc(100vw - 24px)">
     <div class="modal-hdr">
       <h2 id="secFormTitle">Nova seção</h2>
       <button class="modal-close" onclick="closeSecForm()">✕</button>
@@ -537,7 +537,53 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
       </div>
       <div class="form-group">
         <label class="form-label">Texto introdutório (opcional)</label>
-        <textarea class="form-textarea" id="secFormDesc" placeholder="Breve descrição desta seção..."></textarea>
+        <textarea class="form-textarea" id="secFormDesc" placeholder="Frase curta que aparece logo abaixo do título..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Conteúdo da página</label>
+        <div class="rte-wrap">
+          <div class="rte-toolbar">
+            <select class="rte-select" title="Estilo do texto" onchange="rteBlock(this.value);this.selectedIndex=0">
+              <option value="">Parágrafo</option>
+              <option value="h2">Título grande (H2)</option>
+              <option value="h3">Subtítulo (H3)</option>
+              <option value="p">Texto normal</option>
+              <option value="blockquote">Citação</option>
+            </select>
+            <select class="rte-select" title="Tamanho da letra" onchange="rteFontSize(this.value);this.selectedIndex=0">
+              <option value="">Tamanho</option>
+              <option value="13">Pequeno</option>
+              <option value="16">Normal</option>
+              <option value="20">Grande</option>
+              <option value="26">Muito grande</option>
+              <option value="34">Enorme</option>
+            </select>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Negrito" onclick="rteCmd('bold')" style="font-weight:800">B</button>
+            <button type="button" class="rte-btn" title="Itálico" onclick="rteCmd('italic')" style="font-style:italic">I</button>
+            <button type="button" class="rte-btn" title="Sublinhado" onclick="rteCmd('underline')" style="text-decoration:underline">U</button>
+            <button type="button" class="rte-btn" title="Riscado" onclick="rteCmd('strikeThrough')" style="text-decoration:line-through">S</button>
+            <label class="rte-btn" title="Cor do texto" style="padding:0;position:relative;overflow:hidden">A<input type="color" oninput="rteCmd('foreColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <label class="rte-btn" title="Cor de fundo (marca-texto)" style="padding:0;position:relative;overflow:hidden;background:#fff3a0">✎<input type="color" value="#fff3a0" oninput="rteCmd('hiliteColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Lista com marcadores" onclick="rteCmd('insertUnorderedList')">• ☰</button>
+            <button type="button" class="rte-btn" title="Lista numerada" onclick="rteCmd('insertOrderedList')">1.</button>
+            <button type="button" class="rte-btn" title="Alinhar à esquerda" onclick="rteCmd('justifyLeft')">⬅</button>
+            <button type="button" class="rte-btn" title="Centralizar" onclick="rteCmd('justifyCenter')">⬌</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Inserir link" onclick="rteLink()">🔗</button>
+            <button type="button" class="rte-btn" title="Inserir imagem" onclick="rteImage()">🖼️</button>
+            <button type="button" class="rte-btn" title="Inserir vídeo do YouTube" onclick="rteVideo()">▶️</button>
+            <button type="button" class="rte-btn" title="Caixa de destaque" onclick="rteHint()">💡</button>
+            <button type="button" class="rte-btn" title="Código inline" onclick="rteInlineCode()">&lt;/&gt;</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Limpar formatação" onclick="rteCmd('removeFormat')">⌫</button>
+            <button type="button" class="rte-btn" id="secRteHtmlBtn" title="Ver/editar código HTML" onclick="rteToggleHtml()">HTML</button>
+          </div>
+          <div class="rte-area" id="secFormBody" contenteditable="true" data-ph="Escreva o conteúdo desta página... use a barra acima para formatar, inserir imagens e vídeos."></div>
+          <textarea class="rte-source" id="secFormBodySource" style="display:none"></textarea>
+        </div>
+        <div class="form-hint">Este conteúdo aparece na página da seção, acima das perguntas.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Link personalizado (opcional)</label>
@@ -1296,6 +1342,7 @@ function openFaqForm(id) {
   // populate section select
   const sel = document.getElementById('faqFormSec');
   sel.innerHTML = DATA.sections.sort((a,b)=>a.order-b.order).map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  RTE_TARGET = 'faqFormA';
   rteShowHtml = false;
   document.getElementById('faqFormA').style.display = '';
   document.getElementById('faqFormSource').style.display = 'none';
@@ -1386,21 +1433,30 @@ function saveFaq() {
 }
 
 // ═══════════════════════════════════════════
-// EDITOR RICO (RTE)
+// EDITOR RICO (RTE) — funciona para perguntas E seções
 // ═══════════════════════════════════════════
 let rteShowHtml = false;
 let rteRange = null;
+let RTE_TARGET = 'faqFormA';
+const RTE_MAP = {
+  faqFormA:    { source: 'faqFormSource',     htmlBtn: 'rteHtmlBtn' },
+  secFormBody: { source: 'secFormBodySource', htmlBtn: 'secRteHtmlBtn' }
+};
 
-function rteEl(){ return document.getElementById('faqFormA'); }
+function rteEl(){ return document.getElementById(RTE_TARGET); }
 function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// salva a seleção sempre que ela muda dentro do editor
+// salva a seleção e detecta em qual editor o usuário está
 document.addEventListener('selectionchange', () => {
-  const el = document.getElementById('faqFormA');
-  if (!el) return;
   const sel = window.getSelection();
-  if (sel.rangeCount && el.contains(sel.anchorNode)) {
-    rteRange = sel.getRangeAt(0).cloneRange();
+  if (!sel.rangeCount) return;
+  for (const id of Object.keys(RTE_MAP)) {
+    const el = document.getElementById(id);
+    if (el && el.contains(sel.anchorNode)) {
+      RTE_TARGET = id;
+      rteRange = sel.getRangeAt(0).cloneRange();
+      return;
+    }
   }
 });
 function rteRestoreSel(){
@@ -1554,9 +1610,10 @@ function rteHintInsert(cls, icon){
 }
 
 function rteToggleHtml(){
-  const ed = document.getElementById('faqFormA');
-  const src = document.getElementById('faqFormSource');
-  const btn = document.getElementById('rteHtmlBtn');
+  const map = RTE_MAP[RTE_TARGET];
+  const ed = document.getElementById(RTE_TARGET);
+  const src = document.getElementById(map.source);
+  const btn = document.getElementById(map.htmlBtn);
   rteShowHtml = !rteShowHtml;
   if (rteShowHtml){
     src.value = ed.innerHTML;
@@ -1609,6 +1666,13 @@ function openSecForm(id, presetParent) {
   const frm = document.getElementById('secForm');
   frm.style.display = 'flex';
   fillParentSelect(id || null);
+  // prepara o editor rico da seção
+  RTE_TARGET = 'secFormBody';
+  rteShowHtml = false;
+  document.getElementById('secFormBody').style.display = '';
+  document.getElementById('secFormBodySource').style.display = 'none';
+  document.getElementById('secRteHtmlBtn').classList.remove('on');
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch(e){}
   if (id) {
     const s = DATA.sections.find(x => x.id === id);
     document.getElementById('secFormTitle').textContent = 'Editar menu';
@@ -1617,6 +1681,7 @@ function openSecForm(id, presetParent) {
     document.getElementById('secFormGroup').value = s.group || 'geral';
     document.getElementById('secFormParent').value = s.parentId || '';
     document.getElementById('secFormDesc').value = s.desc || '';
+    document.getElementById('secFormBody').innerHTML = s.body || '';
     document.getElementById('secFormSlug').value = s.slug || '';
   } else {
     document.getElementById('secFormTitle').textContent = 'Novo menu';
@@ -1625,6 +1690,7 @@ function openSecForm(id, presetParent) {
     document.getElementById('secFormGroup').value = 'geral';
     document.getElementById('secFormParent').value = presetParent || '';
     document.getElementById('secFormDesc').value = '';
+    document.getElementById('secFormBody').innerHTML = '';
     document.getElementById('secFormSlug').value = '';
   }
   toggleGroupVisibility();
@@ -1701,18 +1767,24 @@ function addRootSection() {
 function saveSec() {
   const name = document.getElementById('secFormName').value.trim();
   if (!name) { alert('Preencha o nome do menu.'); return; }
+  // se estiver no modo HTML, sincroniza o textarea de volta para o editor
+  if (rteShowHtml && RTE_TARGET === 'secFormBody') {
+    document.getElementById('secFormBody').innerHTML = document.getElementById('secFormBodySource').value;
+  }
   const id = document.getElementById('secFormId').value;
   const slug = slugify(document.getElementById('secFormSlug').value.trim());
   const parentId = document.getElementById('secFormParent').value || null;
   const group = parentId ? (DATA.sections.find(s => s.id === parentId)?.group || 'geral') : document.getElementById('secFormGroup').value;
   const desc = document.getElementById('secFormDesc').value.trim();
+  let body = document.getElementById('secFormBody').innerHTML.trim();
+  if (body === '<br>') body = '';
   if (id) {
     const s = DATA.sections.find(x => x.id === id);
-    s.name = name; s.group = group; s.parentId = parentId; s.desc = desc; s.slug = slug;
+    s.name = name; s.group = group; s.parentId = parentId; s.desc = desc; s.body = body; s.slug = slug;
   } else {
     const siblings = DATA.sections.filter(s => (s.parentId || null) === parentId);
     const order = siblings.length ? Math.max(...siblings.map(s => s.order || 0)) + 1 : 0;
-    DATA.sections.push({ id: 'sec-' + Date.now(), name, group, parentId, desc, slug, order });
+    DATA.sections.push({ id: 'sec-' + Date.now(), name, group, parentId, desc, body, slug, order });
   }
   saveData(DATA); render(); closeSecForm(); renderAdminSecs();
   showToast(id ? 'Menu atualizado!' : 'Menu criado!');
