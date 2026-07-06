@@ -352,6 +352,13 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 <!-- ═══════════ TOAST ═══════════ -->
 <div class="toast" id="toast"></div>
 
+<!-- Barra de alterações não publicadas (aparece quando um salvamento falha) -->
+<div id="publishBar" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:9998;background:#7c2d12;color:#fff;padding:10px 16px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;box-shadow:0 -2px 14px rgba(0,0,0,.25);">
+  <span id="publishBarMsg" style="font-weight:500;">Alterações não publicadas.</span>
+  <button id="publishBarRetry" onclick="retryPublish()" style="background:#fff;color:#7c2d12;border:0;border-radius:6px;padding:6px 14px;font-weight:600;cursor:pointer;">Tentar publicar novamente</button>
+  <button onclick="discardDraft()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:6px;padding:6px 14px;cursor:pointer;">Descartar alterações locais</button>
+</div>
+
 <!-- ═══════════ SELO DE MODO EDIÇÃO ═══════════ -->
 <div class="admin-badge" id="adminBadge">
   ✎ Modo edição
@@ -801,6 +808,7 @@ const DEFAULT_DATA = {
 // LOAD / SAVE  (servidor + banco + cache local)
 // ═══════════════════════════════════════════
 const CACHE_KEY = 'nx_content_cache';
+const DIRTY_KEY = 'nx_pending_publish';   // '1' enquanto houver alterações locais ainda não publicadas
 function readCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
@@ -811,6 +819,7 @@ function readCache() {
 // começa já com o conteúdo salvo no navegador (instantâneo); se não houver, usa o padrão embutido
 let DATA = readCache() || JSON.parse(JSON.stringify(DEFAULT_DATA));
 let ADMIN_TOKEN = null;
+let pendingPublish = (function () { try { return localStorage.getItem(DIRTY_KEY) === '1'; } catch (e) { return false; } })();
 
 function showBootLoader() { const el = document.getElementById('bootLoader'); if (el) el.style.display = 'flex'; }
 function hideBootLoader() { const el = document.getElementById('bootLoader'); if (el) el.style.display = 'none'; }
@@ -828,62 +837,129 @@ function renderCurrent() {
 }
 
 async function loadFromServer() {
-  let ok = false, changed = false;
+  let ok = false, changed = false, serverDoc = null;
   try {
     const r = await fetch('/api/data', { cache: 'no-store' });
     if (r.ok) {
       const d = await r.json();
-      if (d && d.sections && d.faqs) {
-        changed = JSON.stringify(d) !== JSON.stringify(DATA);
-        DATA = d;
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
-        ok = true;
-      }
+      if (d && d.sections && d.faqs) { serverDoc = d; ok = true; }
     }
   } catch (e) { /* servidor indisponível */ }
 
-  if (ok) {
-    // renderiza na primeira vez, ou re-renderiza se o conteúdo mudou no servidor
+  if (ok && pendingPublish) {
+    // Há alterações locais NÃO publicadas: nunca sobrescreve o trabalho do usuário com o servidor.
+    if (!bootRendered) renderCurrent();
+    else hideBootLoader();
+    showPublishBar({ kind: 'pendente', msg: 'você tem alterações que ainda não foram publicadas' });
+    // não reagenda revalidação enquanto estiver "sujo" (isso apagaria o rascunho)
+  } else if (ok) {
+    // Fluxo normal (stale-while-revalidate): usa o conteúdo do servidor.
+    changed = JSON.stringify(serverDoc) !== JSON.stringify(DATA);
+    DATA = serverDoc;
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(serverDoc)); } catch (e) {}
     if (!bootRendered || changed) renderCurrent();
     else hideBootLoader();
   } else if (bootRendered) {
-    // já mostramos o conteúdo do cache — mantém na tela e tenta de novo em segundo plano
+    // Servidor fora do ar, mas já há conteúdo na tela (cache) — mantém e tenta de novo.
     hideBootLoader();
+    if (pendingPublish) showPublishBar({ kind: 'conexao', msg: 'sem conexão com o servidor — suas alterações continuam salvas aqui' });
     setTimeout(loadFromServer, 5000);
   } else {
-    // primeira visita, sem cache e sem servidor: mantém "carregando" e tenta de novo
+    // Primeira visita, sem cache e sem servidor.
     showBootLoader();
     setTimeout(loadFromServer, 3000);
   }
 }
 
-// salva no servidor — publica para todos os visitantes
-async function saveData(d) {
+// Tenta publicar no servidor e classifica QUAL foi o erro (internet, conexão, sessão, dados, servidor/banco).
+async function publishDoc(d) {
+  let r;
   try {
-    const r = await fetch('/api/save', {
+    r = await fetch('/api/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ADMIN_TOKEN || '') },
       body: JSON.stringify(d)
     });
-    if (r.status === 401) {
-      ADMIN_TOKEN = null; adminUnlocked = false;
-      const b = document.getElementById('adminBadge'); if (b) b.classList.remove('on');
-      showToast('Sua sessão expirou — faça login de novo para salvar.');
-      loadFromServer();               // descarta a edição não salva e recarrega o conteúdo real do banco
-      document.getElementById('adminOverlay').classList.add('open');
-      document.getElementById('loginBox').style.display = '';
-      document.getElementById('adminPanel').style.display = 'none';
-      setTimeout(() => { const i = document.getElementById('adminPwInput'); if (i) i.focus(); }, 100);
-      return false;
-    }
-    if (!r.ok) throw new Error('falha');
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
-    return true;
   } catch (e) {
-    showToast('Erro ao salvar — sua alteração NÃO foi publicada. Verifique a conexão.');
-    loadFromServer();                 // re-sincroniza com o que está realmente no banco
-    return false;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false)
+      return { ok: false, kind: 'internet', msg: 'sem internet no seu dispositivo' };
+    return { ok: false, kind: 'conexao', msg: 'o servidor não respondeu (sem conexão ou o app está reiniciando)' };
   }
+  if (r.ok) return { ok: true };
+  if (r.status === 401) {
+    ADMIN_TOKEN = null; adminUnlocked = false;
+    const b = document.getElementById('adminBadge'); if (b) b.classList.remove('on');
+    return { ok: false, kind: 'auth', msg: 'sua sessão de admin expirou — faça login de novo' };
+  }
+  if (r.status === 400 || r.status === 422) return { ok: false, kind: 'dados', msg: 'o servidor recusou o conteúdo (dados inválidos)' };
+  if (r.status === 413) return { ok: false, kind: 'dados', msg: 'o conteúdo ficou grande demais para o servidor' };
+  if (r.status >= 500) return { ok: false, kind: 'servidor', msg: 'erro interno do servidor ou do banco de dados (HTTP ' + r.status + ')' };
+  return { ok: false, kind: 'servidor', msg: 'falha ao publicar (HTTP ' + r.status + ')' };
+}
+
+// Salva no servidor (publica para todos). Se falhar, MANTÉM tudo local e mostra a barra para tentar de novo.
+async function saveData(d) {
+  const res = await publishDoc(d);
+  if (res.ok) {
+    clearPending();
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
+    showToast('Alterações publicadas para todos!');
+    return true;
+  }
+  markPending(d, res);   // nunca descarta a edição
+  return false;
+}
+
+// ── Rascunho local + barra "não publicado" ──
+function markPending(d, res) {
+  pendingPublish = true;
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); localStorage.setItem(DIRTY_KEY, '1'); } catch (e) {}
+  showPublishBar(res);
+  if (res && res.kind === 'auth') reopenLogin();
+}
+function clearPending() {
+  pendingPublish = false;
+  try { localStorage.removeItem(DIRTY_KEY); } catch (e) {}
+  hidePublishBar();
+}
+function showPublishBar(res) {
+  const bar = document.getElementById('publishBar');
+  const el = document.getElementById('publishBarMsg');
+  if (!bar || !el) return;
+  const titles = {
+    internet: '📴 Sem internet no seu dispositivo',
+    conexao:  '🔌 Sem conexão com o servidor',
+    auth:     '🔑 Sessão de admin expirada',
+    dados:    '⚠️ Conteúdo recusado pelo servidor',
+    servidor: '🛑 Erro no servidor / banco de dados',
+    pendente: '✏️ Alterações não publicadas'
+  };
+  const kind = (res && res.kind) || 'pendente';
+  const detail = (res && res.msg) ? (' — ' + res.msg) : '';
+  el.textContent = (titles[kind] || 'Não publicado') + detail + '. Suas alterações estão salvas só neste navegador.';
+  bar.style.display = 'flex';
+  const btn = document.getElementById('publishBarRetry');
+  if (btn) { btn.disabled = false; btn.textContent = 'Tentar publicar novamente'; }
+}
+function hidePublishBar() { const bar = document.getElementById('publishBar'); if (bar) bar.style.display = 'none'; }
+function reopenLogin() {
+  const ov = document.getElementById('adminOverlay'); if (ov) ov.classList.add('open');
+  const lb = document.getElementById('loginBox'); if (lb) lb.style.display = '';
+  const ap = document.getElementById('adminPanel'); if (ap) ap.style.display = 'none';
+  setTimeout(() => { const i = document.getElementById('adminPwInput'); if (i) i.focus(); }, 100);
+}
+async function retryPublish() {
+  if (!pendingPublish) { hidePublishBar(); return; }
+  if (!ADMIN_TOKEN) { showToast('Entre no admin para publicar.'); reopenLogin(); return; }
+  const btn = document.getElementById('publishBarRetry');
+  if (btn) { btn.disabled = true; btn.textContent = 'Publicando…'; }
+  await saveData(DATA);   // sucesso limpa a barra; nova falha re-exibe com o erro atual
+}
+function discardDraft() {
+  if (!confirm('Descartar suas alterações locais não publicadas e voltar ao conteúdo do servidor?')) return;
+  clearPending();
+  try { localStorage.removeItem(CACHE_KEY); } catch (e) {}
+  location.reload();
 }
 
 // ═══════════════════════════════════════════
@@ -1387,6 +1463,7 @@ async function checkPw() {
       document.getElementById('adminBadge').classList.add('on');
       render();              // mostra os lápis de edição na página
       showAdminPanel();
+      if (pendingPublish) { showToast('Publicando suas alterações pendentes…'); retryPublish(); }
     } else {
       document.getElementById('loginErr').style.display = 'block';
     }
