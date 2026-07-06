@@ -55,7 +55,7 @@ async function setDoc(doc) {
 // ─── App ───
 const app = express();
 app.use(compression()); // gzip: reduz muito o tamanho do HTML e da API
-app.use(express.json({ limit: '15mb' }));
+app.use(express.json({ limit: '50mb' }));
 
 // Conteúdo público (sem a senha do admin)
 app.get('/api/data', async (req, res) => {
