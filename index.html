@@ -808,28 +808,46 @@ let ADMIN_TOKEN = null;
 function showBootLoader() { const el = document.getElementById('bootLoader'); if (el) el.style.display = 'flex'; }
 function hideBootLoader() { const el = document.getElementById('bootLoader'); if (el) el.style.display = 'none'; }
 
-async function loadFromServer() {
-  let ok = false;
-  try {
-    const r = await fetch('/api/data', { cache: 'no-store' });
-    if (r.ok) {
-      const d = await r.json();
-      if (d && d.sections && d.faqs) { DATA = d; ok = true; }
-    }
-  } catch (e) { /* servidor indisponível */ }
-  if (!ok) {
-    // Nunca mostra conteúdo antigo: mantém "carregando" e tenta de novo sozinho até o banco responder
-    showBootLoader();
-    setTimeout(loadFromServer, 3000);
-    return;
-  }
+let bootRendered = false;
+function renderCurrent() {
   buildSlugs();
   const { secId, faqId } = resolvePath(location.pathname);
   currentSec = secId;
   openAncestors(secId);
   render();
+  bootRendered = true;
   hideBootLoader();
   if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
+}
+
+async function loadFromServer() {
+  let ok = false, changed = false;
+  try {
+    const r = await fetch('/api/data', { cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.sections && d.faqs) {
+        changed = JSON.stringify(d) !== JSON.stringify(DATA);
+        DATA = d;
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
+        ok = true;
+      }
+    }
+  } catch (e) { /* servidor indisponível */ }
+
+  if (ok) {
+    // renderiza na primeira vez, ou re-renderiza se o conteúdo mudou no servidor
+    if (!bootRendered || changed) renderCurrent();
+    else hideBootLoader();
+  } else if (bootRendered) {
+    // já mostramos o conteúdo do cache — mantém na tela e tenta de novo em segundo plano
+    hideBootLoader();
+    setTimeout(loadFromServer, 5000);
+  } else {
+    // primeira visita, sem cache e sem servidor: mantém "carregando" e tenta de novo
+    showBootLoader();
+    setTimeout(loadFromServer, 3000);
+  }
 }
 
 // salva no servidor — publica para todos os visitantes
@@ -1826,8 +1844,13 @@ function showToast(msg) {
 }
 
 // ═══ INIT ═══
-// Não pinta o conteúdo padrão: mostra "carregando" e só renderiza quando o banco responde.
-// Assim nunca aparece a versão antiga/fallback enquanto o servidor sobe.
+// Se já há conteúdo salvo no navegador (cache), mostra NA HORA — sem esperar o servidor.
+// Depois revalida em segundo plano e atualiza só se algo mudou.
+// Na primeiríssima visita (sem cache), mostra "carregando" até o banco responder,
+// evitando exibir a versão embutida antiga.
+if (readCache()) {
+  renderCurrent();
+}
 loadFromServer();
 </script>
 </body>
