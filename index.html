@@ -273,6 +273,13 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .sb-act:hover{background:var(--bd)}
 .sb-addmenu{margin:14px 16px 8px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px dashed var(--brand);color:var(--brand);background:var(--brand-bg);border-radius:8px;padding:8px 10px;font-size:12.5px;cursor:pointer;font-family:var(--font);font-weight:600;width:calc(100% - 32px)}
 .sb-addmenu:hover{background:var(--brand);color:#fff}
+/* arrastar menus: cursor e pistas de soltar */
+.sb-row[draggable=true]{cursor:grab}
+.sb-row[draggable=true]:active{cursor:grabbing}
+.sb-row.drop-child .sb-item{outline:2px solid var(--brand);outline-offset:-2px;background:var(--brand-bg);border-radius:6px}
+.sb-row.drop-before{box-shadow:inset 0 3px 0 var(--brand)}
+.sb-row.drop-after{box-shadow:inset 0 -3px 0 var(--brand)}
+.sb-group.drop-group{background:var(--brand-bg);color:var(--brand);outline:2px dashed var(--brand);outline-offset:-2px;border-radius:6px}
 
 @media(max-width:1100px){.rp{display:none}}
 @media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)!important}.rte-pop{width:calc(100vw - 32px);left:16px!important}}
@@ -949,7 +956,8 @@ function renderNavNode(sec, depth) {
       <button class="sb-act" title="Adicionar submenu" onclick="addSubSection('${sec.id}',event)">➕</button>
       <button class="sb-act" title="Excluir menu" onclick="deleteSecInline('${sec.id}',event)">🗑️</button>
     </span>` : '';
-  let html = `<div class="sb-row">
+  const dnd = isAdmin() ? ` draggable="true" ondragstart="navDragStart(event,'${sec.id}')" ondragover="navDragOver(event,'${sec.id}')" ondragleave="navDragLeave(event)" ondrop="navDrop(event,'${sec.id}')" ondragend="navDragEnd(event)"` : '';
+  let html = `<div class="sb-row"${dnd}>
       <button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${16 + depth*13}px" onclick="navigateTo('${sec.id}')">
         <span>${sec.name}</span>
         ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
@@ -972,13 +980,106 @@ function renderSidebar() {
     const grpSecs = childSections(null).filter(s => (s.group || 'geral') === grp);
     if (!grpSecs.length) return;
     const label = GROUP_LABELS[grp];
-    if (label) html += `<div class="sb-group">${label}</div>`;
+    if (label) {
+      const gdnd = isAdmin() ? ` ondragover="navGroupOver(event)" ondragleave="navGroupLeave(event)" ondrop="navGroupDrop(event,'${grp}')"` : '';
+      html += `<div class="sb-group"${gdnd}>${label}</div>`;
+    }
     grpSecs.forEach(sec => { html += renderNavNode(sec, 0); });
   });
   if (isAdmin()) {
     html += `<button class="sb-addmenu" onclick="addRootSection()">➕ Adicionar menu principal</button>`;
   }
   nav.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// ARRASTAR MENUS (drag & drop) — só admin
+// ═══════════════════════════════════════════
+let dragSecId = null;
+function navDragStart(e, id) {
+  if (!isAdmin()) { e.preventDefault(); return; }
+  dragSecId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', id); } catch (_) {}
+}
+function navDragEnd() { dragSecId = null; clearDropCues(); }
+function clearDropCues() {
+  document.querySelectorAll('.sb-row.drop-child,.sb-row.drop-before,.sb-row.drop-after')
+    .forEach(el => el.classList.remove('drop-child', 'drop-before', 'drop-after'));
+  document.querySelectorAll('.sb-group.drop-group').forEach(el => el.classList.remove('drop-group'));
+}
+function navDragOver(e, id) {
+  if (!dragSecId || dragSecId === id) return;
+  if (isAncestorOf(dragSecId, id)) { e.dataTransfer.dropEffect = 'none'; return; } // não pode entrar em si mesmo
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const row = e.currentTarget;
+  const rect = row.getBoundingClientRect();
+  const y = e.clientY - rect.top, h = rect.height;
+  clearDropCues();
+  const mode = (y < h * 0.28) ? 'before' : (y > h * 0.72) ? 'after' : 'child';
+  row.classList.add('drop-' + mode);
+  row._dropMode = mode;
+}
+function navDragLeave(e) { e.currentTarget.classList.remove('drop-child', 'drop-before', 'drop-after'); }
+function navDrop(e, id) {
+  if (!dragSecId) return;
+  e.preventDefault();
+  const mode = e.currentTarget._dropMode || 'child';
+  const dragged = dragSecId; dragSecId = null;
+  clearDropCues();
+  if (dragged === id || isAncestorOf(dragged, id)) return;
+  moveSection(dragged, mode, id);
+}
+function navGroupOver(e) {
+  if (!dragSecId) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  clearDropCues();
+  e.currentTarget.classList.add('drop-group');
+}
+function navGroupLeave(e) { e.currentTarget.classList.remove('drop-group'); }
+function navGroupDrop(e, grp) {
+  if (!dragSecId) return;
+  e.preventDefault();
+  const dragged = dragSecId; dragSecId = null;
+  clearDropCues();
+  moveSection(dragged, 'group', grp);
+}
+
+function siblingList(parentId) {
+  return DATA.sections
+    .filter(s => (s.parentId || null) === (parentId || null))
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+function moveSection(draggedId, mode, targetOrGroup) {
+  const dragged = DATA.sections.find(s => s.id === draggedId);
+  if (!dragged) return;
+  let parentId, group, beforeId = null, afterId = null;
+  if (mode === 'group') {
+    parentId = null; group = targetOrGroup;
+  } else {
+    const target = DATA.sections.find(s => s.id === targetOrGroup);
+    if (!target) return;
+    if (mode === 'child') {
+      parentId = target.id; group = target.group;
+      openSecs.add(target.id);
+    } else {
+      parentId = target.parentId || null; group = target.group;
+      if (mode === 'before') beforeId = target.id; else afterId = target.id;
+    }
+  }
+  dragged.parentId = parentId;
+  if (group != null) dragged.group = group;
+  // recalcula a ordem entre os irmãos do novo pai
+  const sibs = siblingList(parentId).filter(s => s.id !== dragged.id);
+  let idx = sibs.length;
+  if (beforeId) { const i = sibs.findIndex(s => s.id === beforeId); if (i >= 0) idx = i; }
+  else if (afterId) { const i = sibs.findIndex(s => s.id === afterId); if (i >= 0) idx = i + 1; }
+  sibs.splice(idx, 0, dragged);
+  sibs.forEach((s, i) => { s.order = i; });
+  saveData(DATA); render();
+  showToast('Menu movido!');
 }
 
 function renderContent() {
