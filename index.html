@@ -844,25 +844,42 @@ const DEFAULT_DATA = {
 };
 
 // ═══════════════════════════════════════════
-// LOAD / SAVE  (servidor + banco de dados)
+// LOAD / SAVE  (servidor + banco + cache local)
 // ═══════════════════════════════════════════
-let DATA = JSON.parse(JSON.stringify(DEFAULT_DATA)); // fallback até o servidor responder
+const CACHE_KEY = 'nx_content_cache';
+function readCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (raw) { const d = JSON.parse(raw); if (d && d.sections && d.faqs) return d; }
+  } catch (e) {}
+  return null;
+}
+// começa já com o conteúdo salvo no navegador (instantâneo); se não houver, usa o padrão embutido
+let DATA = readCache() || JSON.parse(JSON.stringify(DEFAULT_DATA));
 let ADMIN_TOKEN = null;
 
+// Busca o conteúdo do servidor em segundo plano e só re-renderiza se algo mudou
 async function loadFromServer() {
   try {
     const r = await fetch('/api/data', { cache: 'no-store' });
     if (r.ok) {
       const d = await r.json();
-      if (d && d.sections && d.faqs) DATA = d;
+      if (d && d.sections && d.faqs) {
+        const str = JSON.stringify(d);
+        const changed = str !== JSON.stringify(DATA);
+        DATA = d;
+        try { localStorage.setItem(CACHE_KEY, str); } catch (e) {}
+        if (changed) {
+          buildSlugs();
+          const { secId, faqId } = resolvePath(location.pathname);
+          currentSec = secId;
+          openAncestors(secId);
+          render();
+          if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
+        }
+      }
     }
-  } catch (e) { /* mantém o conteúdo padrão se o servidor não responder */ }
-  buildSlugs();
-  const { secId, faqId } = resolvePath(location.pathname);
-  currentSec = secId;
-  openAncestors(secId);
-  render();
-  if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
+  } catch (e) { /* offline: mantém o conteúdo do cache */ }
 }
 
 // salva no servidor — publica para todos os visitantes
@@ -879,6 +896,7 @@ async function saveData(d) {
       return false;
     }
     if (!r.ok) throw new Error('falha');
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
     return true;
   } catch (e) {
     showToast('Erro ao salvar no servidor. Verifique a conexão.');

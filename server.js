@@ -2,6 +2,7 @@
 // Central de Ajuda NX Digital — backend Express + Postgres
 // ═══════════════════════════════════════════════════════════
 const express = require('express');
+const compression = require('compression');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -53,6 +54,7 @@ async function setDoc(doc) {
 
 // ─── App ───
 const app = express();
+app.use(compression()); // gzip: reduz muito o tamanho do HTML e da API
 app.use(express.json({ limit: '15mb' }));
 
 // Conteúdo público (sem a senha do admin)
