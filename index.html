@@ -48,17 +48,19 @@ button{font-family:var(--font)}
 .sidebar::-webkit-scrollbar{width:4px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--bd);border-radius:2px}
 .sb-inner{flex:1;padding:8px 0 24px}
-.sb-group{font-size:10.5px;font-weight:700;color:var(--t4);letter-spacing:.6px;text-transform:uppercase;padding:16px 16px 4px}
-.sb-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 14px 5px 16px;font-size:13px;line-height:1.35;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent}
-.sb-item span{flex:1;min-width:0}
+.sb-group{font-size:10.5px;font-weight:700;color:var(--t4);letter-spacing:.7px;text-transform:uppercase;padding:18px 16px 6px;margin-top:2px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 12px 7px 14px;font-size:13px;line-height:1.35;color:var(--t2);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent;border-radius:0 8px 8px 0}
+.sb-ic{flex-shrink:0;width:20px;text-align:center;font-size:14.5px;line-height:1}
+.sb-tx{flex:1;min-width:0}
 .sb-item:hover{color:var(--t1);background:var(--bg2)}
 .sb-item.active{color:var(--brand);font-weight:600;border-left-color:var(--brand);background:var(--brand-bg)}
 .sb-item svg{width:9px;height:9px;color:var(--t4);flex-shrink:0;transition:transform .2s}
 .sb-item.active svg{color:var(--brand)}
 .sb-item.open svg{transform:rotate(90deg)}
-.sb-sub{display:none}
+.sb-sub{display:none;position:relative}
 .sb-sub.open{display:block}
-.sb-sub-item{display:block;width:100%;padding:5px 14px 5px 28px;font-size:12.5px;line-height:1.35;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent}
+.sb-sub.open::before{content:'';position:absolute;left:var(--gl,18px);top:3px;bottom:6px;width:1.5px;background:var(--bd);border-radius:2px}
+.sb-sub-item{display:flex;align-items:center;gap:8px;width:100%;padding:6px 12px 6px 26px;font-size:12.5px;line-height:1.35;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);transition:background .12s,color .12s;border-left:2px solid transparent;border-radius:0 8px 8px 0}
 .sb-sub-item:hover{color:var(--t1);background:var(--bg2)}
 .sb-sub-item.active{color:var(--brand);font-weight:600;border-left-color:var(--brand);background:var(--brand-bg)}
 .sb-footer{border-top:1px solid var(--bd);padding:10px 20px;font-size:12px;color:var(--t4);display:flex;align-items:center;gap:6px}
@@ -1021,6 +1023,40 @@ function isAncestorOf(secId, descId) {
   }
   return false;
 }
+// ── Emoji automático nos menus (só na exibição; não altera o conteúdo salvo) ──
+function startsWithEmoji(s) {
+  return /^\s*(?:[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{2705}\u{2B50}\u{2764}\u{FE0F}])/u.test(s || '');
+}
+const EMOJI_RULES = [
+  [/whats\s*app|whatsapp|baileys|webjs|evolution|uazapi|waba|\bzap\b/, '💬'],
+  [/telegram/, '✈️'], [/instagram/, '📸'], [/facebook|messenger/, '👍'],
+  [/e-?mail|smtp|imap|gmail|webmail/, '📧'], [/webchat/, '💬'],
+  [/template/, '📋'], [/envio|massa|disparo/, '📤'], [/campanha/, '📣'], [/\bsms\b/, '📱'],
+  [/wavoip|liga(ç|c)|voip|chamada|telefon/, '📞'],
+  [/relat(ó|o)rio|an(á|a)lise|indicador|estat(í|i)stic/, '📊'], [/dashboard/, '📈'],
+  [/galeria/, '🖼️'], [/calend(á|a)rio|calendar|agenda(?!mento)/, '📅'], [/agendamento|agendad/, '⏰'], [/anivers(á|a)rio/, '🎂'],
+  [/grupo/, '👥'], [/equipe/, '👥'], [/usu(á|a)rio|perfil de acesso|perfis/, '👤'], [/conta|meu perfil/, '🪪'],
+  [/mensagens? r(á|a)pid|resposta r(á|a)pid/, '⚡'], [/mensagem|mensagens/, '💬'],
+  [/rede.?s? sociais|coment(á|a)rio/, '🌐'], [/kanban/, '🗂️'], [/funil/, '🫙'], [/\bcrm\b/, '📇'], [/demanda/, '📌'], [/vari(á|a)ve/, '🔤'],
+  [/etiqueta|\btag/, '🏷️'], [/fechamento/, '✅'], [/\bfila/, '🎫'], [/hor(á|a)rio/, '🕒'], [/\bnota/, '📝'], [/protocolo/, '🔖'], [/avalia(ç|c)/, '⭐'],
+  [/\bapi\b/, '🔌'], [/integra(ç|c)|\bmeta\b/, '🔗'], [/webhook/, '🪝'], [/bsp/, '🏢'], [/rastreamento|convers(ã|a)o/, '🎯'],
+  [/automa(ç|c)|chat.?flow|fluxo|\bbot/, '🤖'], [/copiloto|\bia\b|intelig(ê|e)ncia/, '🧠'],
+  [/configura(ç|c)|ajuste|geral/, '⚙️'], [/administra(ç|c)|painel admin|\badmin/, '🛠️'], [/gest(ã|a)o|comercial|opera(ç|c)/, '📊'],
+  [/home/, '🏠'], [/atendimento/, '🎧'], [/comunica(ç|c)|marketing/, '📢'],
+  [/seguran(ç|c)|2 fatores|autentica(ç|c)|senha/, '🔒'], [/sess(ã|õ|a|o)/, '📶'], [/log|auditoria/, '🧾'], [/importar|import/, '📥'], [/transbordo/, '🔀'],
+  [/vis(ã|a)o geral|vis(ã|a)o/, '🧭'], [/central de ajuda|\bajuda/, '🖐️'], [/contato/, '📇'], [/onboarding/, '🚀'], [/instalar/, '⬇️'], [/primeiro acesso/, '🔑'],
+  [/woocommerce|mercado livre|\bolx\b|loja/, '🛒'], [/youtube/, '▶️'], [/tiktok/, '🎵'], [/linkedin/, '💼'], [/mercado/, '🛒'],
+  [/notifica(ç|c)|push/, '🔔'], [/banco de dados/, '🗄️'], [/customiza(ç|c)|frontend/, '🎨'], [/\berro/, '🔴'], [/boas pr(á|a)ticas|infra/, '🏗️'],
+  [/hub|notificame/, '🔌'], [/apps?/, '🧩'], [/distribui(ç|c)/, '🔀'], [/exemplo/, '📎'], [/boas.?vindas/, '👋'], [/atualiza(ç|c)|status/, '🔄']
+];
+function withEmoji(name, fallback) {
+  if (!name) return name;
+  if (startsWithEmoji(name)) return name;   // já tem emoji: respeita
+  const n = name.toLowerCase();
+  for (const [re, e] of EMOJI_RULES) { if (re.test(n)) return e + ' ' + name; }
+  return (fallback || '📄') + ' ' + name;
+}
+
 function renderNavNode(sec, depth) {
   const isActive = sec.id === currentSec;
   const kids = childSections(sec.id);
@@ -1033,17 +1069,25 @@ function renderNavNode(sec, depth) {
       <button class="sb-act" title="Excluir menu" onclick="deleteSecInline('${sec.id}',event)">🗑️</button>
     </span>` : '';
   const dnd = isAdmin() ? ` draggable="true" ondragstart="navDragStart(event,'${sec.id}')" ondragover="navDragOver(event,'${sec.id}')" ondragleave="navDragLeave(event)" ondrop="navDrop(event,'${sec.id}')" ondragend="navDragEnd(event)"` : '';
+  const named = withEmoji(sec.name);
+  const emoji = named === sec.name ? '' : named.slice(0, named.indexOf(' '));
+  const label = emoji ? named.slice(named.indexOf(' ') + 1) : sec.name;
   let html = `<div class="sb-row"${dnd}>
-      <button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${16 + depth*13}px" onclick="navigateTo('${sec.id}')">
-        <span>${sec.name}</span>
+      <button class="sb-item${isActive ? ' active' : ''}${expanded && hasChildren ? ' open' : ''}" style="padding-left:${14 + depth*13}px" onclick="navigateTo('${sec.id}')">
+        <span class="sb-ic">${emoji}</span>
+        <span class="sb-tx">${label}</span>
         ${hasChildren ? `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>` : ''}
       </button>${actions}
     </div>`;
   if (expanded && hasChildren) {
-    html += `<div class="sb-sub open">`;
+    html += `<div class="sb-sub open" style="--gl:${18 + depth*13}px">`;
     kids.forEach(k => { html += renderNavNode(k, depth + 1); });
     faqs.forEach(f => {
-      html += `<button class="sb-sub-item" style="padding-left:${28 + depth*13}px" onclick="jumpToFaq('${f.id}')">${f.q}</button>`;
+      const fn = withEmoji(f.q, '❓');
+      const fAlready = (fn === f.q);
+      const fe = fAlready ? '' : fn.slice(0, fn.indexOf(' '));
+      const fl = fAlready ? f.q : fn.slice(fn.indexOf(' ') + 1);
+      html += `<button class="sb-sub-item" style="padding-left:${26 + depth*13}px" onclick="jumpToFaq('${f.id}')"><span class="sb-ic">${fe}</span><span class="sb-tx">${fl}</span></button>`;
     });
     html += `</div>`;
   }
