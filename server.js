@@ -47,6 +47,21 @@ async function initDb() {
     console.log('Banco já contém dados — seed ignorado.');
   }
   try { await migrateInlineImages(); } catch (e) { console.error('Falha na migração de imagens:', e); }
+  try { await migrateBrand(); } catch (e) { console.error('Falha na migração de marca:', e); }
+}
+
+// Troca toda menção a Z-PRO / ZPRO / z-pro / zpro por "NX Digital" no conteúdo salvo.
+// Palavra inteira e sem separador com espaço, para não afetar palavras como "processo" ou "voz pro".
+async function migrateBrand() {
+  const doc = await getDoc();
+  if (!doc) return;
+  const json = JSON.stringify(doc);
+  const re = /(?<![a-zA-Z0-9])z[-_]?pro(?![a-zA-Z0-9])/gi;
+  const matches = json.match(re);
+  if (!matches) return;
+  const out = json.replace(re, 'NX Digital');
+  await setDoc(JSON.parse(out));
+  console.log('Marca: substituídas ' + matches.length + ' ocorrência(s) de Z-PRO por "NX Digital".');
 }
 
 // Migra imagens embutidas em base64 (data:) para a tabela images, trocando por links leves.
