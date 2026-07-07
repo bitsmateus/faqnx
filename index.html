@@ -1724,7 +1724,7 @@ function rteImage(){
     </div>
     <div id="imgUpload">
       <input type="file" accept="image/*" id="rteImgFile" class="form-input" style="padding:7px">
-      <div class="form-hint">A imagem fica embutida na página.</div>
+      <div class="form-hint">A imagem é enviada ao servidor e fica salva como link leve. Você também pode simplesmente <strong>colar (Ctrl+V)</strong> a imagem direto no texto.</div>
     </div>
     <div id="imgUrl" style="display:none">
       <input type="text" class="form-input" id="rteImgUrl" placeholder="https://...">
@@ -1743,11 +1743,63 @@ function rteImageInsert(){
   } else {
     const file = document.getElementById('rteImgFile').files[0];
     if (!file){ alert('Escolha um arquivo de imagem.'); return; }
-    if (file.size > 1500000 && !confirm('Imagem grande (acima de 1,5 MB) pode deixar o site pesado. Inserir mesmo assim?')) return;
-    const reader = new FileReader();
-    reader.onload = e => { rteClosePop(); rteInsertHTML('<img src="' + e.target.result + '" alt="">'); };
-    reader.readAsDataURL(file);
+    rteClosePop();
+    insertImageFile(file);
   }
+}
+
+// Envia a imagem ao servidor e devolve uma URL curta (evita base64 gigante dentro do conteúdo)
+async function uploadImage(file){
+  const r = await fetch('/api/upload', {
+    method: 'POST',
+    headers: { 'Content-Type': file.type || 'application/octet-stream', 'Authorization': 'Bearer ' + (ADMIN_TOKEN || '') },
+    body: file
+  });
+  if (r.status === 401) throw new Error('Sua sessão de admin expirou — faça login de novo e tente outra vez.');
+  if (r.status === 413) throw new Error('Imagem grande demais (acima de 25 MB).');
+  if (!r.ok) throw new Error('Falha ao enviar a imagem (HTTP ' + r.status + ').');
+  const j = await r.json();
+  return j.url;
+}
+async function insertImageFile(file){
+  if (!file || !file.type || !file.type.startsWith('image/')){ alert('O arquivo não é uma imagem.'); return; }
+  showToast('Enviando imagem…');
+  try {
+    const url = await uploadImage(file);
+    rteInsertHTML('<img src="' + url + '" alt="">');
+    showToast('Imagem inserida!');
+  } catch (e) {
+    alert(e.message || 'Não foi possível enviar a imagem.');
+  }
+}
+// Interceptar COLAR imagem: em vez de embutir base64 (pesado), faz upload e insere o link
+function rteHandlePaste(e){
+  const cd = e.clipboardData || window.clipboardData;
+  if (!cd || !cd.items) return;
+  for (const it of cd.items){
+    if (it.kind === 'file' && it.type && it.type.startsWith('image/')){
+      const file = it.getAsFile();
+      if (file){ e.preventDefault(); insertImageFile(file); return; }
+    }
+  }
+}
+// Interceptar ARRASTAR e SOLTAR imagem
+function rteHandleDrop(e){
+  const files = e.dataTransfer && e.dataTransfer.files;
+  if (!files || !files.length) return;
+  for (const f of files){
+    if (f.type && f.type.startsWith('image/')){ e.preventDefault(); insertImageFile(f); return; }
+  }
+}
+function rteAttachImageHandlers(){
+  ['faqFormA','secFormBody'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.dataset.imgHooked){
+      el.addEventListener('paste', rteHandlePaste);
+      el.addEventListener('drop', rteHandleDrop);
+      el.dataset.imgHooked = '1';
+    }
+  });
 }
 
 function rteVideo(){
@@ -2030,6 +2082,7 @@ if (readCache()) {
   renderCurrent();
 }
 loadFromServer();
+rteAttachImageHandlers();   // colar/soltar imagem no editor faz upload em vez de base64
 </script>
 </body>
 </html>

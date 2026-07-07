@@ -30,6 +30,14 @@ async function initDb() {
       updated_at TIMESTAMPTZ DEFAULT now()
     );
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS images (
+      id TEXT PRIMARY KEY,
+      mime TEXT NOT NULL,
+      data BYTEA NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT now()
+    );
+  `);
   const { rows } = await pool.query('SELECT 1 FROM store WHERE id = 1');
   if (rows.length === 0) {
     const seed = JSON.parse(fs.readFileSync(path.join(__dirname, 'seed.json'), 'utf8'));
@@ -38,6 +46,30 @@ async function initDb() {
   } else {
     console.log('Banco já contém dados — seed ignorado.');
   }
+  try { await migrateInlineImages(); } catch (e) { console.error('Falha na migração de imagens:', e); }
+}
+
+// Migra imagens embutidas em base64 (data:) para a tabela images, trocando por links leves.
+// Roda uma vez: depois de migrar não sobra nenhum data:image, então não repete.
+async function migrateInlineImages() {
+  const doc = await getDoc();
+  if (!doc) return;
+  const json = JSON.stringify(doc);
+  if (json.indexOf('data:image/') === -1) return;   // nada a migrar
+  const re = /data:(image\/[a-zA-Z0-9.+-]+);base64,([A-Za-z0-9+/=]+)/g;
+  const map = new Map();
+  let m;
+  while ((m = re.exec(json)) !== null) {
+    if (map.has(m[0])) continue;
+    const id = crypto.randomUUID().replace(/-/g, '');
+    const buf = Buffer.from(m[2], 'base64');
+    await pool.query('INSERT INTO images (id, mime, data) VALUES ($1, $2, $3)', [id, m[1], buf]);
+    map.set(m[0], '/api/img/' + id);
+  }
+  if (map.size === 0) return;
+  const out = json.replace(re, s => map.get(s) || s);
+  await setDoc(JSON.parse(out));
+  console.log('Migradas ' + map.size + ' imagem(ns) base64 para o banco (conteúdo agora usa links leves).');
 }
 
 async function getDoc() {
@@ -114,6 +146,37 @@ app.post('/api/save', requireAuth, async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'erro ao salvar' });
+  }
+});
+
+// Upload de imagem (somente admin) — guarda a imagem no banco e devolve uma URL curta.
+// Assim o conteúdo salvo fica leve (só o link), em vez de imagens gigantes em base64.
+app.post('/api/upload', requireAuth, express.raw({ type: () => true, limit: '25mb' }), async (req, res) => {
+  try {
+    const mime = (req.headers['content-type'] || 'application/octet-stream').split(';')[0].trim();
+    if (!mime.startsWith('image/')) return res.status(400).json({ error: 'o arquivo não é uma imagem' });
+    const buf = req.body;
+    if (!buf || !buf.length) return res.status(400).json({ error: 'imagem vazia' });
+    const id = crypto.randomUUID().replace(/-/g, '');
+    await pool.query('INSERT INTO images (id, mime, data) VALUES ($1, $2, $3)', [id, mime, buf]);
+    res.json({ url: '/api/img/' + id });
+  } catch (e) {
+    console.error('upload', e);
+    res.status(500).json({ error: 'erro ao salvar a imagem' });
+  }
+});
+
+// Servir imagem (público) — com cache longo, pois a URL é única por imagem
+app.get('/api/img/:id', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT mime, data FROM images WHERE id = $1', [String(req.params.id)]);
+    if (!rows[0]) return res.status(404).end();
+    res.set('Content-Type', rows[0].mime);
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.end(rows[0].data);
+  } catch (e) {
+    console.error('img', e);
+    res.status(500).end();
   }
 });
 
