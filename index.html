@@ -284,8 +284,24 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .sb-group.drop-group{background:var(--brand-bg);color:var(--brand);outline:2px dashed var(--brand);outline-offset:-2px;border-radius:6px}
 
 /* ═══════════════════════════════════════════════════════════
-   TRILHAS — área de membros (vídeo + texto em ordem)
+   TREINAMENTOS — área de membros (vídeo + texto em ordem)
    ═══════════════════════════════════════════════════════════ */
+
+/* faixa de destaque no topo da home — primeira coisa que o cliente vê */
+.home-hero{background:var(--brand-bg);border:1px solid var(--bd);border-radius:14px;padding:22px 24px 24px;margin:0 0 34px}
+.hh-lbl{font-size:11.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
+.hh-title{font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-.2px;line-height:1.25;margin-bottom:6px}
+.hh-sub{font-size:14.5px;color:var(--t3);line-height:1.6;margin-bottom:16px;max-width:62ch}
+.hh-resume{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;border:none;border-radius:8px;padding:11px 17px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);margin-bottom:18px;max-width:100%;text-align:left;line-height:1.35}
+.hh-resume:hover{background:var(--brand-dark)}
+.hh-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hh-empty{font-size:14px;color:var(--t3);line-height:1.6}
+.hh-all{margin-top:16px;background:none;border:none;color:var(--brand);font-size:13.5px;font-weight:600;cursor:pointer;font-family:var(--font);padding:0}
+.hh-all:hover{text-decoration:underline}
+
+/* bloco de treinamentos no topo do menu lateral */
+.sb-treinos{border-bottom:1px solid var(--bd);padding-bottom:10px;margin-bottom:2px}
+.sb-treinos .sb-group{color:var(--brand);padding-top:14px}
 
 /* barra de progresso (usada em vários lugares) */
 .tr-bar{height:6px;border-radius:99px;background:var(--bd2);overflow:hidden}
@@ -302,7 +318,7 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .tr-resume-name{font-size:15px;font-weight:600;color:var(--t1);line-height:1.35}
 .tr-resume-sub{font-size:13px;color:var(--t3);margin-top:2px}
 
-/* lista de trilhas */
+/* lista de treinamentos */
 .tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
 .tr-card{border:1px solid var(--bd);border-radius:12px;padding:18px 20px;background:var(--bg);cursor:pointer;display:flex;flex-direction:column;gap:7px;transition:border-color .15s,box-shadow .15s;text-align:left;font-family:var(--font)}
 .tr-card:hover{border-color:var(--brand);box-shadow:0 6px 20px rgba(0,0,0,.07)}
@@ -311,7 +327,7 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .tr-card-meta{font-size:12.5px;color:var(--t4)}
 .tr-empty{border:1px dashed var(--bd);border-radius:10px;padding:28px 20px;text-align:center;color:var(--t3);font-size:14px;line-height:1.6}
 
-/* página da trilha */
+/* página do treinamento */
 .tr-crumb{font-size:12.5px;color:var(--t4);margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .tr-crumb a{color:var(--t3);cursor:pointer}
 .tr-crumb a:hover{color:var(--brand)}
@@ -366,7 +382,7 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .tr-nav-lbl{font-size:11.5px;color:var(--t4);margin-bottom:3px}
 .tr-nav-t{font-size:13.5px;color:var(--t1);font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
-/* menu lateral — trilhas e aulas */
+/* menu lateral — treinamentos e aulas */
 .sb-mod{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t4);padding:10px 16px 3px 28px}
 .sb-prog{padding:8px 16px 8px 28px}
 .sb-lesson{display:flex;align-items:center;gap:8px;width:100%;padding:6px 14px 6px 28px;font-size:12.5px;line-height:1.35;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);border-left:2px solid transparent;transition:background .12s,color .12s}
@@ -437,7 +453,8 @@ html.nav-open,body.nav-open{overflow:hidden}
   .hdr-search{min-width:0;flex:1;height:36px}
   .kbd{display:none}
   .hdr-nav{padding-right:8px;gap:2px}
-  .lnk-suporte{display:none}
+  /* no tablet o header aperta: os links somem e o menu lateral assume */
+  .lnk-suporte,.lnk-treinamentos{display:none}
 
   .sidebar{width:min(86vw,300px);z-index:200;transform:translateX(-100%);transition:transform .24s ease;box-shadow:0 0 40px rgba(0,0,0,.18)}
   .sidebar.open{transform:translateX(0)}
@@ -479,7 +496,9 @@ html.nav-open,body.nav-open{overflow:hidden}
   .rte-btn{min-width:34px;height:34px}
   .rte-select{height:34px}
   .rte-area,.rte-source{min-height:200px;max-height:42vh}
-  .tr-grid{grid-template-columns:1fr}
+  .tr-grid,.hh-grid{grid-template-columns:1fr}
+  .home-hero{padding:18px 16px 20px;border-radius:12px;margin-bottom:26px}
+  .hh-title{font-size:19px}
   .tr-nav{flex-direction:column}
   .tr-nav-btn.next{text-align:left}
 }
@@ -494,7 +513,6 @@ html.nav-open,body.nav-open{overflow:hidden}
   .hdr.searching .hdr-mid{display:flex;position:absolute;inset:0;background:var(--bg);padding:0 8px;gap:6px;z-index:5}
   .hdr.searching .hdr-burger,.hdr.searching .hdr-logo,.hdr.searching .hdr-nav{visibility:hidden}
   .hdr.searching .hdr-search-close{display:inline-flex;width:34px;height:34px;font-size:16px}
-  .lnk-trilhas{display:none}
   .lbl-admin{display:none}
   .lesson-title{font-size:21px}
   .tr-lesson{padding:13px 12px;gap:10px}
@@ -555,7 +573,7 @@ html.nav-open,body.nav-open{overflow:hidden}
     <button class="hdr-searchbtn" type="button" aria-label="Pesquisar" onclick="openMobileSearch()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5"/></svg>
     </button>
-    <a href="/trilhas" class="lnk-trilhas" onclick="event.preventDefault();goTrilhas()">TRILHAS</a>
+    <a href="/treinamentos" class="lnk-treinamentos" onclick="event.preventDefault();goTreinamentos()">TREINAMENTOS</a>
     <a href="mailto:suporte@nxdigital.com.br" class="lnk-suporte">SUPORTE</a>
     <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙<span class="lbl-admin"> Admin</span></a>
   </nav>
@@ -641,7 +659,7 @@ html.nav-open,body.nav-open{overflow:hidden}
       <div class="admin-tabs">
         <div class="admin-tab active" onclick="switchTab(this,'tab-faqs')">Perguntas</div>
         <div class="admin-tab" onclick="switchTab(this,'tab-sections')">Seções</div>
-        <div class="admin-tab" onclick="switchTab(this,'tab-courses')">Trilhas</div>
+        <div class="admin-tab" onclick="switchTab(this,'tab-courses')">Treinamentos</div>
         <div class="admin-tab" onclick="switchTab(this,'tab-settings')">Configurações</div>
       </div>
 
@@ -663,11 +681,11 @@ html.nav-open,body.nav-open{overflow:hidden}
         <div id="secList"></div>
       </div>
 
-      <!-- TAB: TRILHAS -->
+      <!-- TAB: TREINAMENTOS -->
       <div class="admin-tab-panel" id="tab-courses">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap">
           <span style="font-size:13px;color:var(--t3)">Cursos em vídeo que o aluno segue em ordem</span>
-          <button class="btn btn-primary btn-sm" onclick="openCourseForm()">+ Nova trilha</button>
+          <button class="btn btn-primary btn-sm" onclick="openCourseForm()">+ Novo treinamento</button>
         </div>
         <div id="courseList"></div>
       </div>
@@ -877,22 +895,22 @@ html.nav-open,body.nav-open{overflow:hidden}
     </div>
   </div>
 
-  <!-- TRILHA (CURSO) FORM MODAL -->
+  <!-- TREINAMENTO (CURSO) FORM MODAL -->
   <div class="modal" id="courseForm" style="display:none;width:840px;max-width:calc(100vw - 24px)">
     <div class="modal-hdr">
-      <h2 id="courseFormTitle">Nova trilha</h2>
+      <h2 id="courseFormTitle">Novo treinamento</h2>
       <button class="modal-close" onclick="closeCourseForm()">✕</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="courseFormId">
       <div class="form-group">
-        <label class="form-label">Nome da trilha *</label>
+        <label class="form-label">Nome do treinamento *</label>
         <input class="form-input" id="courseFormName" type="text" placeholder="Ex: 🎓 Primeiros passos na NX" oninput="courseSlugPreview()">
         <div class="form-hint">Use um emoji no início para ficar igual ao padrão do menu.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Descrição curta (opcional)</label>
-        <textarea class="form-textarea" id="courseFormDesc" style="min-height:70px" placeholder="Uma frase explicando o que a pessoa aprende nesta trilha..."></textarea>
+        <textarea class="form-textarea" id="courseFormDesc" style="min-height:70px" placeholder="Uma frase explicando o que a pessoa aprende neste treinamento..."></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Link personalizado (opcional)</label>
@@ -909,7 +927,7 @@ html.nav-open,body.nav-open{overflow:hidden}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeCourseForm()">Fechar</button>
-      <button class="btn btn-primary" onclick="saveCourse()">Salvar trilha</button>
+      <button class="btn btn-primary" onclick="saveCourse()">Salvar treinamento</button>
     </div>
   </div>
 
@@ -1192,7 +1210,7 @@ const DEFAULT_DATA = {
 // ═══════════════════════════════════════════
 const CACHE_KEY = 'nx_content_cache';
 const DIRTY_KEY = 'nx_pending_publish';   // '1' enquanto houver alterações locais ainda não publicadas
-// completa os campos que documentos antigos podem não ter (ex.: trilhas)
+// completa os campos que documentos antigos podem não ter (ex.: treinamentos)
 function normalizeDoc(d) {
   if (d && !Array.isArray(d.courses)) d.courses = [];
   return d;
@@ -1481,6 +1499,7 @@ function renderNavNode(sec, depth) {
 function renderSidebar() {
   const nav = document.getElementById('sidebarNav');
   let html = '';
+  html += renderCoursesNav();   // treinamentos primeiro, antes dos grupos do FAQ
   GROUP_ORDER.forEach(grp => {
     const grpSecs = childSections(null).filter(s => (s.group || 'geral') === grp);
     if (grpSecs.length) {
@@ -1491,8 +1510,6 @@ function renderSidebar() {
       }
       grpSecs.forEach(sec => { html += renderNavNode(sec, 0); });
     }
-    // as trilhas entram logo depois do grupo inicial
-    if (grp === 'geral') html += renderCoursesNav();
   });
   if (isAdmin()) {
     html += `<button class="sb-addmenu" onclick="addRootSection()">➕ Adicionar menu principal</button>`;
@@ -1591,7 +1608,7 @@ function moveSection(draggedId, mode, targetOrGroup) {
 }
 
 function renderContent() {
-  if (currentView === 'trilhas') { renderTrilhasIndex(); return; }
+  if (currentView === 'treinamentos') { renderTreinamentosIndex(); return; }
   if (currentView === 'course')  { renderCoursePage(); return; }
   if (currentView === 'lesson')  { renderLessonPage(); return; }
   const sec = DATA.sections.find(s => s.id === currentSec) || DATA.sections.sort((a,b)=>a.order-b.order)[0];
@@ -1600,6 +1617,7 @@ function renderContent() {
   let html = `<div id="sec-${sec.id}">`;
 
   if (sec.id === 'intro') {
+    html += homeHeroHtml();
     html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
              <h1 class="page-title">${sec.name}</h1>
              <p class="intro-desc">A <strong>NX Digital</strong> é um sistema de atendimento e automação projetado para centralizar a comunicação de múltiplos canais, com foco principal no WhatsApp. Suas funcionalidades incluem gestão de múltiplos atendentes e criação de chatbots para automação de conversas. A plataforma suporta tanto a API Oficial do WhatsApp quanto APIs não oficiais (via QR Code), além de integrar com Instagram, Facebook Messenger e Telegram. Também oferece integrações com ferramentas de inteligência artificial, como ChatGPT e Gemini, e plataformas de automação como N8N e Typebot.</p>
@@ -1692,8 +1710,8 @@ function renderRpLinks() {
   const rpTitle = document.getElementById('rpTitle');
   const oldToc = document.getElementById('tocMobile');
   if (oldToc) oldToc.remove();
-  // as telas de trilha já têm a lista de aulas no menu lateral
-  if (currentView === 'trilhas' || currentView === 'course') {
+  // as telas de treinamento já têm a lista de aulas no menu lateral
+  if (currentView === 'treinamentos' || currentView === 'course') {
     if (rp) rp.style.display = 'none';
     document.getElementById('rpLinks').innerHTML = '';
     return;
@@ -1742,7 +1760,7 @@ function renderMobileToc(heads, html) {
 // ═══════════════════════════════════════════
 let currentSec = 'intro';
 let openSecs = new Set();
-// qual tela está no ar: 'sec' (central de ajuda) ou as telas de trilhas
+// qual tela está no ar: 'sec' (central de ajuda) ou as telas de treinamentos
 let currentView = 'sec';
 let currentCourse = null;
 let currentLesson = null;
@@ -1818,11 +1836,11 @@ function urlForFaq(faqId) {
 function resolvePath(pathname) {
   const parts = decodeURIComponent(pathname || '/').replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
   if (parts.length === 0) return { view: 'sec', secId: 'intro' };
-  // /trilhas, /trilhas/curso, /trilhas/curso/aula
-  if (parts[0] === 'trilhas') {
-    if (!parts[1]) return { view: 'trilhas' };
+  // /treinamentos, /treinamentos/curso, /treinamentos/curso/aula
+  if (parts[0] === 'treinamentos' || parts[0] === 'trilhas') {   // 'trilhas' era o nome antigo
+    if (!parts[1]) return { view: 'treinamentos' };
     const courseId = COURSE_BY_SLUG[parts[1]];
-    if (!courseId) return { view: 'trilhas' };
+    if (!courseId) return { view: 'treinamentos' };
     if (!parts[2]) return { view: 'course', courseId };
     const lessonId = LESSON_BY_SLUG[courseId + '/' + parts[2]] || null;
     return lessonId ? { view: 'lesson', courseId, lessonId } : { view: 'course', courseId };
@@ -1876,9 +1894,9 @@ function scrollToAnchor(id) {
 function jumpToFaq(faqId) {
   const faq = DATA.faqs.find(f => f.id === faqId);
   if (!faq) return;
-  const cameFromTrilhas = currentView !== 'sec';
+  const cameFromTreinamentos = currentView !== 'sec';
   currentView = 'sec'; currentCourse = null; currentLesson = null;
-  if (cameFromTrilhas || faq.secId !== currentSec) {
+  if (cameFromTreinamentos || faq.secId !== currentSec) {
     currentSec = faq.secId;
     openAncestors(faq.secId);
     openSecs.add(faq.secId);
@@ -1998,11 +2016,11 @@ function doSearch(val) {
     }
   });
 
-  // trilhas e aulas também entram na busca
+  // treinamentos e aulas também entram na busca
   const trHits = [];
   allCourses().forEach(c => {
     if (c.name.toLowerCase().includes(v) || (c.desc || '').toLowerCase().includes(v)) {
-      trHits.push({ kind: 'course', courseId: c.id, title: c.name, cat: 'Trilha · ' + plural(courseLessons(c).length, 'aula', 'aulas') });
+      trHits.push({ kind: 'course', courseId: c.id, title: c.name, cat: 'Treinamento · ' + plural(courseLessons(c).length, 'aula', 'aulas') });
     }
     courseLessons(c).forEach(x => {
       const l = x.lesson;
@@ -2012,7 +2030,7 @@ function doSearch(val) {
     });
   });
 
-  // as perguntas são muitas — sem uma cota, as trilhas nunca apareceriam
+  // as perguntas são muitas — sem uma cota, os treinamentos nunca apareceriam
   const trTop = trHits.slice(0, 3);
   const top = trTop.concat(faqHits.slice(0, 8 - trTop.length));
   drop.style.display = 'block';
@@ -2709,7 +2727,7 @@ function showToast(msg) {
 }
 
 // ═══════════════════════════════════════════
-// TRILHAS — área de membros (vídeo + texto em ordem)
+// TREINAMENTOS — área de membros (vídeo + texto em ordem)
 // O progresso fica no navegador do visitante (localStorage), sem login.
 // ═══════════════════════════════════════════
 const PROGRESS_KEY = 'nx_progress';
@@ -2758,21 +2776,21 @@ function nextPendingLesson(c) {
 function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
 
 // ── navegação ──
-function urlTrilhas() { return '/trilhas'; }
-function urlForCourse(id) { return '/trilhas/' + (COURSE_SLUG[id] || id); }
+function urlTreinamentos() { return '/treinamentos'; }
+function urlForCourse(id) { return '/treinamentos/' + (COURSE_SLUG[id] || id); }
 function urlForLesson(courseId, lessonId) {
-  return '/trilhas/' + (COURSE_SLUG[courseId] || courseId) + '/' + (LESSON_SLUG[lessonId] || lessonId);
+  return '/treinamentos/' + (COURSE_SLUG[courseId] || courseId) + '/' + (LESSON_SLUG[lessonId] || lessonId);
 }
 
-function goTrilhas(push) {
-  currentView = 'trilhas'; currentCourse = null; currentLesson = null;
+function goTreinamentos(push) {
+  currentView = 'treinamentos'; currentCourse = null; currentLesson = null;
   render();
-  if (push !== false) history.pushState({ view: 'trilhas' }, '', urlTrilhas());
+  if (push !== false) history.pushState({ view: 'treinamentos' }, '', urlTreinamentos());
   closeSidebar();
 }
 function openCourse(id, push) {
   const c = courseById(id);
-  if (!c) return goTrilhas(push);
+  if (!c) return goTreinamentos(push);
   currentView = 'course'; currentCourse = id; currentLesson = null;
   render();
   if (push !== false) history.pushState({ view: 'course', id }, '', urlForCourse(id));
@@ -2795,7 +2813,7 @@ function completeAndNext(courseId, lessonId) {
   if (nb.next) { openLesson(courseId, nb.next.id); return; }
   render();
   const st = courseStats(c);
-  showToast(st.done === st.total ? 'Trilha concluída! 🎉' : 'Aula concluída!');
+  showToast(st.done === st.total ? 'Treinamento concluído! 🎉' : 'Aula concluída!');
 }
 
 // ── vídeo e materiais ──
@@ -2819,12 +2837,52 @@ function progressBarHtml(pct) {
   return '<div class="tr-bar-row"><div class="tr-bar"><span style="width:' + pct + '%"></span></div><div class="tr-pct">' + pct + '%</div></div>';
 }
 
+// Faixa no topo da home. É a primeira coisa que o cliente vê ao abrir o site.
+function homeHeroHtml() {
+  const list = allCourses();
+  if (!list.length && !isAdmin()) return '';
+
+  let resume = '';
+  const last = readLast();
+  if (last) {
+    const c = courseById(last.courseId);
+    const l = c ? lessonById(c, last.lessonId) : null;
+    if (c && l) {
+      resume = '<button class="hh-resume" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
+               '▶ Continuar: ' + esc(l.title) + '</button>';
+    }
+  }
+
+  let corpo;
+  if (list.length) {
+    corpo = '<div class="hh-grid">' + list.slice(0, 4).map(c => {
+      const st = courseStats(c);
+      return '<button class="tr-card" onclick="openCourse(\'' + c.id + '\')">' +
+        '<div class="tr-card-name">' + esc(c.name) + '</div>' +
+        '<div class="tr-card-desc">' + esc(c.desc || '') + '</div>' +
+        '<div class="tr-card-meta">' + plural(st.total, 'aula', 'aulas') +
+          (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
+        progressBarHtml(st.pct) + '</button>';
+    }).join('') + '</div>';
+  } else {
+    corpo = '<div class="hh-empty">Nenhum treinamento publicado ainda. Clique em <strong>Novo treinamento</strong> no menu à esquerda para criar o primeiro.</div>';
+  }
+
+  return '<section class="home-hero">' +
+    '<div class="hh-lbl">🎓 Comece por aqui</div>' +
+    '<h2 class="hh-title">Treinamentos em vídeo</h2>' +
+    '<p class="hh-sub">Aprenda a usar o sistema seguindo os vídeos na ordem certa. Marque cada aula como concluída — o seu progresso fica salvo.</p>' +
+    resume + corpo +
+    (list.length ? '<button class="hh-all" onclick="goTreinamentos()">Ver todos os treinamentos →</button>' : '') +
+    '</section>';
+}
+
 // ── telas ──
-function renderTrilhasIndex() {
+function renderTreinamentosIndex() {
   const list = allCourses();
   const last = readLast();
-  let html = '<div class="eyebrow">Trilhas · ' + esc(DATA.settings.company) + '</div>' +
-             '<h1 class="page-title">🎓 Trilhas</h1>' +
+  let html = '<div class="eyebrow">Treinamentos · ' + esc(DATA.settings.company) + '</div>' +
+             '<h1 class="page-title">🎓 Treinamentos</h1>' +
              '<p class="intro-desc">Vídeos e tutoriais na ordem certa. Marque cada aula como concluída — o seu progresso fica salvo neste navegador.</p>';
 
   if (last) {
@@ -2842,12 +2900,12 @@ function renderTrilhasIndex() {
   }
 
   if (isAdmin()) {
-    html += '<div class="admin-edit-bar"><button class="edit-pencil" onclick="openCourseFormInline()">➕ Nova trilha</button></div>';
+    html += '<div class="admin-edit-bar"><button class="edit-pencil" onclick="openCourseFormInline()">➕ Novo treinamento</button></div>';
   }
 
   if (!list.length) {
-    html += '<div class="tr-empty">Nenhuma trilha publicada ainda.' +
-            (isAdmin() ? '<br>Clique em <strong>Nova trilha</strong> para criar a primeira.' : '') + '</div>';
+    html += '<div class="tr-empty">Nenhum treinamento publicado ainda.' +
+            (isAdmin() ? '<br>Clique em <strong>Novo treinamento</strong> para criar o primeiro.' : '') + '</div>';
   } else {
     html += '<div class="tr-grid">' + list.map(c => {
       const st = courseStats(c);
@@ -2868,21 +2926,21 @@ function renderTrilhasIndex() {
 
 function renderCoursePage() {
   const c = courseById(currentCourse);
-  if (!c) { currentView = 'trilhas'; currentCourse = null; currentLesson = null; renderTrilhasIndex(); return; }
+  if (!c) { currentView = 'treinamentos'; currentCourse = null; currentLesson = null; renderTreinamentosIndex(); return; }
   const st = courseStats(c);
   const nx = nextPendingLesson(c);
 
-  let html = '<div class="tr-crumb"><a onclick="goTrilhas()">Trilhas</a><span>›</span><span>' + esc(c.name) + '</span></div>' +
+  let html = '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span><span>' + esc(c.name) + '</span></div>' +
              '<h1 class="page-title">' + esc(c.name) + '</h1>';
   if (c.desc) html += '<p class="intro-desc" style="margin-bottom:18px">' + esc(c.desc) + '</p>';
   html += progressBarHtml(st.pct) +
           '<div class="tr-count">' + st.done + ' de ' + plural(st.total, 'aula concluída', 'aulas concluídas') + '</div>';
   if (nx) {
     html += '<button class="btn btn-primary" onclick="openLesson(\'' + c.id + '\',\'' + nx.id + '\')">▶ ' +
-            (st.done ? 'Continuar de onde parou' : 'Começar a trilha') + '</button>';
+            (st.done ? 'Continuar de onde parou' : 'Começar o treinamento') + '</button>';
   }
   if (isAdmin()) {
-    html += '<div class="admin-edit-bar" style="margin-top:18px"><button class="edit-pencil" onclick="openCourseFormInline(\'' + c.id + '\')">✏️ Editar trilha e aulas</button></div>';
+    html += '<div class="admin-edit-bar" style="margin-top:18px"><button class="edit-pencil" onclick="openCourseFormInline(\'' + c.id + '\')">✏️ Editar treinamento e aulas</button></div>';
   }
 
   let n = 0;
@@ -2907,7 +2965,7 @@ function renderCoursePage() {
   });
 
   if (!courseLessons(c).length && !isAdmin()) {
-    html += '<div class="tr-empty" style="margin-top:20px">Esta trilha ainda não tem aulas publicadas.</div>';
+    html += '<div class="tr-empty" style="margin-top:20px">Este treinamento ainda não tem aulas publicadas.</div>';
   }
 
   document.getElementById('mainContent').innerHTML = html;
@@ -2918,7 +2976,7 @@ function renderCoursePage() {
 function renderLessonPage() {
   const c = courseById(currentCourse);
   const l = c ? lessonById(c, currentLesson) : null;
-  if (!c) { currentView = 'trilhas'; currentCourse = null; currentLesson = null; renderTrilhasIndex(); return; }
+  if (!c) { currentView = 'treinamentos'; currentCourse = null; currentLesson = null; renderTreinamentosIndex(); return; }
   if (!l) { currentView = 'course'; currentLesson = null; renderCoursePage(); return; }
 
   const mod = moduleOfLesson(c, l.id);
@@ -2926,7 +2984,7 @@ function renderLessonPage() {
   const st = courseStats(c);
   const done = isDone(l.id);
 
-  let html = '<div class="tr-crumb"><a onclick="goTrilhas()">Trilhas</a><span>›</span>' +
+  let html = '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span>' +
              '<a onclick="openCourse(\'' + c.id + '\')">' + esc(c.name) + '</a></div>';
   html += lessonVideoHtml(l);
   html += '<h1 class="lesson-title">' + esc(l.title) + '</h1>' +
@@ -2969,9 +3027,9 @@ function renderLessonPage() {
 function renderCoursesNav() {
   const list = allCourses();
   if (!list.length && !isAdmin()) return '';
-  let html = '<div class="sb-group">Trilhas</div>';
-  html += '<div class="sb-row"><button class="sb-item' + (currentView === 'trilhas' ? ' active' : '') +
-          '" onclick="goTrilhas()"><span class="sb-ic">🎓</span><span class="sb-tx">Todas as trilhas</span></button></div>';
+  let html = '<div class="sb-treinos"><div class="sb-group">Treinamentos</div>';
+  html += '<div class="sb-row"><button class="sb-item' + (currentView === 'treinamentos' ? ' active' : '') +
+          '" onclick="goTreinamentos()"><span class="sb-ic">🎓</span><span class="sb-tx">Todos os treinamentos</span></button></div>';
 
   list.forEach(c => {
     const inThis = (currentView === 'course' || currentView === 'lesson') && currentCourse === c.id;
@@ -3001,17 +3059,17 @@ function renderCoursesNav() {
     });
     if (isAdmin()) {
       html += '<button class="sb-lesson" style="color:var(--brand);font-weight:600" onclick="openCourseFormInline(\'' + c.id + '\')">' +
-              '<span class="sb-tick" style="border-color:transparent;color:var(--brand)">✎</span><span class="sb-tx">Editar trilha</span></button>';
+              '<span class="sb-tick" style="border-color:transparent;color:var(--brand)">✎</span><span class="sb-tx">Editar treinamento</span></button>';
     }
     html += '</div>';
   });
 
-  if (isAdmin()) html += '<button class="sb-addmenu" onclick="openCourseFormInline()">➕ Nova trilha</button>';
-  return html;
+  if (isAdmin()) html += '<button class="sb-addmenu" onclick="openCourseFormInline()">➕ Novo treinamento</button>';
+  return html + '</div>';
 }
 
 // ═══════════════════════════════════════════
-// ADMIN — TRILHAS
+// ADMIN — TREINAMENTOS
 // ═══════════════════════════════════════════
 let courseFromPage = false;
 let lessonFromPage = false;
@@ -3022,7 +3080,7 @@ function renderAdminCourses() {
   if (!el) return;
   const list = allCourses();
   if (!list.length) {
-    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t4);font-size:13px">Nenhuma trilha ainda. Clique em "+ Nova trilha".</div>';
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t4);font-size:13px">Nenhum treinamento ainda. Clique em "+ Novo treinamento".</div>';
     return;
   }
   el.innerHTML = list.map((c, i) => {
@@ -3031,7 +3089,7 @@ function renderAdminCourses() {
       '<div style="min-width:0">' +
         '<div class="admin-sec-name">' + esc(c.name) + '</div>' +
         '<div class="admin-sec-id">' + plural(st.total, 'aula', 'aulas') + ' · ' +
-          plural((c.modules || []).length, 'módulo', 'módulos') + ' · /trilhas/' + (COURSE_SLUG[c.id] || c.id) + '</div>' +
+          plural((c.modules || []).length, 'módulo', 'módulos') + ' · /treinamentos/' + (COURSE_SLUG[c.id] || c.id) + '</div>' +
       '</div>' +
       '<div class="admin-faq-actions">' +
         '<button class="btn btn-secondary btn-sm" title="Subir" onclick="moveCourse(\'' + c.id + '\',-1)"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
@@ -3056,17 +3114,17 @@ function deleteCourse(id) {
   const c = courseById(id);
   if (!c) return;
   const st = courseStats(c);
-  if (!confirm('Excluir a trilha "' + c.name + '"' + (st.total ? ' e as suas ' + st.total + ' aula(s)' : '') + '?')) return;
+  if (!confirm('Excluir o treinamento "' + c.name + '"' + (st.total ? ' e as suas ' + st.total + ' aula(s)' : '') + '?')) return;
   DATA.courses = (DATA.courses || []).filter(x => x.id !== id);
   if (currentCourse === id) {
-    currentView = 'trilhas'; currentCourse = null; currentLesson = null;
-    history.replaceState({ view: 'trilhas' }, '', urlTrilhas());
+    currentView = 'treinamentos'; currentCourse = null; currentLesson = null;
+    history.replaceState({ view: 'treinamentos' }, '', urlTreinamentos());
   }
   saveData(DATA); render(); renderAdminCourses();
-  showToast('Trilha excluída.');
+  showToast('Treinamento excluído.');
 }
 
-// ── formulário da trilha ──
+// ── formulário da treinamento ──
 function openCourseForm(id) {
   if (!isAdmin()) return;
   document.getElementById('adminOverlay').classList.add('open');
@@ -3077,7 +3135,7 @@ function openCourseForm(id) {
   document.getElementById('lessonForm').style.display = 'none';
   document.getElementById('courseForm').style.display = 'flex';
   const c = id ? courseById(id) : null;
-  document.getElementById('courseFormTitle').textContent = c ? 'Editar trilha' : 'Nova trilha';
+  document.getElementById('courseFormTitle').textContent = c ? 'Editar treinamento' : 'Novo treinamento';
   document.getElementById('courseFormId').value = c ? c.id : '';
   document.getElementById('courseFormName').value = c ? c.name : '';
   document.getElementById('courseFormDesc').value = c ? (c.desc || '') : '';
@@ -3103,13 +3161,13 @@ function closeCourseForm() {
 function courseSlugPreview() {
   const name = document.getElementById('courseFormName').value;
   const slug = document.getElementById('courseFormSlug').value;
-  const final = slugify(slug) || slugify(name) || 'trilha';
+  const final = slugify(slug) || slugify(name) || 'treinamento';
   const el = document.getElementById('courseSlugPreview');
-  if (el) el.textContent = 'Link: ' + location.origin + '/trilhas/' + final;
+  if (el) el.textContent = 'Link: ' + location.origin + '/treinamentos/' + final;
 }
 function saveCourse() {
   const name = document.getElementById('courseFormName').value.trim();
-  if (!name) { alert('Dê um nome para a trilha.'); return; }
+  if (!name) { alert('Dê um nome para o treinamento.'); return; }
   const id = document.getElementById('courseFormId').value;
   const desc = document.getElementById('courseFormDesc').value.trim();
   const slug = slugify(document.getElementById('courseFormSlug').value.trim());
@@ -3119,18 +3177,18 @@ function saveCourse() {
     if (!c) return;
     c.name = name; c.desc = desc; c.slug = slug;
     saveData(DATA); render(); renderAdminCourses(); renderCourseBuilder();
-    showToast('Trilha atualizada!');
+    showToast('Treinamento atualizado!');
   } else {
     const c = { id: uid('c'), name, desc, slug, order: DATA.courses.length, modules: [{ id: uid('m'), name: 'Módulo 1', lessons: [] }] };
     DATA.courses.push(c);
     saveData(DATA); render(); renderAdminCourses();
     // reabre em modo edição para liberar o construtor de módulos/aulas
     document.getElementById('courseFormId').value = c.id;
-    document.getElementById('courseFormTitle').textContent = 'Editar trilha';
+    document.getElementById('courseFormTitle').textContent = 'Editar treinamento';
     document.getElementById('courseBuilderWrap').style.display = '';
     courseSlugPreview();
     renderCourseBuilder();
-    showToast('Trilha criada — agora adicione as aulas.');
+    showToast('Treinamento criado — agora adicione as aulas.');
   }
 }
 
@@ -3285,7 +3343,7 @@ function lessonSlugPreview() {
   const slug = document.getElementById('lessonFormSlug').value;
   const final = slugify(slug) || slugify(t) || 'aula';
   const el = document.getElementById('lessonSlugPreview');
-  if (el) el.textContent = 'Link: ' + location.origin + '/trilhas/trilha/' + final;
+  if (el) el.textContent = 'Link: ' + location.origin + '/treinamentos/treinamento/' + final;
 }
 function parseMaterials(raw) {
   return (raw || '').split('\n').map(line => {
