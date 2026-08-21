@@ -282,6 +282,116 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .sb-group.drop-group{background:var(--brand-bg);color:var(--brand);outline:2px dashed var(--brand);outline-offset:-2px;border-radius:6px}
 
 /* ═══════════════════════════════════════════════════════════
+   TRILHAS — área de membros (vídeo + texto em ordem)
+   ═══════════════════════════════════════════════════════════ */
+
+/* barra de progresso (usada em vários lugares) */
+.tr-bar{height:6px;border-radius:99px;background:var(--bd2);overflow:hidden}
+.tr-bar span{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .3s}
+.tr-bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.tr-bar-row .tr-bar{flex:1}
+.tr-pct{font-size:12px;font-weight:600;color:var(--t3);min-width:36px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* card "continuar de onde parou" */
+.tr-resume{display:flex;align-items:center;gap:14px;border:1px solid var(--bd);border-left:3px solid var(--brand);background:var(--brand-bg);border-radius:10px;padding:14px 16px;margin:0 0 26px;cursor:pointer;transition:box-shadow .15s}
+.tr-resume:hover{box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.tr-resume-ico{font-size:20px;flex-shrink:0;color:var(--brand)}
+.tr-resume-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--brand);margin-bottom:3px}
+.tr-resume-name{font-size:15px;font-weight:600;color:var(--t1);line-height:1.35}
+.tr-resume-sub{font-size:13px;color:var(--t3);margin-top:2px}
+
+/* lista de trilhas */
+.tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+.tr-card{border:1px solid var(--bd);border-radius:12px;padding:18px 20px;background:var(--bg);cursor:pointer;display:flex;flex-direction:column;gap:7px;transition:border-color .15s,box-shadow .15s;text-align:left;font-family:var(--font)}
+.tr-card:hover{border-color:var(--brand);box-shadow:0 6px 20px rgba(0,0,0,.07)}
+.tr-card-name{font-size:16px;font-weight:600;color:var(--t1);line-height:1.35}
+.tr-card-desc{font-size:13.5px;color:var(--t3);line-height:1.6;flex:1}
+.tr-card-meta{font-size:12.5px;color:var(--t4)}
+.tr-empty{border:1px dashed var(--bd);border-radius:10px;padding:28px 20px;text-align:center;color:var(--t3);font-size:14px;line-height:1.6}
+
+/* página da trilha */
+.tr-crumb{font-size:12.5px;color:var(--t4);margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tr-crumb a{color:var(--t3);cursor:pointer}
+.tr-crumb a:hover{color:var(--brand)}
+.tr-count{font-size:13px;color:var(--t3);margin-bottom:20px}
+.tr-mod{margin-top:24px}
+.tr-mod-name{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t4);margin-bottom:8px}
+.tr-lessons{border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.tr-lesson{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;cursor:pointer;border:none;border-bottom:1px solid var(--bd2);background:var(--bg);transition:background .12s;text-align:left;font-family:var(--font)}
+.tr-lesson:last-child{border-bottom:none}
+.tr-lesson:hover{background:var(--bg2)}
+.tr-tick{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0}
+.tr-lesson.done .tr-tick{background:var(--brand);border-color:var(--brand);color:#fff}
+.tr-lesson-n{font-size:12.5px;color:var(--t4);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:16px}
+.tr-lesson-t{flex:1;min-width:0;font-size:14.5px;color:var(--t2);line-height:1.4}
+.tr-lesson.done .tr-lesson-t{color:var(--t3)}
+.tr-dur{font-size:12.5px;color:var(--t4);flex-shrink:0}
+
+/* página da aula */
+.lesson-title{font-size:26px;font-weight:700;color:var(--t1);line-height:1.25;letter-spacing:-.3px;margin:16px 0 6px}
+.lesson-meta{font-size:13px;color:var(--t4);margin-bottom:20px}
+.lesson-body{font-size:16px;color:var(--t2);line-height:1.85}
+.lesson-body p{margin-bottom:14px}
+.lesson-body h2{font-size:20px;font-weight:600;color:var(--t1);margin:26px 0 10px;scroll-margin-top:72px}
+.lesson-body h3{font-size:17px;font-weight:600;color:var(--t1);margin:20px 0 8px;scroll-margin-top:72px}
+.lesson-body ul,.lesson-body ol{padding-left:24px;margin:10px 0 16px}
+.lesson-body li{margin-bottom:8px;line-height:1.75}
+.lesson-body strong{font-weight:600;color:var(--t1)}
+.lesson-body img{max-width:100%;height:auto;border-radius:8px;margin:12px 0;border:1px solid var(--bd)}
+.lesson-body a{color:var(--brand);text-decoration:underline;text-underline-offset:2px}
+.lesson-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+.lesson-body th{background:var(--bg2);font-weight:600;color:var(--t1);padding:10px 14px;text-align:left;border:1px solid var(--bd)}
+.lesson-body td{padding:10px 14px;border:1px solid var(--bd);vertical-align:top;line-height:1.65}
+.lesson-body pre{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:14px 18px;margin:12px 0;overflow-x:auto}
+.lesson-body code{font-size:13.5px;background:var(--bg2);border:1px solid var(--bd);border-radius:4px;padding:2px 7px;color:var(--brand);font-family:'Courier New',monospace}
+.lesson-body blockquote{border-left:4px solid var(--brand);background:var(--brand-bg);padding:12px 18px;margin:14px 0;border-radius:0 8px 8px 0}
+
+.mat-list{border:1px solid var(--bd);border-radius:10px;padding:4px 0 6px;margin:24px 0}
+.mat-title{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t4);padding:10px 16px 6px}
+.mat-item{display:flex;align-items:center;gap:9px;padding:9px 16px;font-size:14px;color:var(--t2)}
+.mat-item:hover{background:var(--bg2);color:var(--brand)}
+
+.tr-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:28px 0 0;padding-top:22px;border-top:1px solid var(--bd)}
+.tr-done-count{font-size:12.5px;color:var(--t4);margin-left:auto}
+.btn-done{background:var(--brand);color:#fff}
+.btn-done:hover{background:var(--brand-dark)}
+.btn-undone{background:var(--bg2);color:var(--t3);border:1px solid var(--bd)}
+.btn-undone:hover{background:var(--bd2)}
+.tr-nav{display:flex;gap:10px;margin-top:16px}
+.tr-nav-btn{flex:1;min-width:0;border:1px solid var(--bd);border-radius:10px;padding:11px 14px;background:var(--bg);cursor:pointer;text-align:left;font-family:var(--font);transition:border-color .15s}
+.tr-nav-btn:hover{border-color:var(--brand)}
+.tr-nav-btn.next{text-align:right}
+.tr-nav-lbl{font-size:11.5px;color:var(--t4);margin-bottom:3px}
+.tr-nav-t{font-size:13.5px;color:var(--t1);font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* menu lateral — trilhas e aulas */
+.sb-mod{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t4);padding:10px 16px 3px 28px}
+.sb-prog{padding:8px 16px 8px 28px}
+.sb-lesson{display:flex;align-items:center;gap:8px;width:100%;padding:6px 14px 6px 28px;font-size:12.5px;line-height:1.35;color:var(--t3);cursor:pointer;border:none;background:none;text-align:left;font-family:var(--font);border-left:2px solid transparent;transition:background .12s,color .12s}
+.sb-lesson:hover{color:var(--t1);background:var(--bg2)}
+.sb-lesson.active{color:var(--brand);font-weight:600;border-left-color:var(--brand);background:var(--brand-bg)}
+.sb-lesson>span:last-child{flex:1;min-width:0}
+.sb-tick{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;color:transparent;line-height:1}
+.sb-lesson.done .sb-tick{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* admin — construtor de módulos e aulas */
+.cb-mod{border:1px solid var(--bd);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.cb-mod-hdr{display:flex;align-items:center;gap:6px;padding:7px 9px;background:var(--bg2);border-bottom:1px solid var(--bd)}
+.cb-mod-hdr input{flex:1;min-width:0;border:1px solid transparent;background:none;border-radius:5px;padding:5px 7px;font-size:13.5px;font-weight:600;color:var(--t1);font-family:var(--font)}
+.cb-mod-hdr input:focus{outline:none;border-color:var(--brand);background:var(--bg)}
+.cb-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--bd2);font-size:13.5px;color:var(--t2)}
+.cb-row:last-of-type{border-bottom:none}
+.cb-row-t{flex:1;min-width:0;line-height:1.4}
+.cb-row-sub{font-size:12px;color:var(--t4);margin-top:2px}
+.cb-acts{display:flex;gap:4px;flex-shrink:0}
+.cb-btn{width:28px;height:28px;border:1px solid var(--bd);background:var(--bg);border-radius:6px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.cb-btn:hover:not(:disabled){border-color:var(--brand);background:var(--brand-bg)}
+.cb-btn:disabled{opacity:.35;cursor:default}
+.cb-add{margin:9px 12px 11px;display:inline-flex;align-items:center;gap:5px;border:1px dashed var(--brand);color:var(--brand);background:var(--brand-bg);border-radius:7px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--font);font-weight:600}
+.cb-add:hover{background:var(--brand);color:#fff}
+.cb-empty{padding:14px 12px;font-size:13px;color:var(--t4)}
+
+/* ═══════════════════════════════════════════════════════════
    RESPONSIVO — tablet e celular
    ═══════════════════════════════════════════════════════════ */
 
@@ -325,6 +435,7 @@ html.nav-open,body.nav-open{overflow:hidden}
   .hdr-search{min-width:0;flex:1;height:36px}
   .kbd{display:none}
   .hdr-nav{padding-right:8px;gap:2px}
+  .lnk-suporte{display:none}
 
   .sidebar{width:min(86vw,300px);z-index:200;transform:translateX(-100%);transition:transform .24s ease;box-shadow:0 0 40px rgba(0,0,0,.18)}
   .sidebar.open{transform:translateX(0)}
@@ -366,7 +477,9 @@ html.nav-open,body.nav-open{overflow:hidden}
   .rte-btn{min-width:34px;height:34px}
   .rte-select{height:34px}
   .rte-area,.rte-source{min-height:200px;max-height:42vh}
-
+  .tr-grid{grid-template-columns:1fr}
+  .tr-nav{flex-direction:column}
+  .tr-nav-btn.next{text-align:left}
 }
 
 /* ─── ≤560px: celular ─── */
@@ -379,8 +492,12 @@ html.nav-open,body.nav-open{overflow:hidden}
   .hdr.searching .hdr-mid{display:flex;position:absolute;inset:0;background:var(--bg);padding:0 8px;gap:6px;z-index:5}
   .hdr.searching .hdr-burger,.hdr.searching .hdr-logo,.hdr.searching .hdr-nav{visibility:hidden}
   .hdr.searching .hdr-search-close{display:inline-flex;width:34px;height:34px;font-size:16px}
-  .lnk-suporte{display:none}
+  .lnk-trilhas{display:none}
   .lbl-admin{display:none}
+  .lesson-title{font-size:21px}
+  .tr-lesson{padding:13px 12px;gap:10px}
+  .tr-lesson-t{font-size:14px}
+  .tr-card{padding:16px}
   .btn-admin{padding:6px 10px!important;font-size:14px}
   .logo-sep,.logo-sub{display:none}
 
@@ -436,6 +553,7 @@ html.nav-open,body.nav-open{overflow:hidden}
     <button class="hdr-searchbtn" type="button" aria-label="Pesquisar" onclick="openMobileSearch()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5"/></svg>
     </button>
+    <a href="/trilhas" class="lnk-trilhas" onclick="event.preventDefault();goTrilhas()">TRILHAS</a>
     <a href="mailto:suporte@nxdigital.com.br" class="lnk-suporte">SUPORTE</a>
     <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙<span class="lbl-admin"> Admin</span></a>
   </nav>
@@ -464,10 +582,10 @@ html.nav-open,body.nav-open{overflow:hidden}
   <article class="content" id="mainContent"></article>
 
   <!-- RIGHT PANEL -->
-  <aside class="rp">
-    <div class="rp-title">Nesta página</div>
+  <aside class="rp" id="rightPanel">
+    <div class="rp-title" id="rpTitle">Nesta página</div>
     <div id="rpLinks"></div>
-    <hr class="rp-div">
+    <hr class="rp-div" id="rpDiv">
     <div class="rp-fb-label">Isto foi útil?</div>
     <div class="rp-stars">
       <button class="rp-star" onclick="fbk(this)">😊</button>
@@ -514,6 +632,7 @@ html.nav-open,body.nav-open{overflow:hidden}
       <div class="admin-tabs">
         <div class="admin-tab active" onclick="switchTab(this,'tab-faqs')">Perguntas</div>
         <div class="admin-tab" onclick="switchTab(this,'tab-sections')">Seções</div>
+        <div class="admin-tab" onclick="switchTab(this,'tab-courses')">Trilhas</div>
         <div class="admin-tab" onclick="switchTab(this,'tab-settings')">Configurações</div>
       </div>
 
@@ -533,6 +652,15 @@ html.nav-open,body.nav-open{overflow:hidden}
           <button class="btn btn-primary btn-sm" onclick="openSecForm()">+ Nova seção</button>
         </div>
         <div id="secList"></div>
+      </div>
+
+      <!-- TAB: TRILHAS -->
+      <div class="admin-tab-panel" id="tab-courses">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--t3)">Cursos em vídeo que o aluno segue em ordem</span>
+          <button class="btn btn-primary btn-sm" onclick="openCourseForm()">+ Nova trilha</button>
+        </div>
+        <div id="courseList"></div>
       </div>
 
       <!-- TAB: CONFIGURAÇÕES -->
@@ -739,6 +867,130 @@ html.nav-open,body.nav-open{overflow:hidden}
       <button class="btn btn-primary" onclick="saveSec()">Salvar seção</button>
     </div>
   </div>
+
+  <!-- TRILHA (CURSO) FORM MODAL -->
+  <div class="modal" id="courseForm" style="display:none;width:840px;max-width:calc(100vw - 24px)">
+    <div class="modal-hdr">
+      <h2 id="courseFormTitle">Nova trilha</h2>
+      <button class="modal-close" onclick="closeCourseForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="courseFormId">
+      <div class="form-group">
+        <label class="form-label">Nome da trilha *</label>
+        <input class="form-input" id="courseFormName" type="text" placeholder="Ex: 🎓 Primeiros passos na NX" oninput="courseSlugPreview()">
+        <div class="form-hint">Use um emoji no início para ficar igual ao padrão do menu.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição curta (opcional)</label>
+        <textarea class="form-textarea" id="courseFormDesc" style="min-height:70px" placeholder="Uma frase explicando o que a pessoa aprende nesta trilha..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link personalizado (opcional)</label>
+        <input class="form-input" id="courseFormSlug" type="text" placeholder="Ex: primeiros-passos (gerado do nome se vazio)" oninput="courseSlugPreview()">
+        <div class="form-hint" id="courseSlugPreview"></div>
+      </div>
+
+      <div id="courseBuilderWrap" style="display:none">
+        <hr style="border:none;border-top:1px solid var(--bd);margin:22px 0 16px">
+        <label class="form-label">Módulos e aulas</label>
+        <div class="form-hint" style="margin-bottom:12px">A ordem aqui é a ordem que o aluno vê. Use ↑ ↓ para reorganizar. Cada alteração já é publicada.</div>
+        <div id="courseBuilder"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeCourseForm()">Fechar</button>
+      <button class="btn btn-primary" onclick="saveCourse()">Salvar trilha</button>
+    </div>
+  </div>
+
+  <!-- AULA FORM MODAL -->
+  <div class="modal" id="lessonForm" style="display:none;width:840px;max-width:calc(100vw - 24px)">
+    <div class="modal-hdr">
+      <h2 id="lessonFormTitle">Nova aula</h2>
+      <button class="modal-close" onclick="closeLessonForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Título da aula *</label>
+        <input class="form-input" id="lessonFormT" type="text" placeholder="Ex: Conectando o seu WhatsApp" oninput="lessonSlugPreview()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Módulo</label>
+        <select class="form-select" id="lessonFormMod"></select>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div class="form-group" style="flex:1;min-width:220px">
+          <label class="form-label">Link do vídeo</label>
+          <input class="form-input" id="lessonFormVideo" type="text" placeholder="Cole o link do YouTube">
+          <div class="form-hint">YouTube (inclusive vídeo "não listado"). Outros players funcionam se você colar o link de incorporação (embed).</div>
+        </div>
+        <div class="form-group" style="width:130px">
+          <label class="form-label">Duração</label>
+          <input class="form-input" id="lessonFormDur" type="text" placeholder="8:42">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Conteúdo escrito (abaixo do vídeo)</label>
+        <div class="rte-wrap">
+          <div class="rte-toolbar">
+            <select class="rte-select" title="Estilo do texto" onchange="rteBlock(this.value);this.selectedIndex=0">
+              <option value="">Parágrafo</option>
+              <option value="h2">Título grande (H2)</option>
+              <option value="h3">Subtítulo (H3)</option>
+              <option value="p">Texto normal</option>
+              <option value="blockquote">Citação</option>
+            </select>
+            <select class="rte-select" title="Tamanho da letra" onchange="rteFontSize(this.value);this.selectedIndex=0">
+              <option value="">Tamanho</option>
+              <option value="13">Pequeno</option>
+              <option value="16">Normal</option>
+              <option value="20">Grande</option>
+              <option value="26">Muito grande</option>
+              <option value="34">Enorme</option>
+            </select>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Negrito" onclick="rteCmd('bold')" style="font-weight:800">B</button>
+            <button type="button" class="rte-btn" title="Itálico" onclick="rteCmd('italic')" style="font-style:italic">I</button>
+            <button type="button" class="rte-btn" title="Sublinhado" onclick="rteCmd('underline')" style="text-decoration:underline">U</button>
+            <button type="button" class="rte-btn" title="Riscado" onclick="rteCmd('strikeThrough')" style="text-decoration:line-through">S</button>
+            <label class="rte-btn" title="Cor do texto" style="padding:0;position:relative;overflow:hidden">A<input type="color" oninput="rteCmd('foreColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <label class="rte-btn" title="Cor de fundo (marca-texto)" style="padding:0;position:relative;overflow:hidden;background:#fff3a0">✎<input type="color" value="#fff3a0" oninput="rteCmd('hiliteColor',this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Lista com marcadores" onclick="rteCmd('insertUnorderedList')">• ☰</button>
+            <button type="button" class="rte-btn" title="Lista numerada" onclick="rteCmd('insertOrderedList')">1.</button>
+            <button type="button" class="rte-btn" title="Alinhar à esquerda" onclick="rteCmd('justifyLeft')">⬅</button>
+            <button type="button" class="rte-btn" title="Centralizar" onclick="rteCmd('justifyCenter')">⬌</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Inserir link" onclick="rteLink()">🔗</button>
+            <button type="button" class="rte-btn" title="Inserir imagem" onclick="rteImage()">🖼️</button>
+            <button type="button" class="rte-btn" title="Inserir vídeo do YouTube" onclick="rteVideo()">▶️</button>
+            <button type="button" class="rte-btn" title="Caixa de destaque" onclick="rteHint()">💡</button>
+            <button type="button" class="rte-btn" title="Código inline" onclick="rteInlineCode()">&lt;/&gt;</button>
+            <span class="rte-sep"></span>
+            <button type="button" class="rte-btn" title="Limpar formatação" onclick="rteCmd('removeFormat')">⌫</button>
+            <button type="button" class="rte-btn" id="lessonRteHtmlBtn" title="Ver/editar código HTML" onclick="rteToggleHtml()">HTML</button>
+          </div>
+          <div class="rte-area" id="lessonFormBody" contenteditable="true" data-ph="Passo a passo, prints, observações... aparece logo abaixo do vídeo."></div>
+          <textarea class="rte-source" id="lessonFormBodySource" style="display:none"></textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Materiais para download (opcional)</label>
+        <textarea class="form-textarea" id="lessonFormMats" style="min-height:76px" placeholder="Planilha de controle | https://exemplo.com/planilha.xlsx"></textarea>
+        <div class="form-hint">Um por linha, no formato <code class="ic">Nome do material | link</code>.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link personalizado (opcional)</label>
+        <input class="form-input" id="lessonFormSlug" type="text" placeholder="Ex: conectar-whatsapp (gerado do título se vazio)" oninput="lessonSlugPreview()">
+        <div class="form-hint" id="lessonSlugPreview"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeLessonForm()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLesson()">Salvar aula</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -930,15 +1182,20 @@ const DEFAULT_DATA = {
 // LOAD / SAVE  (servidor + banco + cache local)
 // ═══════════════════════════════════════════
 const CACHE_KEY = 'nx_content_cache';
+// completa os campos que documentos antigos podem não ter (ex.: trilhas)
+function normalizeDoc(d) {
+  if (d && !Array.isArray(d.courses)) d.courses = [];
+  return d;
+}
 function readCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (raw) { const d = JSON.parse(raw); if (d && d.sections && d.faqs) return d; }
+    if (raw) { const d = JSON.parse(raw); if (d && d.sections && d.faqs) return normalizeDoc(d); }
   } catch (e) {}
   return null;
 }
 // começa já com o conteúdo salvo no navegador (instantâneo); se não houver, usa o padrão embutido
-let DATA = readCache() || JSON.parse(JSON.stringify(DEFAULT_DATA));
+let DATA = readCache() || normalizeDoc(JSON.parse(JSON.stringify(DEFAULT_DATA)));
 let ADMIN_TOKEN = null;
 
 function showBootLoader() { const el = document.getElementById('bootLoader'); if (el) el.style.display = 'flex'; }
@@ -947,13 +1204,12 @@ function hideBootLoader() { const el = document.getElementById('bootLoader'); if
 let bootRendered = false;
 function renderCurrent() {
   buildSlugs();
-  const { secId, faqId } = resolvePath(location.pathname);
-  currentSec = secId;
-  openAncestors(secId);
+  const r = resolvePath(location.pathname);
+  applyRoute(r);
   render();
   bootRendered = true;
   hideBootLoader();
-  if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 120);
+  if (r.faqId) setTimeout(() => scrollToAnchor('faq-' + r.faqId), 120);
 }
 
 async function loadFromServer() {
@@ -963,6 +1219,7 @@ async function loadFromServer() {
     if (r.ok) {
       const d = await r.json();
       if (d && d.sections && d.faqs) {
+        normalizeDoc(d);
         changed = JSON.stringify(d) !== JSON.stringify(DATA);
         DATA = d;
         try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {}
@@ -1107,13 +1364,16 @@ function renderSidebar() {
   let html = '';
   GROUP_ORDER.forEach(grp => {
     const grpSecs = childSections(null).filter(s => (s.group || 'geral') === grp);
-    if (!grpSecs.length) return;
-    const label = GROUP_LABELS[grp];
-    if (label) {
-      const gdnd = isAdmin() ? ` ondragover="navGroupOver(event)" ondragleave="navGroupLeave(event)" ondrop="navGroupDrop(event,'${grp}')"` : '';
-      html += `<div class="sb-group"${gdnd}>${label}</div>`;
+    if (grpSecs.length) {
+      const label = GROUP_LABELS[grp];
+      if (label) {
+        const gdnd = isAdmin() ? ` ondragover="navGroupOver(event)" ondragleave="navGroupLeave(event)" ondrop="navGroupDrop(event,'${grp}')"` : '';
+        html += `<div class="sb-group"${gdnd}>${label}</div>`;
+      }
+      grpSecs.forEach(sec => { html += renderNavNode(sec, 0); });
     }
-    grpSecs.forEach(sec => { html += renderNavNode(sec, 0); });
+    // as trilhas entram logo depois do grupo inicial
+    if (grp === 'geral') html += renderCoursesNav();
   });
   if (isAdmin()) {
     html += `<button class="sb-addmenu" onclick="addRootSection()">➕ Adicionar menu principal</button>`;
@@ -1212,6 +1472,9 @@ function moveSection(draggedId, mode, targetOrGroup) {
 }
 
 function renderContent() {
+  if (currentView === 'trilhas') { renderTrilhasIndex(); return; }
+  if (currentView === 'course')  { renderCoursePage(); return; }
+  if (currentView === 'lesson')  { renderLessonPage(); return; }
   const sec = DATA.sections.find(s => s.id === currentSec) || DATA.sections.sort((a,b)=>a.order-b.order)[0];
   if (!sec) return;
   const faqs = DATA.faqs.filter(f => f.secId === sec.id);
@@ -1306,7 +1569,24 @@ function enhanceContent() {
 }
 
 function renderRpLinks() {
-  const heads = [...document.querySelectorAll('#mainContent h2.sec-heading')];
+  const rp = document.getElementById('rightPanel');
+  const rpTitle = document.getElementById('rpTitle');
+  const oldToc = document.getElementById('tocMobile');
+  if (oldToc) oldToc.remove();
+  // as telas de trilha já têm a lista de aulas no menu lateral
+  if (currentView === 'trilhas' || currentView === 'course') {
+    if (rp) rp.style.display = 'none';
+    document.getElementById('rpLinks').innerHTML = '';
+    return;
+  }
+  if (rp) rp.style.display = '';
+  const sel = currentView === 'lesson'
+    ? '#mainContent .lesson-body h2, #mainContent .lesson-body h3'
+    : '#mainContent h2.sec-heading';
+  const heads = [...document.querySelectorAll(sel)];
+  const rpDiv = document.getElementById('rpDiv');
+  if (rpTitle) rpTitle.style.display = heads.length ? '' : 'none';
+  if (rpDiv) rpDiv.style.display = heads.length ? '' : 'none';
   let html = '';
   heads.forEach((h, i) => {
     if (!h.id) h.id = 'h-' + i;
@@ -1343,9 +1623,14 @@ function renderMobileToc(heads, html) {
 // ═══════════════════════════════════════════
 let currentSec = 'intro';
 let openSecs = new Set();
+// qual tela está no ar: 'sec' (central de ajuda) ou as telas de trilhas
+let currentView = 'sec';
+let currentCourse = null;
+let currentLesson = null;
 
 // ─── Links personalizados (slugs) ───
 let SEC_SLUG = {}, FAQ_SLUG = {}, SEC_BY_SLUG = {}, FAQ_BY_SLUG = {};
+let COURSE_SLUG = {}, COURSE_BY_SLUG = {}, LESSON_SLUG = {}, LESSON_BY_SLUG = {};
 
 function slugify(str) {
   return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -1375,6 +1660,31 @@ function buildSlugs() {
     usedFaq[f.secId].add(slug);
     FAQ_SLUG[f.id] = slug; FAQ_BY_SLUG[f.secId + '/' + slug] = f.id;
   });
+  buildCourseSlugs();
+}
+
+function buildCourseSlugs() {
+  COURSE_SLUG = {}; COURSE_BY_SLUG = {}; LESSON_SLUG = {}; LESSON_BY_SLUG = {};
+  const usedCourse = new Set();
+  (DATA.courses || []).forEach(c => {
+    let base = (c.slug && slugify(c.slug)) || slugify(c.name) || c.id;
+    if (!base) base = c.id;
+    let slug = base, n = 2;
+    while (usedCourse.has(slug)) { slug = base + '-' + n; n++; }
+    usedCourse.add(slug);
+    COURSE_SLUG[c.id] = slug; COURSE_BY_SLUG[slug] = c.id;
+    const usedL = new Set();
+    courseLessons(c).forEach(x => {
+      const l = x.lesson;
+      let b = (l.slug && slugify(l.slug)) || slugify(l.title) || l.id;
+      if (!b) b = l.id;
+      b = b.slice(0, 60).replace(/-+$/, '');
+      let s2 = b, k = 2;
+      while (usedL.has(s2)) { s2 = b + '-' + k; k++; }
+      usedL.add(s2);
+      LESSON_SLUG[l.id] = s2; LESSON_BY_SLUG[c.id + '/' + s2] = l.id;
+    });
+  });
 }
 
 function urlForSec(secId) {
@@ -1388,12 +1698,34 @@ function urlForFaq(faqId) {
 }
 function resolvePath(pathname) {
   const parts = decodeURIComponent(pathname || '/').replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
-  if (parts.length === 0) return { secId: 'intro' };
+  if (parts.length === 0) return { view: 'sec', secId: 'intro' };
+  // /trilhas, /trilhas/curso, /trilhas/curso/aula
+  if (parts[0] === 'trilhas') {
+    if (!parts[1]) return { view: 'trilhas' };
+    const courseId = COURSE_BY_SLUG[parts[1]];
+    if (!courseId) return { view: 'trilhas' };
+    if (!parts[2]) return { view: 'course', courseId };
+    const lessonId = LESSON_BY_SLUG[courseId + '/' + parts[2]] || null;
+    return lessonId ? { view: 'lesson', courseId, lessonId } : { view: 'course', courseId };
+  }
   const secId = SEC_BY_SLUG[parts[0]];
-  if (!secId) return { secId: 'intro' };
+  if (!secId) return { view: 'sec', secId: 'intro' };
   let faqId = null;
   if (parts[1]) faqId = FAQ_BY_SLUG[secId + '/' + parts[1]] || null;
-  return { secId, faqId };
+  return { view: 'sec', secId, faqId };
+}
+
+// aplica o resultado de resolvePath ao estado da tela
+function applyRoute(r) {
+  currentView = r.view || 'sec';
+  if (currentView === 'sec') {
+    currentSec = r.secId;
+    currentCourse = null; currentLesson = null;
+    openAncestors(r.secId);
+  } else {
+    currentCourse = r.courseId || null;
+    currentLesson = r.lessonId || null;
+  }
 }
 
 function openAncestors(secId) {
@@ -1402,6 +1734,7 @@ function openAncestors(secId) {
 }
 
 function navigateTo(secId) {
+  currentView = 'sec'; currentCourse = null; currentLesson = null;
   const hasChildren = childSections(secId).length > 0 || DATA.faqs.some(f => f.secId === secId);
   openAncestors(secId);
   if (hasChildren) {
@@ -1424,7 +1757,9 @@ function scrollToAnchor(id) {
 function jumpToFaq(faqId) {
   const faq = DATA.faqs.find(f => f.id === faqId);
   if (!faq) return;
-  if (faq.secId !== currentSec) {
+  const cameFromTrilhas = currentView !== 'sec';
+  currentView = 'sec'; currentCourse = null; currentLesson = null;
+  if (cameFromTrilhas || faq.secId !== currentSec) {
     currentSec = faq.secId;
     openAncestors(faq.secId);
     openSecs.add(faq.secId);
@@ -1445,13 +1780,12 @@ function jumpToFaq(faqId) {
 // botão voltar/avançar do navegador
 window.addEventListener('popstate', () => {
   closeSidebar();
-  const { secId, faqId } = resolvePath(location.pathname);
-  currentSec = secId;
-  openAncestors(secId);
+  const r = resolvePath(location.pathname);
+  applyRoute(r);
   renderContent();
   renderRpLinks();
   renderSidebar();
-  if (faqId) setTimeout(() => scrollToAnchor('faq-' + faqId), 60);
+  if (r.faqId) setTimeout(() => scrollToAnchor('faq-' + r.faqId), 60);
 });
 
 function rpClick(a) {
@@ -1535,24 +1869,52 @@ function doSearch(val) {
   const drop = document.getElementById('searchDrop');
   if (!val || val.length < 2) { drop.style.display = 'none'; return; }
   const v = val.toLowerCase();
-  const hits = DATA.faqs.filter(f =>
-    f.q.toLowerCase().includes(v) ||
-    (f.tags||'').toLowerCase().includes(v) ||
-    f.a.toLowerCase().includes(v)
-  ).slice(0, 8);
   const secMap = {};
   DATA.sections.forEach(s => secMap[s.id] = s.name);
-  if (!hits.length) {
-    drop.style.display = 'block';
-    drop.innerHTML = '<div class="sd-empty">Nenhum resultado encontrado.</div>';
-    return;
-  }
+
+  const faqHits = [];
+  DATA.faqs.forEach(f => {
+    if (f.q.toLowerCase().includes(v) || (f.tags || '').toLowerCase().includes(v) || f.a.toLowerCase().includes(v)) {
+      faqHits.push({ kind: 'faq', id: f.id, title: f.q, cat: secMap[f.secId] || '' });
+    }
+  });
+
+  // trilhas e aulas também entram na busca
+  const trHits = [];
+  allCourses().forEach(c => {
+    if (c.name.toLowerCase().includes(v) || (c.desc || '').toLowerCase().includes(v)) {
+      trHits.push({ kind: 'course', courseId: c.id, title: c.name, cat: 'Trilha · ' + plural(courseLessons(c).length, 'aula', 'aulas') });
+    }
+    courseLessons(c).forEach(x => {
+      const l = x.lesson;
+      if (l.title.toLowerCase().includes(v) || (l.body || '').toLowerCase().includes(v)) {
+        trHits.push({ kind: 'lesson', id: l.id, courseId: c.id, title: l.title, cat: '🎓 ' + c.name });
+      }
+    });
+  });
+
+  // as perguntas são muitas — sem uma cota, as trilhas nunca apareceriam
+  const trTop = trHits.slice(0, 3);
+  const top = trTop.concat(faqHits.slice(0, 8 - trTop.length));
   drop.style.display = 'block';
-  drop.innerHTML = `<div class="sd-hdr">${hits.length} resultado(s) para "<strong>${val}</strong>"</div>` +
-    hits.map(h => `<div class="sd-item" onclick="jumpToFaq('${h.id}');document.getElementById('searchDrop').style.display='none';document.getElementById('searchInput').value=''">
-      <div class="sd-q">${h.q.replace(new RegExp(val,'gi'), s => `<mark>${s}</mark>`)}</div>
-      <div class="sd-cat">${secMap[h.secId] || ''}</div>
-    </div>`).join('');
+  if (!top.length) { drop.innerHTML = '<div class="sd-empty">Nenhum resultado encontrado.</div>'; return; }
+
+  // escapa o texto digitado antes de virar regex (senão "(" quebra a busca)
+  const re = new RegExp(esc(val).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  drop.innerHTML = '<div class="sd-hdr">' + top.length + ' resultado(s) para "<strong>' + esc(val) + '</strong>"</div>' +
+    top.map(h => {
+      const go = h.kind === 'lesson' ? "openLesson('" + h.courseId + "','" + h.id + "')"
+                : h.kind === 'course' ? "openCourse('" + h.courseId + "')"
+                : "jumpToFaq('" + h.id + "')";
+      return '<div class="sd-item" onclick="' + go + ';closeSearchDrop()">' +
+             '<div class="sd-q">' + esc(h.title).replace(re, s => '<mark>' + s + '</mark>') + '</div>' +
+             '<div class="sd-cat">' + esc(h.cat) + '</div></div>';
+    }).join('');
+}
+function closeSearchDrop() {
+  document.getElementById('searchDrop').style.display = 'none';
+  document.getElementById('searchInput').value = '';
+  closeMobileSearch();
 }
 document.addEventListener('click', e => {
   if (!e.target.closest('#searchDrop') && !e.target.closest('#searchInput'))
@@ -1575,12 +1937,15 @@ function openAdmin(e) {
     document.getElementById('adminPanel').style.display = 'none';
     document.getElementById('faqForm').style.display = 'none';
     document.getElementById('secForm').style.display = 'none';
+    document.getElementById('courseForm').style.display = 'none';
+    document.getElementById('lessonForm').style.display = 'none';
     setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
   } else {
     showAdminPanel();
   }
 }
 function closeAdmin() {
+  courseFromPage = false; lessonFromPage = false;
   document.getElementById('adminOverlay').classList.remove('open');
   document.getElementById('adminPwInput').value = '';
   document.getElementById('loginErr').style.display = 'none';
@@ -1619,9 +1984,12 @@ function showAdminPanel() {
   document.getElementById('loginBox').style.display = 'none';
   document.getElementById('faqForm').style.display = 'none';
   document.getElementById('secForm').style.display = 'none';
+  document.getElementById('courseForm').style.display = 'none';
+  document.getElementById('lessonForm').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'flex';
   renderAdminFaqs();
   renderAdminSecs();
+  renderAdminCourses();
   loadSettings();
 }
 function switchTab(tab, panelId) {
@@ -1755,7 +2123,8 @@ let rteRange = null;
 let RTE_TARGET = 'faqFormA';
 const RTE_MAP = {
   faqFormA:    { source: 'faqFormSource',     htmlBtn: 'rteHtmlBtn' },
-  secFormBody: { source: 'secFormBodySource', htmlBtn: 'secRteHtmlBtn' }
+  secFormBody: { source: 'secFormBodySource', htmlBtn: 'secRteHtmlBtn' },
+  lessonFormBody: { source: 'lessonFormBodySource', htmlBtn: 'lessonRteHtmlBtn' }
 };
 
 function rteEl(){ return document.getElementById(RTE_TARGET); }
@@ -2144,10 +2513,12 @@ function importData(input) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.sections || !data.faqs) throw new Error('Arquivo inválido');
-      DATA = data;
+      DATA = normalizeDoc(data);
       saveData(DATA);
       currentSec = 'intro';
-      render(); renderAdminFaqs(); renderAdminSecs(); loadSettings();
+      currentView = 'sec'; currentCourse = null; currentLesson = null;
+      history.replaceState({}, '', '/');
+      render(); renderAdminFaqs(); renderAdminSecs(); renderAdminCourses(); loadSettings();
       showToast('Conteúdo importado com sucesso!');
     } catch (err) {
       alert('Não foi possível importar: arquivo inválido ou corrompido.');
@@ -2163,6 +2534,633 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ═══════════════════════════════════════════
+// TRILHAS — área de membros (vídeo + texto em ordem)
+// O progresso fica no navegador do visitante (localStorage), sem login.
+// ═══════════════════════════════════════════
+const PROGRESS_KEY = 'nx_progress';
+const LAST_KEY = 'nx_last_lesson';
+
+let PROGRESS = (function () {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch (e) { return {}; }
+})();
+
+function saveProgress() { try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); } catch (e) {} }
+function isDone(lessonId) { return !!PROGRESS[lessonId]; }
+function setDone(lessonId, v) { if (v) PROGRESS[lessonId] = 1; else delete PROGRESS[lessonId]; saveProgress(); }
+function readLast() { try { return JSON.parse(localStorage.getItem(LAST_KEY)) || null; } catch (e) { return null; } }
+function writeLast(courseId, lessonId) { try { localStorage.setItem(LAST_KEY, JSON.stringify({ courseId, lessonId })); } catch (e) {} }
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+// ── consultas ──
+function allCourses() { return (DATA.courses || []).slice().sort((a, b) => (a.order || 0) - (b.order || 0)); }
+function courseById(id) { return (DATA.courses || []).find(c => c.id === id) || null; }
+function courseLessons(c) {
+  const out = [];
+  if (c) (c.modules || []).forEach(m => (m.lessons || []).forEach(l => out.push({ lesson: l, module: m })));
+  return out;
+}
+function lessonById(c, id) { const hit = courseLessons(c).find(x => x.lesson.id === id); return hit ? hit.lesson : null; }
+function moduleOfLesson(c, id) { const hit = courseLessons(c).find(x => x.lesson.id === id); return hit ? hit.module : null; }
+function courseStats(c) {
+  const all = courseLessons(c);
+  const done = all.filter(x => isDone(x.lesson.id)).length;
+  return { done, total: all.length, pct: all.length ? Math.round(done * 100 / all.length) : 0 };
+}
+function lessonNeighbors(c, lessonId) {
+  const all = courseLessons(c).map(x => x.lesson);
+  const i = all.findIndex(l => l.id === lessonId);
+  return { index: i, total: all.length, prev: i > 0 ? all[i - 1] : null, next: (i >= 0 && i < all.length - 1) ? all[i + 1] : null };
+}
+function nextPendingLesson(c) {
+  const all = courseLessons(c).map(x => x.lesson);
+  return all.find(l => !isDone(l.id)) || all[0] || null;
+}
+function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+// ── navegação ──
+function urlTrilhas() { return '/trilhas'; }
+function urlForCourse(id) { return '/trilhas/' + (COURSE_SLUG[id] || id); }
+function urlForLesson(courseId, lessonId) {
+  return '/trilhas/' + (COURSE_SLUG[courseId] || courseId) + '/' + (LESSON_SLUG[lessonId] || lessonId);
+}
+
+function goTrilhas(push) {
+  currentView = 'trilhas'; currentCourse = null; currentLesson = null;
+  render();
+  if (push !== false) history.pushState({ view: 'trilhas' }, '', urlTrilhas());
+  closeSidebar();
+}
+function openCourse(id, push) {
+  const c = courseById(id);
+  if (!c) return goTrilhas(push);
+  currentView = 'course'; currentCourse = id; currentLesson = null;
+  render();
+  if (push !== false) history.pushState({ view: 'course', id }, '', urlForCourse(id));
+  // com aulas na lista, a gaveta continua aberta para o aluno escolher
+  if (!courseLessons(c).length) closeSidebar();
+}
+function openLesson(courseId, lessonId, push) {
+  currentView = 'lesson'; currentCourse = courseId; currentLesson = lessonId;
+  writeLast(courseId, lessonId);
+  render();
+  if (push !== false) history.pushState({ view: 'lesson', courseId, lessonId }, '', urlForLesson(courseId, lessonId));
+  closeSidebar();
+}
+
+function toggleLessonDone(lessonId) { setDone(lessonId, !isDone(lessonId)); render(); }
+function completeAndNext(courseId, lessonId) {
+  setDone(lessonId, true);
+  const c = courseById(courseId);
+  const nb = lessonNeighbors(c, lessonId);
+  if (nb.next) { openLesson(courseId, nb.next.id); return; }
+  render();
+  const st = courseStats(c);
+  showToast(st.done === st.total ? 'Trilha concluída! 🎉' : 'Aula concluída!');
+}
+
+// ── vídeo e materiais ──
+function lessonVideoHtml(l) {
+  if (!l.video) return '';
+  const id = ytId(l.video);
+  let src = '';
+  if (id) src = 'https://www.youtube.com/embed/' + id + '?rel=0';
+  else if (/^https?:\/\//i.test(l.video.trim())) src = l.video.trim();
+  if (!src) return '';
+  return '<div class="video-embed"><iframe src="' + esc(src) + '" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+}
+function materialsHtml(l) {
+  const mats = (l.materials || []).filter(m => m && m.url);
+  if (!mats.length) return '';
+  return '<div class="mat-list"><div class="mat-title">Materiais desta aula</div>' +
+    mats.map(m => '<a class="mat-item" href="' + esc(m.url) + '" target="_blank" rel="noopener">↓ <span>' + esc(m.label || m.url) + '</span></a>').join('') +
+    '</div>';
+}
+function progressBarHtml(pct) {
+  return '<div class="tr-bar-row"><div class="tr-bar"><span style="width:' + pct + '%"></span></div><div class="tr-pct">' + pct + '%</div></div>';
+}
+
+// ── telas ──
+function renderTrilhasIndex() {
+  const list = allCourses();
+  const last = readLast();
+  let html = '<div class="eyebrow">Trilhas · ' + esc(DATA.settings.company) + '</div>' +
+             '<h1 class="page-title">🎓 Trilhas</h1>' +
+             '<p class="intro-desc">Vídeos e tutoriais na ordem certa. Marque cada aula como concluída — o seu progresso fica salvo neste navegador.</p>';
+
+  if (last) {
+    const c = courseById(last.courseId);
+    const l = c && lessonById(c, last.lessonId);
+    if (c && l) {
+      html += '<div class="tr-resume" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
+                '<div class="tr-resume-ico">▶</div>' +
+                '<div style="min-width:0">' +
+                  '<div class="tr-resume-lbl">Continuar de onde parou</div>' +
+                  '<div class="tr-resume-name">' + esc(l.title) + '</div>' +
+                  '<div class="tr-resume-sub">' + esc(c.name) + '</div>' +
+                '</div></div>';
+    }
+  }
+
+  if (isAdmin()) {
+    html += '<div class="admin-edit-bar"><button class="edit-pencil" onclick="openCourseFormInline()">➕ Nova trilha</button></div>';
+  }
+
+  if (!list.length) {
+    html += '<div class="tr-empty">Nenhuma trilha publicada ainda.' +
+            (isAdmin() ? '<br>Clique em <strong>Nova trilha</strong> para criar a primeira.' : '') + '</div>';
+  } else {
+    html += '<div class="tr-grid">' + list.map(c => {
+      const st = courseStats(c);
+      return '<button class="tr-card" onclick="openCourse(\'' + c.id + '\')">' +
+               '<div class="tr-card-name">' + esc(c.name) + '</div>' +
+               (c.desc ? '<div class="tr-card-desc">' + esc(c.desc) + '</div>' : '<div class="tr-card-desc"></div>') +
+               '<div class="tr-card-meta">' + plural(st.total, 'aula', 'aulas') +
+                 (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
+               progressBarHtml(st.pct) +
+             '</button>';
+    }).join('') + '</div>';
+  }
+
+  document.getElementById('mainContent').innerHTML = html;
+  enhanceContent();
+  window.scrollTo(0, 0);
+}
+
+function renderCoursePage() {
+  const c = courseById(currentCourse);
+  if (!c) { currentView = 'trilhas'; currentCourse = null; currentLesson = null; renderTrilhasIndex(); return; }
+  const st = courseStats(c);
+  const nx = nextPendingLesson(c);
+
+  let html = '<div class="tr-crumb"><a onclick="goTrilhas()">Trilhas</a><span>›</span><span>' + esc(c.name) + '</span></div>' +
+             '<h1 class="page-title">' + esc(c.name) + '</h1>';
+  if (c.desc) html += '<p class="intro-desc" style="margin-bottom:18px">' + esc(c.desc) + '</p>';
+  html += progressBarHtml(st.pct) +
+          '<div class="tr-count">' + st.done + ' de ' + plural(st.total, 'aula concluída', 'aulas concluídas') + '</div>';
+  if (nx) {
+    html += '<button class="btn btn-primary" onclick="openLesson(\'' + c.id + '\',\'' + nx.id + '\')">▶ ' +
+            (st.done ? 'Continuar de onde parou' : 'Começar a trilha') + '</button>';
+  }
+  if (isAdmin()) {
+    html += '<div class="admin-edit-bar" style="margin-top:18px"><button class="edit-pencil" onclick="openCourseFormInline(\'' + c.id + '\')">✏️ Editar trilha e aulas</button></div>';
+  }
+
+  let n = 0;
+  (c.modules || []).forEach(m => {
+    const lessons = m.lessons || [];
+    if (!lessons.length && !isAdmin()) return;
+    html += '<div class="tr-mod">';
+    if (m.name) html += '<div class="tr-mod-name">' + esc(m.name) + '</div>';
+    html += '<div class="tr-lessons">';
+    if (!lessons.length) html += '<div class="cb-empty" style="padding:14px 16px">Nenhuma aula neste módulo ainda.</div>';
+    lessons.forEach(l => {
+      n++;
+      const done = isDone(l.id);
+      html += '<button class="tr-lesson' + (done ? ' done' : '') + '" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
+                '<span class="tr-tick">✓</span>' +
+                '<span class="tr-lesson-n">' + n + '</span>' +
+                '<span class="tr-lesson-t">' + esc(l.title) + '</span>' +
+                (l.duration ? '<span class="tr-dur">' + esc(l.duration) + '</span>' : '') +
+              '</button>';
+    });
+    html += '</div></div>';
+  });
+
+  if (!courseLessons(c).length && !isAdmin()) {
+    html += '<div class="tr-empty" style="margin-top:20px">Esta trilha ainda não tem aulas publicadas.</div>';
+  }
+
+  document.getElementById('mainContent').innerHTML = html;
+  enhanceContent();
+  window.scrollTo(0, 0);
+}
+
+function renderLessonPage() {
+  const c = courseById(currentCourse);
+  const l = c ? lessonById(c, currentLesson) : null;
+  if (!c) { currentView = 'trilhas'; currentCourse = null; currentLesson = null; renderTrilhasIndex(); return; }
+  if (!l) { currentView = 'course'; currentLesson = null; renderCoursePage(); return; }
+
+  const mod = moduleOfLesson(c, l.id);
+  const nb = lessonNeighbors(c, l.id);
+  const st = courseStats(c);
+  const done = isDone(l.id);
+
+  let html = '<div class="tr-crumb"><a onclick="goTrilhas()">Trilhas</a><span>›</span>' +
+             '<a onclick="openCourse(\'' + c.id + '\')">' + esc(c.name) + '</a></div>';
+  html += lessonVideoHtml(l);
+  html += '<h1 class="lesson-title">' + esc(l.title) + '</h1>' +
+          '<div class="lesson-meta">' + (mod && mod.name ? esc(mod.name) + ' · ' : '') +
+          'Aula ' + (nb.index + 1) + ' de ' + nb.total + (l.duration ? ' · ' + esc(l.duration) : '') + '</div>';
+
+  if (isAdmin()) {
+    html += '<div class="admin-edit-bar"><button class="edit-pencil" onclick="editLessonInline(\'' + c.id + '\',\'' + (mod ? mod.id : '') + '\',\'' + l.id + '\')">✏️ Editar aula</button></div>';
+  }
+  if (l.body) html += '<div class="lesson-body">' + l.body + '</div>';
+  html += materialsHtml(l);
+
+  html += '<div class="tr-actions">';
+  if (!done) {
+    html += '<button class="btn btn-done" onclick="completeAndNext(\'' + c.id + '\',\'' + l.id + '\')">✓ ' +
+            (nb.next ? 'Concluir e avançar' : 'Marcar como concluída') + '</button>';
+  } else {
+    html += '<button class="btn btn-undone" onclick="toggleLessonDone(\'' + l.id + '\')">✓ Concluída — desmarcar</button>';
+    if (nb.next) html += '<button class="btn btn-primary" onclick="openLesson(\'' + c.id + '\',\'' + nb.next.id + '\')">Próxima aula →</button>';
+  }
+  html += '<span class="tr-done-count">' + st.done + '/' + st.total + ' concluídas</span></div>';
+
+  if (nb.prev || nb.next) {
+    html += '<div class="tr-nav">';
+    html += nb.prev
+      ? '<button class="tr-nav-btn" onclick="openLesson(\'' + c.id + '\',\'' + nb.prev.id + '\')"><div class="tr-nav-lbl">← Anterior</div><div class="tr-nav-t">' + esc(nb.prev.title) + '</div></button>'
+      : '<span style="flex:1"></span>';
+    html += nb.next
+      ? '<button class="tr-nav-btn next" onclick="openLesson(\'' + c.id + '\',\'' + nb.next.id + '\')"><div class="tr-nav-lbl">Próxima →</div><div class="tr-nav-t">' + esc(nb.next.title) + '</div></button>'
+      : '<span style="flex:1"></span>';
+    html += '</div>';
+  }
+
+  document.getElementById('mainContent').innerHTML = html;
+  enhanceContent();
+  window.scrollTo(0, 0);
+}
+
+// ── menu lateral ──
+function renderCoursesNav() {
+  const list = allCourses();
+  if (!list.length && !isAdmin()) return '';
+  let html = '<div class="sb-group">Trilhas</div>';
+  html += '<div class="sb-row"><button class="sb-item' + (currentView === 'trilhas' ? ' active' : '') +
+          '" onclick="goTrilhas()"><span>🎓 Todas as trilhas</span></button></div>';
+
+  list.forEach(c => {
+    const inThis = (currentView === 'course' || currentView === 'lesson') && currentCourse === c.id;
+    const st = courseStats(c);
+    html += '<div class="sb-row"><button class="sb-item' + (inThis ? ' active open' : '') +
+            '" onclick="openCourse(\'' + c.id + '\')"><span>' + esc(c.name) + '</span>' +
+            '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg>' +
+            '</button></div>';
+    if (!inThis) return;
+    html += '<div class="sb-sub open">';
+    if (st.total) html += '<div class="sb-prog"><div class="tr-bar"><span style="width:' + st.pct + '%"></span></div></div>';
+    (c.modules || []).forEach(m => {
+      const lessons = m.lessons || [];
+      if (!lessons.length) return;
+      if (m.name) html += '<div class="sb-mod">' + esc(m.name) + '</div>';
+      lessons.forEach(l => {
+        html += '<button class="sb-lesson' + (isDone(l.id) ? ' done' : '') + (currentLesson === l.id ? ' active' : '') +
+                '" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
+                '<span class="sb-tick">✓</span><span>' + esc(l.title) + '</span></button>';
+      });
+    });
+    if (isAdmin()) {
+      html += '<button class="sb-lesson" style="color:var(--brand);font-weight:600" onclick="openCourseFormInline(\'' + c.id + '\')">' +
+              '<span class="sb-tick" style="border-color:transparent;color:var(--brand)">✎</span><span>Editar trilha</span></button>';
+    }
+    html += '</div>';
+  });
+
+  if (isAdmin()) html += '<button class="sb-addmenu" onclick="openCourseFormInline()">➕ Nova trilha</button>';
+  return html;
+}
+
+// ═══════════════════════════════════════════
+// ADMIN — TRILHAS
+// ═══════════════════════════════════════════
+let courseFromPage = false;
+let lessonFromPage = false;
+let lessonCtx = { courseId: null, moduleId: null, lessonId: null };
+
+function renderAdminCourses() {
+  const el = document.getElementById('courseList');
+  if (!el) return;
+  const list = allCourses();
+  if (!list.length) {
+    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t4);font-size:13px">Nenhuma trilha ainda. Clique em "+ Nova trilha".</div>';
+    return;
+  }
+  el.innerHTML = list.map((c, i) => {
+    const st = courseStats(c);
+    return '<div class="admin-sec-item">' +
+      '<div style="min-width:0">' +
+        '<div class="admin-sec-name">' + esc(c.name) + '</div>' +
+        '<div class="admin-sec-id">' + plural(st.total, 'aula', 'aulas') + ' · ' +
+          plural((c.modules || []).length, 'módulo', 'módulos') + ' · /trilhas/' + (COURSE_SLUG[c.id] || c.id) + '</div>' +
+      '</div>' +
+      '<div class="admin-faq-actions">' +
+        '<button class="btn btn-secondary btn-sm" title="Subir" onclick="moveCourse(\'' + c.id + '\',-1)"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button class="btn btn-secondary btn-sm" title="Descer" onclick="moveCourse(\'' + c.id + '\',1)"' + (i === list.length - 1 ? ' disabled' : '') + '>↓</button>' +
+        '<button class="btn btn-secondary btn-sm" onclick="openCourseForm(\'' + c.id + '\')">Editar</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="deleteCourse(\'' + c.id + '\')">Excluir</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function moveCourse(id, dir) {
+  const list = allCourses();
+  const i = list.findIndex(c => c.id === id);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  const tmp = list[i]; list[i] = list[j]; list[j] = tmp;
+  list.forEach((c, k) => { c.order = k; });
+  saveData(DATA); render(); renderAdminCourses();
+}
+
+function deleteCourse(id) {
+  const c = courseById(id);
+  if (!c) return;
+  const st = courseStats(c);
+  if (!confirm('Excluir a trilha "' + c.name + '"' + (st.total ? ' e as suas ' + st.total + ' aula(s)' : '') + '?')) return;
+  DATA.courses = (DATA.courses || []).filter(x => x.id !== id);
+  if (currentCourse === id) {
+    currentView = 'trilhas'; currentCourse = null; currentLesson = null;
+    history.replaceState({ view: 'trilhas' }, '', urlTrilhas());
+  }
+  saveData(DATA); render(); renderAdminCourses();
+  showToast('Trilha excluída.');
+}
+
+// ── formulário da trilha ──
+function openCourseForm(id) {
+  if (!isAdmin()) return;
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('faqForm').style.display = 'none';
+  document.getElementById('secForm').style.display = 'none';
+  document.getElementById('lessonForm').style.display = 'none';
+  document.getElementById('courseForm').style.display = 'flex';
+  const c = id ? courseById(id) : null;
+  document.getElementById('courseFormTitle').textContent = c ? 'Editar trilha' : 'Nova trilha';
+  document.getElementById('courseFormId').value = c ? c.id : '';
+  document.getElementById('courseFormName').value = c ? c.name : '';
+  document.getElementById('courseFormDesc').value = c ? (c.desc || '') : '';
+  document.getElementById('courseFormSlug').value = c ? (c.slug || '') : '';
+  document.getElementById('courseBuilderWrap').style.display = c ? '' : 'none';
+  courseSlugPreview();
+  renderCourseBuilder();
+}
+function openCourseFormInline(id) {
+  if (!isAdmin()) return;
+  courseFromPage = true;
+  openCourseForm(id);
+}
+function closeCourseForm() {
+  document.getElementById('courseForm').style.display = 'none';
+  if (courseFromPage) {
+    courseFromPage = false;
+    document.getElementById('adminOverlay').classList.remove('open');
+  } else {
+    document.getElementById('adminPanel').style.display = 'flex';
+  }
+}
+function courseSlugPreview() {
+  const name = document.getElementById('courseFormName').value;
+  const slug = document.getElementById('courseFormSlug').value;
+  const final = slugify(slug) || slugify(name) || 'trilha';
+  const el = document.getElementById('courseSlugPreview');
+  if (el) el.textContent = 'Link: ' + location.origin + '/trilhas/' + final;
+}
+function saveCourse() {
+  const name = document.getElementById('courseFormName').value.trim();
+  if (!name) { alert('Dê um nome para a trilha.'); return; }
+  const id = document.getElementById('courseFormId').value;
+  const desc = document.getElementById('courseFormDesc').value.trim();
+  const slug = slugify(document.getElementById('courseFormSlug').value.trim());
+  if (!Array.isArray(DATA.courses)) DATA.courses = [];
+  if (id) {
+    const c = courseById(id);
+    if (!c) return;
+    c.name = name; c.desc = desc; c.slug = slug;
+    saveData(DATA); render(); renderAdminCourses(); renderCourseBuilder();
+    showToast('Trilha atualizada!');
+  } else {
+    const c = { id: uid('c'), name, desc, slug, order: DATA.courses.length, modules: [{ id: uid('m'), name: 'Módulo 1', lessons: [] }] };
+    DATA.courses.push(c);
+    saveData(DATA); render(); renderAdminCourses();
+    // reabre em modo edição para liberar o construtor de módulos/aulas
+    document.getElementById('courseFormId').value = c.id;
+    document.getElementById('courseFormTitle').textContent = 'Editar trilha';
+    document.getElementById('courseBuilderWrap').style.display = '';
+    courseSlugPreview();
+    renderCourseBuilder();
+    showToast('Trilha criada — agora adicione as aulas.');
+  }
+}
+
+// ── construtor de módulos e aulas (salva a cada ação) ──
+function renderCourseBuilder() {
+  const wrap = document.getElementById('courseBuilder');
+  if (!wrap) return;
+  const c = courseById(document.getElementById('courseFormId').value);
+  if (!c) { wrap.innerHTML = ''; return; }
+  const mods = c.modules || [];
+  let html = '';
+  mods.forEach((m, mi) => {
+    const lessons = m.lessons || [];
+    html += '<div class="cb-mod"><div class="cb-mod-hdr">' +
+      '<input value="' + esc(m.name || '') + '" placeholder="Nome do módulo (vazio = não exibe)" onchange="renameModule(\'' + c.id + '\',\'' + m.id + '\',this.value)">' +
+      '<div class="cb-acts">' +
+        '<button class="cb-btn" title="Subir módulo" onclick="moveModule(\'' + c.id + '\',\'' + m.id + '\',-1)"' + (mi === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button class="cb-btn" title="Descer módulo" onclick="moveModule(\'' + c.id + '\',\'' + m.id + '\',1)"' + (mi === mods.length - 1 ? ' disabled' : '') + '>↓</button>' +
+        '<button class="cb-btn" title="Excluir módulo" onclick="deleteModule(\'' + c.id + '\',\'' + m.id + '\')">🗑️</button>' +
+      '</div></div>';
+    if (!lessons.length) html += '<div class="cb-empty">Nenhuma aula neste módulo.</div>';
+    lessons.forEach((l, li) => {
+      html += '<div class="cb-row"><div class="cb-row-t">' + esc(l.title) +
+        '<div class="cb-row-sub">' + (l.video ? '▶ vídeo' : 'sem vídeo') +
+          (l.duration ? ' · ' + esc(l.duration) : '') +
+          ((l.materials || []).length ? ' · ' + plural(l.materials.length, 'material', 'materiais') : '') +
+        '</div></div><div class="cb-acts">' +
+        '<button class="cb-btn" title="Subir aula" onclick="moveLesson(\'' + c.id + '\',\'' + m.id + '\',\'' + l.id + '\',-1)"' + (li === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button class="cb-btn" title="Descer aula" onclick="moveLesson(\'' + c.id + '\',\'' + m.id + '\',\'' + l.id + '\',1)"' + (li === lessons.length - 1 ? ' disabled' : '') + '>↓</button>' +
+        '<button class="cb-btn" title="Editar aula" onclick="openLessonForm(\'' + c.id + '\',\'' + m.id + '\',\'' + l.id + '\')">✏️</button>' +
+        '<button class="cb-btn" title="Excluir aula" onclick="deleteLesson(\'' + c.id + '\',\'' + m.id + '\',\'' + l.id + '\')">🗑️</button>' +
+        '</div></div>';
+    });
+    html += '<button class="cb-add" onclick="openLessonForm(\'' + c.id + '\',\'' + m.id + '\')">➕ Nova aula</button></div>';
+  });
+  html += '<button class="cb-add" style="margin-left:0" onclick="addModule(\'' + c.id + '\')">➕ Novo módulo</button>';
+  wrap.innerHTML = html;
+}
+
+function builderChanged() {
+  saveData(DATA); render(); renderCourseBuilder(); renderAdminCourses();
+}
+function addModule(cid) {
+  const c = courseById(cid); if (!c) return;
+  if (!Array.isArray(c.modules)) c.modules = [];
+  c.modules.push({ id: uid('m'), name: 'Módulo ' + (c.modules.length + 1), lessons: [] });
+  builderChanged();
+}
+function renameModule(cid, mid, value) {
+  const c = courseById(cid); if (!c) return;
+  const m = (c.modules || []).find(x => x.id === mid); if (!m) return;
+  m.name = value.trim();
+  builderChanged();
+}
+function moveModule(cid, mid, dir) {
+  const c = courseById(cid); if (!c) return;
+  const mods = c.modules || [];
+  const i = mods.findIndex(x => x.id === mid);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= mods.length) return;
+  mods.splice(j, 0, mods.splice(i, 1)[0]);
+  builderChanged();
+}
+function deleteModule(cid, mid) {
+  const c = courseById(cid); if (!c) return;
+  const m = (c.modules || []).find(x => x.id === mid); if (!m) return;
+  const n = (m.lessons || []).length;
+  if (!confirm('Excluir o módulo "' + (m.name || 'sem nome') + '"' + (n ? ' e as suas ' + n + ' aula(s)' : '') + '?')) return;
+  c.modules = c.modules.filter(x => x.id !== mid);
+  builderChanged();
+}
+function moveLesson(cid, mid, lid, dir) {
+  const c = courseById(cid); if (!c) return;
+  const m = (c.modules || []).find(x => x.id === mid); if (!m) return;
+  const ls = m.lessons || [];
+  const i = ls.findIndex(x => x.id === lid);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= ls.length) return;
+  ls.splice(j, 0, ls.splice(i, 1)[0]);
+  builderChanged();
+}
+function deleteLesson(cid, mid, lid) {
+  const c = courseById(cid); if (!c) return;
+  const m = (c.modules || []).find(x => x.id === mid); if (!m) return;
+  const l = (m.lessons || []).find(x => x.id === lid); if (!l) return;
+  if (!confirm('Excluir a aula "' + l.title + '"?')) return;
+  m.lessons = m.lessons.filter(x => x.id !== lid);
+  if (currentLesson === lid) { currentLesson = null; currentView = 'course'; }
+  builderChanged();
+}
+
+// ── formulário da aula ──
+function openLessonForm(courseId, moduleId, lessonId) {
+  if (!isAdmin()) return;
+  const c = courseById(courseId);
+  if (!c) return;
+  if (!Array.isArray(c.modules) || !c.modules.length) { alert('Crie um módulo antes de adicionar aulas.'); return; }
+  if (!moduleId) {
+    const m = lessonId ? moduleOfLesson(c, lessonId) : null;
+    moduleId = m ? m.id : c.modules[0].id;
+  }
+  lessonCtx = { courseId, moduleId, lessonId: lessonId || null };
+
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('faqForm').style.display = 'none';
+  document.getElementById('secForm').style.display = 'none';
+  document.getElementById('courseForm').style.display = 'none';
+  document.getElementById('lessonForm').style.display = 'flex';
+
+  const sel = document.getElementById('lessonFormMod');
+  sel.innerHTML = c.modules.map(m => '<option value="' + m.id + '">' + esc(m.name || 'Módulo sem nome') + '</option>').join('');
+  sel.value = moduleId;
+
+  RTE_TARGET = 'lessonFormBody';
+  rteShowHtml = false;
+  document.getElementById('lessonFormBody').style.display = '';
+  document.getElementById('lessonFormBodySource').style.display = 'none';
+  document.getElementById('lessonRteHtmlBtn').classList.remove('on');
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+
+  const l = lessonId ? lessonById(c, lessonId) : null;
+  document.getElementById('lessonFormTitle').textContent = l ? 'Editar aula' : 'Nova aula';
+  document.getElementById('lessonFormT').value = l ? l.title : '';
+  document.getElementById('lessonFormVideo').value = l ? (l.video || '') : '';
+  document.getElementById('lessonFormDur').value = l ? (l.duration || '') : '';
+  document.getElementById('lessonFormBody').innerHTML = l ? (l.body || '') : '';
+  document.getElementById('lessonFormSlug').value = l ? (l.slug || '') : '';
+  document.getElementById('lessonFormMats').value = l
+    ? (l.materials || []).map(m => (m.label || '') + ' | ' + (m.url || '')).join('\n')
+    : '';
+  lessonSlugPreview();
+}
+function editLessonInline(courseId, moduleId, lessonId) {
+  if (!isAdmin()) return;
+  lessonFromPage = true;
+  openLessonForm(courseId, moduleId, lessonId);
+}
+function closeLessonForm() {
+  document.getElementById('lessonForm').style.display = 'none';
+  if (lessonFromPage) {
+    lessonFromPage = false;
+    document.getElementById('adminOverlay').classList.remove('open');
+  } else {
+    document.getElementById('courseForm').style.display = 'flex';
+    renderCourseBuilder();
+  }
+}
+function lessonSlugPreview() {
+  const t = document.getElementById('lessonFormT').value;
+  const slug = document.getElementById('lessonFormSlug').value;
+  const final = slugify(slug) || slugify(t) || 'aula';
+  const el = document.getElementById('lessonSlugPreview');
+  if (el) el.textContent = 'Link: ' + location.origin + '/trilhas/trilha/' + final;
+}
+function parseMaterials(raw) {
+  return (raw || '').split('\n').map(line => {
+    const t = line.trim();
+    if (!t) return null;
+    const i = t.lastIndexOf('|');
+    if (i === -1) return { label: t, url: t };
+    return { label: t.slice(0, i).trim(), url: t.slice(i + 1).trim() };
+  }).filter(m => m && m.url);
+}
+function saveLesson() {
+  const c = courseById(lessonCtx.courseId);
+  if (!c) return;
+  const title = document.getElementById('lessonFormT').value.trim();
+  if (rteShowHtml) {
+    document.getElementById('lessonFormBody').innerHTML = document.getElementById('lessonFormBodySource').value;
+  }
+  let body = document.getElementById('lessonFormBody').innerHTML.trim();
+  if (body === '<br>') body = '';
+  const video = document.getElementById('lessonFormVideo').value.trim();
+  if (!title) { alert('Dê um título para a aula.'); return; }
+  if (!video && !body) { alert('A aula precisa de um vídeo ou de um conteúdo escrito.'); return; }
+
+  const data = {
+    title,
+    slug: slugify(document.getElementById('lessonFormSlug').value.trim()),
+    video,
+    duration: document.getElementById('lessonFormDur').value.trim(),
+    body,
+    materials: parseMaterials(document.getElementById('lessonFormMats').value)
+  };
+  const targetMod = document.getElementById('lessonFormMod').value;
+  const editing = lessonCtx.lessonId;
+
+  if (editing) {
+    const cur = lessonById(c, editing);
+    if (!cur) return;
+    Object.assign(cur, data);
+    const oldMod = moduleOfLesson(c, editing);
+    if (oldMod && oldMod.id !== targetMod) {
+      oldMod.lessons = oldMod.lessons.filter(x => x.id !== cur.id);
+      const nm = c.modules.find(m => m.id === targetMod);
+      if (nm) { nm.lessons = nm.lessons || []; nm.lessons.push(cur); }
+    }
+  } else {
+    const m = c.modules.find(x => x.id === targetMod) || c.modules[0];
+    if (!m) { alert('Crie um módulo primeiro.'); return; }
+    m.lessons = m.lessons || [];
+    m.lessons.push(Object.assign({ id: uid('l') }, data));
+  }
+
+  saveData(DATA); render(); closeLessonForm(); renderAdminCourses();
+  showToast(editing ? 'Aula atualizada!' : 'Aula criada!');
 }
 
 // ═══ INIT ═══
