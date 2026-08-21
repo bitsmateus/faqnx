@@ -281,8 +281,127 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .sb-row.drop-after{box-shadow:inset 0 -3px 0 var(--brand)}
 .sb-group.drop-group{background:var(--brand-bg);color:var(--brand);outline:2px dashed var(--brand);outline-offset:-2px;border-radius:6px}
 
-@media(max-width:1100px){.rp{display:none}}
-@media(max-width:768px){.sidebar{display:none}.main{margin-left:0}.content{padding:24px 20px 60px}.sdrop{left:12px;width:calc(100vw - 24px)}.modal{width:calc(100vw - 24px)!important}.rte-pop{width:calc(100vw - 32px);left:16px!important}}
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVO — tablet e celular
+   ═══════════════════════════════════════════════════════════ */
+
+/* controles que só aparecem no mobile */
+.hdr-burger,.hdr-searchbtn,.hdr-search-close{display:none;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--t2);border-radius:8px;flex-shrink:0;padding:0;font-family:var(--font)}
+.hdr-burger svg,.hdr-searchbtn svg{width:21px;height:21px}
+.sb-backdrop{position:fixed;inset:0;background:rgba(15,18,40,.45);z-index:190;opacity:0;visibility:hidden;transition:opacity .22s,visibility .22s}
+html.nav-open .sb-backdrop{opacity:1;visibility:visible}
+html.nav-open,body.nav-open{overflow:hidden}
+
+/* conteúdo do usuário nunca pode estourar a largura */
+.content-body,.acc-body{overflow-wrap:break-word}
+.content-body iframe,.acc-body iframe,.content-body video,.acc-body video{max-width:100%}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:14px 0}
+.tbl-scroll table{margin:0}
+
+/* índice "Nesta página" para telas sem o painel da direita */
+.toc-m{display:none;border:1px solid var(--bd);border-radius:10px;background:var(--bg2);margin:6px 0 22px;overflow:hidden}
+.toc-m summary{list-style:none;cursor:pointer;padding:11px 14px;font-size:13px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:8px}
+.toc-m summary::-webkit-details-marker{display:none}
+.toc-m summary::after{content:'▾';margin-left:auto;color:var(--t4);transition:transform .2s}
+.toc-m[open] summary::after{transform:rotate(180deg)}
+.toc-m nav{padding:0 14px 10px}
+.toc-m a{display:block;padding:9px 0;font-size:14px;line-height:1.4;color:var(--t3);border-top:1px solid var(--bd)}
+
+@media(max-width:1100px){
+  .rp{display:none}
+  .toc-m{display:block}
+  .content{max-width:100%}
+}
+
+/* ─── ≤900px: o menu lateral vira gaveta ─── */
+@media(max-width:900px){
+  html,body{overflow-x:hidden}
+
+  .hdr{padding-left:4px}
+  .hdr-burger{display:inline-flex;width:40px;height:40px;margin-right:2px}
+  .hdr-logo{width:auto;border-right:none;padding:0 6px;gap:8px;min-width:0}
+  .logo-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hdr-mid{padding:0 8px;min-width:0}
+  .hdr-search{min-width:0;flex:1;height:36px}
+  .kbd{display:none}
+  .hdr-nav{padding-right:8px;gap:2px}
+
+  .sidebar{width:min(86vw,300px);z-index:200;transform:translateX(-100%);transition:transform .24s ease;box-shadow:0 0 40px rgba(0,0,0,.18)}
+  .sidebar.open{transform:translateX(0)}
+
+  .main{margin-left:0}
+  .content{padding:22px 18px 64px}
+
+  /* alvos de toque maiores no menu */
+  .sb-item{padding:10px 14px 10px 16px;font-size:14px}
+  .sb-sub-item{padding-top:10px;padding-bottom:10px;font-size:13.5px}
+  .sb-item svg{width:11px;height:11px}
+  /* no toque não existe :hover — ações do admin sempre visíveis */
+  .sb-row .sb-actions{display:flex;position:static;transform:none;box-shadow:none;background:none;padding-right:6px}
+  .sb-act{width:32px;height:32px;font-size:14px}
+
+  .sdrop{left:10px;right:10px;width:auto;max-height:70vh;overflow-y:auto}
+  .rte-pop{width:calc(100vw - 32px);left:16px!important}
+
+  /* iOS dá zoom em campos com fonte < 16px */
+  .form-input,.form-select,.form-textarea,.rte-source,.hdr-search input{font-size:16px}
+}
+
+/* ─── ≤700px: modais e painel de admin ─── */
+@media(max-width:700px){
+  .modal{width:calc(100vw - 20px)!important;max-width:calc(100vw - 20px)!important;max-height:92vh;max-height:92dvh}
+  .modal-hdr{padding:14px 16px}
+  .modal-hdr h2{font-size:15px}
+  .modal-body{padding:16px}
+  .modal-footer{padding:12px 16px;position:sticky;bottom:0;background:var(--bg)}
+  .login-box{width:calc(100vw - 28px);max-width:360px;padding:26px 20px}
+
+  .admin-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;scrollbar-width:none}
+  .admin-tabs::-webkit-scrollbar{display:none}
+  .admin-tab{white-space:nowrap;padding:9px 13px}
+  .admin-faq-item,.admin-sec-item{flex-direction:column;align-items:stretch}
+  .admin-faq-actions{justify-content:flex-end}
+
+  .rte-toolbar{gap:3px;padding:5px}
+  .rte-btn{min-width:34px;height:34px}
+  .rte-select{height:34px}
+  .rte-area,.rte-source{min-height:200px;max-height:42vh}
+
+}
+
+/* ─── ≤560px: celular ─── */
+@media(max-width:560px){
+  html{font-size:14.5px}
+
+  /* busca vira botão de lupa que abre a barra em tela cheia */
+  .hdr-mid{display:none}
+  .hdr-searchbtn{display:inline-flex;width:38px;height:38px}
+  .hdr.searching .hdr-mid{display:flex;position:absolute;inset:0;background:var(--bg);padding:0 8px;gap:6px;z-index:5}
+  .hdr.searching .hdr-burger,.hdr.searching .hdr-logo,.hdr.searching .hdr-nav{visibility:hidden}
+  .hdr.searching .hdr-search-close{display:inline-flex;width:34px;height:34px;font-size:16px}
+  .lnk-suporte{display:none}
+  .lbl-admin{display:none}
+  .btn-admin{padding:6px 10px!important;font-size:14px}
+  .logo-sep,.logo-sub{display:none}
+
+  .content{padding:18px 14px 56px}
+  .page-title{font-size:24px;gap:8px;margin-bottom:12px}
+  .page-lead,.intro-desc{font-size:15px;margin-bottom:22px}
+  .sec-heading{font-size:19px;margin:30px 0 10px}
+  .content-body p,.acc-body p{font-size:15.5px;line-height:1.75}
+  .content-body ul,.content-body ol,.acc-body ul,.acc-body ol{padding-left:20px;font-size:15.5px}
+  .content-body h3,.acc-body h3{font-size:16px}
+  .content-body pre,.acc-body pre{padding:12px}
+  .hint{padding:10px 12px;font-size:13.5px}
+  .intro-how-title{font-size:15px}
+
+  .fb-row{flex-wrap:wrap;margin-top:36px}
+  .toast{left:12px;right:12px;bottom:14px;text-align:center}
+  .admin-badge{left:10px;bottom:10px;font-size:11.5px}
+  .admin-edit-bar{gap:6px}
+  .edit-pencil{font-size:12px}
+  h2.sec-heading .edit-pencil{margin-left:0;display:inline-flex;margin-top:6px}
+}
 </style>
 </head>
 <body>
@@ -295,7 +414,10 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 <style>@keyframes nxspin{to{transform:rotate(360deg)}}</style>
 
 <!-- ═══════════ HEADER ═══════════ -->
-<header class="hdr">
+<header class="hdr" id="hdr">
+  <button class="hdr-burger" id="hdrBurger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar" onclick="toggleSidebar()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
   <div class="hdr-logo">
     <div class="logo-mark">NX</div>
     <span class="logo-name">NX Digital</span>
@@ -308,10 +430,14 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
       <input id="searchInput" type="text" placeholder="Perguntar ou pesquisar..." oninput="doSearch(this.value)" autocomplete="off">
       <span class="kbd">Ctrl K</span>
     </div>
+    <button class="hdr-search-close" type="button" aria-label="Fechar busca" onclick="closeMobileSearch()">✕</button>
   </div>
   <nav class="hdr-nav">
-    <a href="mailto:suporte@nxdigital.com.br">SUPORTE</a>
-    <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙ Admin</a>
+    <button class="hdr-searchbtn" type="button" aria-label="Pesquisar" onclick="openMobileSearch()">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5"/></svg>
+    </button>
+    <a href="mailto:suporte@nxdigital.com.br" class="lnk-suporte">SUPORTE</a>
+    <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙<span class="lbl-admin"> Admin</span></a>
   </nav>
 </header>
 
@@ -321,12 +447,15 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 <!-- ═══════════ LAYOUT ═══════════ -->
 <div class="layout">
 
+<!-- fundo escuro da gaveta (mobile) -->
+<div class="sb-backdrop" id="sbBackdrop" onclick="closeSidebar()"></div>
+
 <!-- ═══════════ SIDEBAR ═══════════ -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <nav class="sb-inner" id="sidebarNav"></nav>
   <div class="sb-footer">
     <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l3 2"/></svg>
-    Suporte NX Digital
+    <a href="mailto:suporte@nxdigital.com.br">Suporte NX Digital</a>
   </div>
 </aside>
 
@@ -902,7 +1031,7 @@ function applySettings() {
   document.title = 'Central de Ajuda — ' + s.company;
   document.querySelector('.logo-name').textContent = s.company;
   document.querySelector('.logo-sub').textContent = s.subtitle;
-  document.querySelector('a[href^="mailto"]').href = 'mailto:' + s.email;
+  document.querySelectorAll('a[href^="mailto"]').forEach(a => { a.href = 'mailto:' + s.email; });
   const c = s.color || '#5A64F2';
   const hex2rgb = h => { const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return r+','+g+','+b; };
   document.documentElement.style.setProperty('--brand', c);
@@ -1148,7 +1277,32 @@ function renderContent() {
     <button class="rp-star" onclick="fbk(this)">😞</button>
   </div>`;
   document.getElementById('mainContent').innerHTML = html;
+  enhanceContent();
   window.scrollTo(0, 0);
+}
+
+// Tabelas largas e vídeos colados pelo admin quebram o layout no celular.
+// Aqui elas ganham um container com rolagem horizontal própria.
+function enhanceContent() {
+  const root = document.getElementById('mainContent');
+  if (!root) return;
+  root.querySelectorAll('table').forEach(t => {
+    const cols = t.rows[0] ? t.rows[0].cells.length : 0;
+    // 2 colunas cabem em qualquer tela; de 3 em diante é melhor rolar do que espremer
+    if (cols >= 3) t.style.minWidth = Math.min(cols * 160, 900) + 'px';
+    if (t.parentElement && t.parentElement.classList.contains('tbl-scroll')) return;
+    const w = document.createElement('div');
+    w.className = 'tbl-scroll';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+  root.querySelectorAll('iframe').forEach(f => {
+    if (f.closest('.video-embed')) return;
+    const w = document.createElement('div');
+    w.className = 'video-embed';
+    f.parentNode.insertBefore(w, f);
+    w.appendChild(f);
+  });
 }
 
 function renderRpLinks() {
@@ -1167,6 +1321,21 @@ function renderRpLinks() {
   });
   document.getElementById('rpLinks').innerHTML = html;
   if (document.querySelector('.rp-link')) document.querySelector('.rp-link').classList.add('active');
+  renderMobileToc(heads, html);
+}
+
+// Em telas estreitas o painel "Nesta página" some — este bloco recolhível o substitui.
+function renderMobileToc(heads, html) {
+  const old = document.getElementById('tocMobile');
+  if (old) old.remove();
+  if (heads.length < 2) return;
+  const box = document.createElement('details');
+  box.className = 'toc-m';
+  box.id = 'tocMobile';
+  box.innerHTML = '<summary>Nesta página · ' + heads.length + ' tópicos</summary><nav>' + html + '</nav>';
+  box.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { box.open = false; }));
+  const anchor = heads[0].closest('[id^="faq-"]') || heads[0];
+  anchor.parentNode.insertBefore(box, anchor);
 }
 
 // ═══════════════════════════════════════════
@@ -1243,6 +1412,8 @@ function navigateTo(secId) {
   renderRpLinks();
   renderSidebar();
   history.pushState({ secId }, '', urlForSec(secId));
+  // no celular, só fecha a gaveta quando o item não tem submenu para explorar
+  if (!hasChildren) closeSidebar();
 }
 
 function scrollToAnchor(id) {
@@ -1267,10 +1438,13 @@ function jumpToFaq(faqId) {
   history.pushState({ secId: faq.secId, faqId }, '', urlForFaq(faqId));
   document.getElementById('searchDrop').style.display = 'none';
   document.getElementById('searchInput').value = '';
+  closeMobileSearch();
+  closeSidebar();
 }
 
 // botão voltar/avançar do navegador
 window.addEventListener('popstate', () => {
+  closeSidebar();
   const { secId, faqId } = resolvePath(location.pathname);
   currentSec = secId;
   openAncestors(secId);
@@ -1306,6 +1480,53 @@ window.addEventListener('scroll', () => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id);
   });
 }, { passive: true });
+
+// ═══════════════════════════════════════════
+// MENU MOBILE (gaveta) + BUSCA MOBILE
+// ═══════════════════════════════════════════
+function isMobileNav() { return window.matchMedia('(max-width:900px)').matches; }
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.documentElement.classList.add('nav-open');
+  document.body.classList.add('nav-open');
+  const b = document.getElementById('hdrBurger');
+  if (b) b.setAttribute('aria-expanded', 'true');
+}
+function closeSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (sb) sb.classList.remove('open');
+  document.documentElement.classList.remove('nav-open');
+  document.body.classList.remove('nav-open');
+  const b = document.getElementById('hdrBurger');
+  if (b) b.setAttribute('aria-expanded', 'false');
+}
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (sb && sb.classList.contains('open')) closeSidebar(); else openSidebar();
+}
+
+function openMobileSearch() {
+  document.getElementById('hdr').classList.add('searching');
+  closeSidebar();
+  setTimeout(() => document.getElementById('searchInput').focus(), 60);
+}
+function closeMobileSearch() {
+  const h = document.getElementById('hdr');
+  if (!h || !h.classList.contains('searching')) return;
+  h.classList.remove('searching');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchDrop').style.display = 'none';
+}
+
+// voltando para o desktop, a gaveta não pode continuar "aberta"
+window.addEventListener('resize', () => {
+  if (!isMobileNav()) closeSidebar();
+  if (!window.matchMedia('(max-width:560px)').matches) closeMobileSearch();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeSidebar(); closeMobileSearch(); }
+});
 
 // ═══════════════════════════════════════════
 // SEARCH
