@@ -2684,14 +2684,16 @@ function rteHandleDrop(e){
     if (f.type && f.type.startsWith('image/')){ e.preventDefault(); insertImageFile(f); return; }
   }
 }
+// Liga colar/soltar imagem em TODOS os editores (perguntas, seções e aulas).
+// Era uma lista fixa e o editor da aula tinha ficado de fora: colar print lá
+// caía no padrão do navegador, que embute a imagem em base64 dentro do
+// conteúdo salvo. Varrendo por classe, editor novo já entra ligado.
 function rteAttachImageHandlers(){
-  ['faqFormA','secFormBody'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && !el.dataset.imgHooked){
-      el.addEventListener('paste', rteHandlePaste);
-      el.addEventListener('drop', rteHandleDrop);
-      el.dataset.imgHooked = '1';
-    }
+  document.querySelectorAll('.rte-area').forEach(el => {
+    if (el.dataset.imgHooked) return;
+    el.addEventListener('paste', rteHandlePaste);
+    el.addEventListener('drop', rteHandleDrop);
+    el.dataset.imgHooked = '1';
   });
 }
 
