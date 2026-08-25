@@ -1113,6 +1113,7 @@ html.nav-open,body.nav-open{overflow:hidden}
       </div>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-danger" id="courseFormDel" style="margin-right:auto;display:none" onclick="deleteCourseFromForm()">🗑 Excluir treinamento</button>
       <button class="btn btn-secondary" onclick="closeCourseForm()">Fechar</button>
       <button class="btn btn-primary" onclick="saveCourse()">Salvar treinamento</button>
     </div>
@@ -3579,9 +3580,22 @@ function openCourseForm(id) {
   document.getElementById('courseFormPrereq').value = c ? (c.prereq || '') : '';
   document.getElementById('courseFormAudience').value = c ? (c.audience || '') : '';
   document.getElementById('courseBuilderWrap').style.display = c ? '' : 'none';
+  // só faz sentido excluir um treinamento que já existe
+  document.getElementById('courseFormDel').style.display = c ? '' : 'none';
   courseSlugPreview();
   courseCoverPreview();
   renderCourseBuilder();
+}
+
+// Excluir de dentro do próprio formulário. Sem isso, quem abre pelo
+// "✏️ Editar treinamento" da página não chega na lista do painel, que é o
+// outro lugar onde o Excluir mora.
+function deleteCourseFromForm() {
+  const id = document.getElementById('courseFormId').value;
+  if (!id) return;
+  const antes = (DATA.courses || []).length;
+  deleteCourse(id);                    // ele já pede confirmação
+  if ((DATA.courses || []).length < antes) closeCourseForm();   // cancelou? fica aberto
 }
 
 // mostra a capa escolhida do jeito que ela vai aparecer no card
