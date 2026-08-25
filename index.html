@@ -233,7 +233,7 @@ mark{background:#eef0fe;color:var(--brand);padding:0 2px;border-radius:2px}
 .content-body a:hover,.acc-body a:hover{color:var(--brand-dark)}
 .content-body blockquote,.acc-body blockquote{border-left:4px solid var(--brand);background:var(--brand-bg);padding:12px 18px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--t2)}
 .video-embed{position:relative;width:100%;max-width:720px;aspect-ratio:16/9;margin:16px 0;border-radius:10px;overflow:hidden;background:#000;border:1px solid var(--bd)}
-.video-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-embed iframe,.video-embed video{position:absolute;inset:0;width:100%;height:100%;border:0}
 
 /* ═══ EDITOR RICO (RTE) ═══ */
 .rte-wrap{border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--bg)}
@@ -1137,7 +1137,7 @@ html.nav-open,body.nav-open{overflow:hidden}
         <div class="form-group" style="flex:1;min-width:220px">
           <label class="form-label">Link do vídeo</label>
           <input class="form-input" id="lessonFormVideo" type="text" placeholder="Cole o link do YouTube">
-          <div class="form-hint">YouTube (inclusive vídeo "não listado"). Outros players funcionam se você colar o link de incorporação (embed).</div>
+          <div class="form-hint">No YouTube, deixe o vídeo como <strong>“Não listado”</strong>: ele toca aqui, mas não aparece na busca nem no seu canal. <strong>“Privado” não funciona</strong> — só quem você convidar por conta Google conseguiria ver.<br>Também aceita link direto de arquivo <code>.mp4</code> e, para outros players (Vimeo, Loom), a URL de <em>incorporação</em> — não a URL da página.</div>
         </div>
         <div class="form-group" style="width:130px">
           <label class="form-label">Duração</label>
@@ -2699,7 +2699,7 @@ function rteVideo(){
   rteMakePop(`
     <h4>Inserir vídeo do YouTube</h4>
     <input type="text" class="form-input" id="rteVidUrl" placeholder="Cole o link do YouTube...">
-    <div class="form-hint">Ex: https://www.youtube.com/watch?v=ABC123</div>
+    <div class="form-hint">Ex: https://www.youtube.com/watch?v=ABC123<br>O vídeo precisa estar <strong>público</strong> ou <strong>não listado</strong> — vídeo “privado” não toca aqui.</div>
     <div class="rte-pop-row">
       <button class="btn btn-secondary btn-sm" type="button" onclick="rteClosePop()">Cancelar</button>
       <button class="btn btn-primary btn-sm" type="button" onclick="rteVideoInsert()">Inserir</button>
@@ -2711,7 +2711,7 @@ function rteVideoInsert(){
   const id = ytId(url);
   if (!id){ alert('Link do YouTube inválido. Cole o endereço completo do vídeo.'); return; }
   rteClosePop();
-  rteInsertHTML('<div class="video-embed"><iframe src="https://www.youtube.com/embed/' + id + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p><br></p>');
+  rteInsertHTML(ytEmbedHtml(id) + '<p><br></p>');
 }
 
 function rteHint(){
@@ -3079,14 +3079,30 @@ function completeAndNext(courseId, lessonId) {
 }
 
 // ── vídeo e materiais ──
+const VIDEO_ALLOW = 'accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture';
+
+// Monta o embed do YouTube. Usamos o domínio -nocookie: ele não grava cookie
+// de rastreio antes de a pessoa dar play. playsinline evita o iPhone jogar o
+// vídeo em tela cheia sozinho no meio da aula.
+function ytEmbedHtml(id) {
+  const src = 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&playsinline=1';
+  return '<div class="video-embed"><iframe src="' + esc(src) + '" allow="' + VIDEO_ALLOW +
+         '" allowfullscreen loading="lazy"></iframe></div>';
+}
+
 function lessonVideoHtml(l) {
   if (!l.video) return '';
-  const id = ytId(l.video);
-  let src = '';
-  if (id) src = 'https://www.youtube.com/embed/' + id + '?rel=0';
-  else if (/^https?:\/\//i.test(l.video.trim())) src = l.video.trim();
-  if (!src) return '';
-  return '<div class="video-embed"><iframe src="' + esc(src) + '" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+  const url = String(l.video).trim();
+  const id = ytId(url);
+  if (id) return ytEmbedHtml(id);
+  if (!/^https?:\/\//i.test(url)) return '';
+  // arquivo de vídeo solto (S3, Cloudflare, etc.): toca no player do navegador
+  if (/\.(mp4|webm|ogv|ogg|mov)(\?|#|$)/i.test(url)) {
+    return '<div class="video-embed"><video src="' + esc(url) + '" controls playsinline preload="metadata"></video></div>';
+  }
+  // qualquer outro player (Vimeo, Loom…): precisa ser a URL de incorporação
+  return '<div class="video-embed"><iframe src="' + esc(url) + '" allow="' + VIDEO_ALLOW +
+         '" allowfullscreen loading="lazy"></iframe></div>';
 }
 function materialsHtml(l) {
   const mats = (l.materials || []).filter(m => m && m.url);
