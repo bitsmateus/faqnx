@@ -37,6 +37,13 @@ button{font-family:var(--font)}
 .hdr-nav{display:flex;align-items:center;gap:4px;padding-right:16px}
 .hdr-nav a{font-size:13px;color:var(--t3);padding:5px 10px;border-radius:6px;transition:background .13s,color .13s}
 .hdr-nav a:hover{background:var(--bg2);color:var(--t1)}
+/* Treinamentos é a porta de entrada do site — no header ele vira botão, não link */
+.lnk-treinamentos{font-size:12.5px!important;font-weight:700!important;letter-spacing:.4px;color:#fff!important;background:var(--brand);padding:7px 14px!important;border-radius:7px;white-space:nowrap}
+.lnk-treinamentos:hover{background:var(--brand-dark);color:#fff!important}
+.lnk-central{white-space:nowrap}
+/* abaixo de 1100px o header não cabe os quatro itens: só Treinamentos fica,
+   já que Central e Suporte estão no menu lateral e na capa */
+@media(max-width:1100px){.lnk-central,.lnk-suporte{display:none}}
 .btn-admin{font-size:12px;color:var(--t4)!important;border:1px solid var(--bd)!important;padding:4px 10px!important;border-radius:6px}
 .btn-admin:hover{color:var(--brand)!important;border-color:var(--brand)!important;background:var(--brand-bg)!important}
 
@@ -382,6 +389,106 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .tr-nav-lbl{font-size:11.5px;color:var(--t4);margin-bottom:3px}
 .tr-nav-t{font-size:13.5px;color:var(--t1);font-weight:500;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
+/* ─── capa da área de treinamentos (agora a home do site) ─── */
+.tr-hero{border:1px solid var(--bd);border-radius:16px;background:var(--brand-bg);padding:32px 34px 30px;margin-bottom:26px;position:relative;overflow:hidden}
+.tr-hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:var(--brand);opacity:.07;pointer-events:none}
+.tr-hero-lbl{font-size:11.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--brand);margin-bottom:10px}
+.tr-hero-title{font-size:30px;font-weight:700;color:var(--t1);letter-spacing:-.5px;line-height:1.2;margin-bottom:10px;max-width:20ch}
+.tr-hero-sub{font-size:15.5px;color:var(--t3);line-height:1.65;max-width:58ch;margin-bottom:20px}
+.tr-hero-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;position:relative}
+.tr-hero-cta{display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;border:none;border-radius:9px;padding:13px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);line-height:1.3;text-align:left}
+.tr-hero-cta:hover{background:var(--brand-dark)}
+.tr-hero-2nd{display:inline-flex;align-items:center;gap:7px;background:var(--bg);color:var(--t2);border:1px solid var(--bd);border-radius:9px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.tr-hero-2nd:hover{border-color:var(--brand);color:var(--brand)}
+.tr-hero-prog{display:flex;align-items:center;gap:12px;margin-top:20px;position:relative;max-width:420px}
+.tr-hero-prog .tr-bar{flex:1}
+.tr-hero-prog b{font-size:12.5px;color:var(--t3);font-weight:600;white-space:nowrap}
+
+/* faixa de sessão anterior */
+.tr-sect{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t4);margin:30px 0 12px}
+
+/* card de treinamento — agora com capa, selo e cor própria */
+.tr-card{position:relative;overflow:hidden;padding:0}
+.tr-card>.tr-card-in{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px;flex:1;min-width:0}
+.tr-card-cover{aspect-ratio:16/9;width:100%;background:var(--bg2);background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:56px;border-bottom:1px solid var(--bd)}
+.tr-card-badge{position:absolute;top:10px;left:10px;background:var(--bg);color:var(--brand);border:1px solid currentColor;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;z-index:1}
+.tr-card.accent{border-top:3px solid var(--acc,var(--brand))}
+.tr-card .tr-bar span{background:var(--acc,var(--brand))}
+
+/* treinamento em destaque — "comece por aqui" */
+.tr-feat{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:0;border:1px solid var(--bd);border-top:3px solid var(--acc,var(--brand));border-radius:14px;overflow:hidden;background:var(--bg);cursor:pointer;text-align:left;font-family:var(--font);width:100%;transition:box-shadow .15s}
+.tr-feat:hover{box-shadow:0 8px 26px rgba(0,0,0,.09)}
+.tr-feat-cover{background:var(--bg2);background-size:cover;background-position:center;min-height:150px;display:flex;align-items:center;justify-content:center;font-size:64px}
+.tr-feat-in{padding:20px 22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tr-feat-lbl{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--acc,var(--brand))}
+.tr-feat-name{font-size:19px;font-weight:700;color:var(--t1);line-height:1.3}
+.tr-feat-desc{font-size:14px;color:var(--t3);line-height:1.6}
+.tr-feat-meta{font-size:12.5px;color:var(--t4)}
+.tr-feat .tr-bar span{background:var(--acc,var(--brand))}
+
+/* faixa que leva para a central de ajuda */
+.tr-help{display:flex;align-items:center;gap:14px;border:1px solid var(--bd);border-radius:12px;padding:16px 20px;margin-top:34px;background:var(--bg2)}
+.tr-help-tx{flex:1;min-width:0;font-size:14px;color:var(--t3);line-height:1.55}
+.tr-help-tx b{display:block;font-size:15px;color:var(--t1);font-weight:600;margin-bottom:2px}
+.tr-help-btn{flex-shrink:0;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;font-size:13.5px;font-weight:600;color:var(--t2);cursor:pointer;font-family:var(--font)}
+.tr-help-btn:hover{border-color:var(--brand);color:var(--brand)}
+
+/* capa do treinamento (banner + o que você vai aprender) */
+.tr-banner{border-radius:14px;overflow:hidden;border:1px solid var(--bd);margin:4px 0 20px;background:var(--bg2);background-size:cover;background-position:center;aspect-ratio:21/6;min-height:120px}
+.tr-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tr-chip{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border-radius:99px;padding:5px 11px;background:var(--brand-bg);color:var(--acc,var(--brand));border:1px solid currentColor}
+.tr-learn{border:1px solid var(--bd);border-radius:12px;padding:18px 22px;margin:22px 0;background:var(--bg)}
+.tr-learn-t{font-size:11.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t4);margin-bottom:10px}
+.tr-learn ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+.tr-learn li{font-size:14.5px;color:var(--t2);line-height:1.55;padding-left:24px;position:relative}
+.tr-learn li::before{content:"✓";position:absolute;left:0;top:0;color:var(--acc,var(--brand));font-weight:700}
+.tr-note{border:1px solid var(--bd);border-left:3px solid var(--acc,var(--brand));border-radius:0 10px 10px 0;padding:13px 18px;margin:14px 0;font-size:14px;color:var(--t3);line-height:1.6}
+.tr-note b{color:var(--t1);font-weight:600}
+
+/* nas telas de treinamento o painel "Nesta página" some — a coluna pode crescer */
+.content.tr-mode{max-width:1080px}
+
+/* ─── tela da aula: player + playlist ao lado ─── */
+.content.player-mode{max-width:1240px}
+.player{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:26px;align-items:start}
+.player-main{min-width:0}
+.player .video-embed{max-width:100%;margin:0 0 18px}
+.pl{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:var(--bg);position:sticky;top:calc(var(--hh) + 24px);max-height:calc(100vh - var(--hh) - 48px);display:flex;flex-direction:column}
+.pl-hdr{padding:14px 16px 12px;border-bottom:1px solid var(--bd);background:var(--bg2)}
+.pl-name{font-size:14.5px;font-weight:700;color:var(--t1);line-height:1.35;margin-bottom:8px}
+.pl-scroll{overflow-y:auto;flex:1}
+.pl-mod{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t4);padding:14px 16px 5px;background:var(--bg)}
+.pl-item{display:flex;align-items:flex-start;gap:10px;width:100%;padding:9px 16px;border:none;background:none;cursor:pointer;text-align:left;font-family:var(--font);border-left:3px solid transparent;transition:background .12s}
+.pl-item:hover{background:var(--bg2)}
+.pl-item.active{background:var(--brand-bg);border-left-color:var(--brand)}
+.pl-tick{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;margin-top:1px}
+.pl-item.done .pl-tick{background:var(--brand);border-color:var(--brand);color:#fff}
+.pl-item.active .pl-tick{border-color:var(--brand);color:var(--brand)}
+.pl-tx{flex:1;min-width:0;font-size:13.5px;color:var(--t2);line-height:1.4}
+.pl-item.active .pl-tx{color:var(--brand);font-weight:600}
+.pl-item.done .pl-tx{color:var(--t3)}
+.pl-dur{font-size:11.5px;color:var(--t4);flex-shrink:0;margin-top:1px}
+.pl-foot{padding:11px 16px;border-top:1px solid var(--bd);background:var(--bg2);font-size:12.5px;color:var(--t4)}
+.pl-toggle{display:none}
+
+/* abaixo de 1080px a playlist desce para debaixo do vídeo, recolhida */
+@media(max-width:1080px){
+  .content.player-mode{max-width:100%}
+  .player{grid-template-columns:minmax(0,1fr);gap:20px}
+  .pl{position:static;max-height:none}
+  .pl-scroll{max-height:52vh}
+  .pl-toggle{display:block;width:100%;padding:13px 16px;border:none;background:var(--bg2);font-family:var(--font);font-size:14px;font-weight:600;color:var(--t1);cursor:pointer;text-align:left}
+  .pl.closed .pl-scroll,.pl.closed .pl-foot,.pl.closed .pl-hdr{display:none}
+}
+@media(max-width:760px){
+  .tr-feat{grid-template-columns:1fr}
+  .tr-feat-cover{min-height:120px;aspect-ratio:16/7}
+  .tr-learn ul{grid-template-columns:1fr}
+  .tr-hero{padding:24px 20px}
+  .tr-hero-title{font-size:24px}
+  .tr-help{flex-direction:column;align-items:stretch}
+}
+
 /* menu lateral — treinamentos e aulas */
 .sb-mod{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--t4);padding:10px 16px 3px 28px}
 .sb-prog{padding:8px 16px 8px 28px}
@@ -453,8 +560,8 @@ html.nav-open,body.nav-open{overflow:hidden}
   .hdr-search{min-width:0;flex:1;height:36px}
   .kbd{display:none}
   .hdr-nav{padding-right:8px;gap:2px}
-  /* no tablet o header aperta: os links somem e o menu lateral assume */
-  .lnk-suporte,.lnk-treinamentos{display:none}
+  /* no celular o botão de Treinamentos encolhe, mas continua visível */
+  .lnk-treinamentos{font-size:11.5px!important;padding:6px 10px!important}
 
   .sidebar{width:min(86vw,300px);z-index:200;transform:translateX(-100%);transition:transform .24s ease;box-shadow:0 0 40px rgba(0,0,0,.18)}
   .sidebar.open{transform:translateX(0)}
@@ -573,7 +680,8 @@ html.nav-open,body.nav-open{overflow:hidden}
     <button class="hdr-searchbtn" type="button" aria-label="Pesquisar" onclick="openMobileSearch()">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M15 15l-3.5-3.5"/></svg>
     </button>
-    <a href="/treinamentos" class="lnk-treinamentos" onclick="event.preventDefault();goTreinamentos()">TREINAMENTOS</a>
+    <a href="/" class="lnk-treinamentos" onclick="event.preventDefault();goTreinamentos()">🎓 TREINAMENTOS</a>
+    <a href="/central-de-ajuda" class="lnk-central" onclick="event.preventDefault();goCentral()">CENTRAL DE AJUDA</a>
     <a href="mailto:suporte@nxdigital.com.br" class="lnk-suporte">SUPORTE</a>
     <a href="#" class="btn-admin" onclick="openAdmin(event)">⚙<span class="lbl-admin"> Admin</span></a>
   </nav>
@@ -712,6 +820,28 @@ html.nav-open,body.nav-open{overflow:hidden}
           <label class="form-label">Alterar senha do admin</label>
           <input class="form-input" id="cfgPw" type="password" placeholder="Nova senha (deixe em branco para manter)">
         </div>
+
+        <hr style="border:none;border-top:1px solid var(--bd);margin:20px 0 16px">
+        <label class="form-label" style="margin-bottom:4px;display:block">Capa da home (área de Treinamentos)</label>
+        <div class="form-hint" style="margin-bottom:12px">É a primeira coisa que o cliente vê ao abrir o site. Deixe em branco para usar o texto padrão.</div>
+        <div class="form-group">
+          <label class="form-label">Etiqueta pequena</label>
+          <input class="form-input" id="cfgTrLbl" type="text" placeholder="🎓 Comece por aqui">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Título</label>
+          <input class="form-input" id="cfgTrTitle" type="text" placeholder="Aprenda a configurar a NX Digital">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Frase de apoio</label>
+          <textarea class="form-textarea" id="cfgTrSub" style="min-height:70px" placeholder="Vídeos curtos, na ordem certa, do primeiro acesso até a ferramenta rodando."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Texto do botão principal</label>
+          <input class="form-input" id="cfgTrCta" type="text" placeholder="Continuar de onde parei / Começar agora">
+          <div class="form-hint">Vazio = o botão se adapta sozinho (“Começar agora” na primeira visita).</div>
+        </div>
+
         <button class="btn btn-primary" onclick="saveSettings()">Salvar configurações</button>
 
         <hr style="border:none;border-top:1px solid var(--bd);margin:24px 0">
@@ -916,6 +1046,63 @@ html.nav-open,body.nav-open{overflow:hidden}
         <label class="form-label">Link personalizado (opcional)</label>
         <input class="form-input" id="courseFormSlug" type="text" placeholder="Ex: primeiros-passos (gerado do nome se vazio)" oninput="courseSlugPreview()">
         <div class="form-hint" id="courseSlugPreview"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--bd);margin:20px 0 16px">
+      <label class="form-label" style="margin-bottom:10px;display:block">Aparência na vitrine</label>
+
+      <div class="form-group">
+        <label class="form-label">Imagem de capa (opcional)</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label class="btn btn-secondary btn-sm" style="cursor:pointer">⬆ Enviar imagem
+            <input type="file" accept="image/*" onchange="uploadCourseCover(this)" style="display:none">
+          </label>
+          <input class="form-input" id="courseFormCover" type="text" placeholder="ou cole a URL da imagem" style="flex:1;min-width:200px" oninput="courseCoverPreview()">
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('courseFormCover').value='';courseCoverPreview()">Remover</button>
+        </div>
+        <div class="form-hint">Sem imagem, o card usa o emoji do nome. Proporção boa: 16:9 (ex: 960×540).</div>
+        <div id="courseCoverPreview" style="margin-top:10px"></div>
+      </div>
+
+      <div class="form-group" style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:150px">
+          <label class="form-label">Cor de destaque</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="color" id="courseFormColorPick" style="width:44px;height:38px;padding:2px;border:1px solid var(--bd);border-radius:7px;background:var(--bg);cursor:pointer" oninput="document.getElementById('courseFormColor').value=this.value">
+            <input class="form-input" id="courseFormColor" type="text" placeholder="vazio = cor do site" style="flex:1" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value))document.getElementById('courseFormColorPick').value=this.value">
+          </div>
+        </div>
+        <div style="flex:1;min-width:150px">
+          <label class="form-label">Selo (opcional)</label>
+          <input class="form-input" id="courseFormBadge" type="text" placeholder="Ex: Obrigatório, Novo, Avançado">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;color:var(--t2)">
+          <input type="checkbox" id="courseFormFeatured" style="width:16px;height:16px;cursor:pointer">
+          <span>Destacar como <strong>“Comece por aqui”</strong> na home</span>
+        </label>
+        <div class="form-hint">Aparece em card grande no topo da home. Só um treinamento por vez fica em destaque.</div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--bd);margin:20px 0 16px">
+      <label class="form-label" style="margin-bottom:10px;display:block">Antes de começar</label>
+
+      <div class="form-group">
+        <label class="form-label">O que você vai aprender</label>
+        <textarea class="form-textarea" id="courseFormLearn" style="min-height:90px" placeholder="Um item por linha. Ex:&#10;Conectar o primeiro número de WhatsApp&#10;Criar filas e distribuir atendimentos&#10;Montar seu primeiro chatbot"></textarea>
+        <div class="form-hint">Um item por linha — vira a lista com ✓ na capa do treinamento.</div>
+      </div>
+      <div class="form-group" style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <label class="form-label">Pré-requisitos (opcional)</label>
+          <input class="form-input" id="courseFormPrereq" type="text" placeholder="Ex: ter acesso de administrador no painel">
+        </div>
+        <div style="flex:1;min-width:200px">
+          <label class="form-label">Para quem é (opcional)</label>
+          <input class="form-input" id="courseFormAudience" type="text" placeholder="Ex: Administradores">
+        </div>
       </div>
 
       <div id="courseBuilderWrap" style="display:none">
@@ -1615,6 +1802,12 @@ function moveSection(draggedId, mode, targetOrGroup) {
 }
 
 function renderContent() {
+  // a tela da aula usa uma coluna mais larga, para caber vídeo + playlist
+  const main = document.getElementById('mainContent');
+  if (main) {
+    main.classList.toggle('player-mode', currentView === 'lesson');
+    main.classList.toggle('tr-mode', currentView === 'treinamentos' || currentView === 'course');
+  }
   if (currentView === 'treinamentos') { renderTreinamentosIndex(); return; }
   if (currentView === 'course')  { renderCoursePage(); return; }
   if (currentView === 'lesson')  { renderLessonPage(); return; }
@@ -1623,8 +1816,10 @@ function renderContent() {
   const faqs = DATA.faqs.filter(f => f.secId === sec.id);
   let html = `<div id="sec-${sec.id}">`;
 
+  // na primeira página da central, a faixa de treinamentos vem antes de tudo
+  if (sec.id === introSecId()) html += homeHeroHtml();
+
   if (sec.id === 'intro') {
-    html += homeHeroHtml();
     html += `<div class="eyebrow">Central de Ajuda · ${DATA.settings.company}</div>
              <h1 class="page-title">${sec.name}</h1>
              <p class="intro-desc">A <strong>NX Digital</strong> é um sistema de atendimento e automação projetado para centralizar a comunicação de múltiplos canais, com foco principal no WhatsApp. Suas funcionalidades incluem gestão de múltiplos atendentes e criação de chatbots para automação de conversas. A plataforma suporta tanto a API Oficial do WhatsApp quanto APIs não oficiais (via QR Code), além de integrar com Instagram, Facebook Messenger e Telegram. Também oferece integrações com ferramentas de inteligência artificial, como ChatGPT e Gemini, e plataformas de automação como N8N e Typebot.</p>
@@ -1717,8 +1912,8 @@ function renderRpLinks() {
   const rpTitle = document.getElementById('rpTitle');
   const oldToc = document.getElementById('tocMobile');
   if (oldToc) oldToc.remove();
-  // as telas de treinamento já têm a lista de aulas no menu lateral
-  if (currentView === 'treinamentos' || currentView === 'course') {
+  // as telas de treinamento já têm a lista de aulas (playlist e menu lateral)
+  if (currentView !== 'sec') {
     if (rp) rp.style.display = 'none';
     document.getElementById('rpLinks').innerHTML = '';
     return;
@@ -1831,8 +2026,19 @@ function buildCourseSlugs() {
   });
 }
 
+// A home do site é a área de Treinamentos. A central de ajuda continua inteira,
+// só deixou de ser a primeira tela — ela vive em /central-de-ajuda e no menu.
+// Sem nenhum treinamento publicado, a home volta a ser a central (senão o
+// visitante cairia numa tela vazia).
+function temTreinamentos() { return (DATA.courses || []).length > 0; }
+function introSecId() {
+  if (DATA.sections.find(s => s.id === 'intro')) return 'intro';
+  const first = DATA.sections.slice().sort((a, b) => (a.order || 0) - (b.order || 0))[0];
+  return first ? first.id : 'intro';
+}
+
 function urlForSec(secId) {
-  if (secId === 'intro') return '/';
+  if (secId === 'intro' || secId === introSecId()) return temTreinamentos() ? '/central-de-ajuda' : '/';
   return '/' + (SEC_SLUG[secId] || secId);
 }
 function urlForFaq(faqId) {
@@ -1842,7 +2048,10 @@ function urlForFaq(faqId) {
 }
 function resolvePath(pathname) {
   const parts = decodeURIComponent(pathname || '/').replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
-  if (parts.length === 0) return { view: 'sec', secId: 'intro' };
+  if (parts.length === 0) {
+    return temTreinamentos() ? { view: 'treinamentos' } : { view: 'sec', secId: introSecId() };
+  }
+  if (parts[0] === 'central-de-ajuda' && !parts[1]) return { view: 'sec', secId: introSecId() };
   // /treinamentos, /treinamentos/curso, /treinamentos/curso/aula
   if (parts[0] === 'treinamentos' || parts[0] === 'trilhas') {   // 'trilhas' era o nome antigo
     if (!parts[1]) return { view: 'treinamentos' };
@@ -2705,6 +2914,10 @@ function loadSettings() {
   document.getElementById('cfgColor').value = s.color;
   document.getElementById('cfgEmail').value = s.email;
   document.getElementById('cfgPw').value = '';
+  document.getElementById('cfgTrLbl').value = s.trLbl || '';
+  document.getElementById('cfgTrTitle').value = s.trTitle || '';
+  document.getElementById('cfgTrSub').value = s.trSub || '';
+  document.getElementById('cfgTrCta').value = s.trCta || '';
 }
 function saveSettings() {
   const newPw = document.getElementById('cfgPw').value.trim();
@@ -2712,6 +2925,10 @@ function saveSettings() {
   DATA.settings.subtitle = document.getElementById('cfgSubtitle').value.trim();
   DATA.settings.color = document.getElementById('cfgColor').value.trim();
   DATA.settings.email = document.getElementById('cfgEmail').value.trim();
+  DATA.settings.trLbl = document.getElementById('cfgTrLbl').value.trim();
+  DATA.settings.trTitle = document.getElementById('cfgTrTitle').value.trim();
+  DATA.settings.trSub = document.getElementById('cfgTrSub').value.trim();
+  DATA.settings.trCta = document.getElementById('cfgTrCta').value.trim();
   if (newPw) DATA.settings.pw = newPw;
   saveData(DATA); render();
   showToast('Configurações salvas!');
@@ -2809,7 +3026,8 @@ function nextPendingLesson(c) {
 function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
 
 // ── navegação ──
-function urlTreinamentos() { return '/treinamentos'; }
+// a área de treinamentos é a home; /treinamentos continua valendo para links antigos
+function urlTreinamentos() { return temTreinamentos() ? '/' : '/treinamentos'; }
 function urlForCourse(id) { return '/treinamentos/' + (COURSE_SLUG[id] || id); }
 function urlForLesson(courseId, lessonId) {
   return '/treinamentos/' + (COURSE_SLUG[courseId] || courseId) + '/' + (LESSON_SLUG[lessonId] || lessonId);
@@ -2820,6 +3038,17 @@ function goTreinamentos(push) {
   render();
   if (push !== false) history.pushState({ view: 'treinamentos' }, '', urlTreinamentos());
   closeSidebar();
+}
+// volta para a primeira página da central de ajuda
+function goCentral() {
+  const id = introSecId();
+  currentView = 'sec'; currentCourse = null; currentLesson = null;
+  currentSec = id;
+  openAncestors(id);
+  render();
+  history.pushState({ secId: id }, '', urlForSec(id));
+  closeSidebar();
+  window.scrollTo(0, 0);
 }
 function openCourse(id, push) {
   const c = courseById(id);
@@ -2870,6 +3099,94 @@ function progressBarHtml(pct) {
   return '<div class="tr-bar-row"><div class="tr-bar"><span style="width:' + pct + '%"></span></div><div class="tr-pct">' + pct + '%</div></div>';
 }
 
+// ── personalização de cada treinamento (definida no painel admin) ──
+function courseAccent(c) { return (c && c.color) || DATA.settings.color || '#5A64F2'; }
+// emoji do início do nome; serve de capa quando não há imagem.
+// Mesma separação emoji/texto que o menu lateral já usa.
+function courseEmoji(c) {
+  const n = (c && c.name || '').trim();
+  if (!startsWithEmoji(n)) return '🎓';
+  const i = n.indexOf(' ');
+  return i > 0 ? n.slice(0, i) : n;
+}
+function courseTitle(c) {
+  const n = (c && c.name || '').trim();
+  if (!startsWithEmoji(n)) return n;
+  const i = n.indexOf(' ');
+  return i > 0 ? n.slice(i + 1).trim() : n;
+}
+// Com imagem, a capa é a imagem. Sem imagem, vira um fundo com a cor do
+// treinamento e o emoji do nome no meio — nunca um retângulo cinza vazio.
+function coverStyle(c) {
+  if (c && c.cover) return ' style="background-image:url(' + esc(c.cover) + ')"';
+  const a = esc(courseAccent(c));
+  return ' style="background:linear-gradient(135deg,' + a + '1f,' + a + '08)"';
+}
+function coverInner(c) { return c && c.cover ? '' : courseEmoji(c); }
+// um item por linha, ignorando linhas vazias
+function linhas(txt) {
+  return String(txt || '').split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+}
+function cursoDestaque() {
+  const list = allCourses();
+  return list.find(c => c.featured) || null;
+}
+// progresso somando todos os treinamentos
+function progressoGeral() {
+  let done = 0, total = 0;
+  allCourses().forEach(c => { const st = courseStats(c); done += st.done; total += st.total; });
+  return { done, total, pct: total ? Math.round(done * 100 / total) : 0 };
+}
+// de onde o botão principal deve continuar: última aula vista, senão a 1ª pendente
+function proximoPasso() {
+  const last = readLast();
+  if (last) {
+    const c = courseById(last.courseId);
+    const l = c && lessonById(c, last.lessonId);
+    if (c && l) return { course: c, lesson: l, retomar: true };
+  }
+  const c = cursoDestaque() || allCourses()[0];
+  if (!c) return null;
+  const l = nextPendingLesson(c);
+  return l ? { course: c, lesson: l, retomar: false } : null;
+}
+
+function cursoCardHtml(c) {
+  const st = courseStats(c);
+  return '<button class="tr-card accent" style="--acc:' + esc(courseAccent(c)) + '" onclick="openCourse(\'' + c.id + '\')">' +
+    (c.badge ? '<span class="tr-card-badge" style="color:' + esc(courseAccent(c)) + '">' + esc(c.badge) + '</span>' : '') +
+    '<div class="tr-card-cover"' + coverStyle(c) + '>' + coverInner(c) + '</div>' +
+    '<div class="tr-card-in">' +
+      '<div class="tr-card-name">' + esc(courseTitle(c)) + '</div>' +
+      '<div class="tr-card-desc">' + esc(c.desc || '') + '</div>' +
+      '<div class="tr-card-meta">' + plural(st.total, 'aula', 'aulas') +
+        (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
+      progressBarHtml(st.pct) +
+    '</div></button>';
+}
+
+function cursoDestaqueHtml(c) {
+  const st = courseStats(c);
+  return '<button class="tr-feat" style="--acc:' + esc(courseAccent(c)) + '" onclick="openCourse(\'' + c.id + '\')">' +
+    '<div class="tr-feat-cover"' + coverStyle(c) + '>' + coverInner(c) + '</div>' +
+    '<div class="tr-feat-in">' +
+      '<div class="tr-feat-lbl">' + esc(c.badge || 'Comece por aqui') + '</div>' +
+      '<div class="tr-feat-name">' + esc(courseTitle(c)) + '</div>' +
+      (c.desc ? '<div class="tr-feat-desc">' + esc(c.desc) + '</div>' : '') +
+      '<div class="tr-feat-meta">' + plural(st.total, 'aula', 'aulas') +
+        (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
+      progressBarHtml(st.pct) +
+    '</div></button>';
+}
+
+function faixaCentralHtml() {
+  return '<div class="tr-help">' +
+    '<div class="tr-help-tx"><b>Precisa de uma resposta rápida?</b>' +
+      'A Central de Ajuda tem o passo a passo escrito de cada tela do sistema.</div>' +
+    '<button class="tr-help-btn" onclick="goCentral()">Abrir a Central de Ajuda →</button>' +
+    '</div>';
+}
+
 // Faixa no topo da home. É a primeira coisa que o cliente vê ao abrir o site.
 function homeHeroHtml() {
   const list = allCourses();
@@ -2888,15 +3205,7 @@ function homeHeroHtml() {
 
   let corpo;
   if (list.length) {
-    corpo = '<div class="hh-grid">' + list.slice(0, 4).map(c => {
-      const st = courseStats(c);
-      return '<button class="tr-card" onclick="openCourse(\'' + c.id + '\')">' +
-        '<div class="tr-card-name">' + esc(c.name) + '</div>' +
-        '<div class="tr-card-desc">' + esc(c.desc || '') + '</div>' +
-        '<div class="tr-card-meta">' + plural(st.total, 'aula', 'aulas') +
-          (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
-        progressBarHtml(st.pct) + '</button>';
-    }).join('') + '</div>';
+    corpo = '<div class="hh-grid">' + list.slice(0, 4).map(cursoCardHtml).join('') + '</div>';
   } else {
     corpo = '<div class="hh-empty">Nenhum treinamento publicado ainda. Clique em <strong>Novo treinamento</strong> no menu à esquerda para criar o primeiro.</div>';
   }
@@ -2913,24 +3222,29 @@ function homeHeroHtml() {
 // ── telas ──
 function renderTreinamentosIndex() {
   const list = allCourses();
-  const last = readLast();
-  let html = '<div class="eyebrow">Treinamentos · ' + esc(DATA.settings.company) + '</div>' +
-             '<h1 class="page-title">🎓 Treinamentos</h1>' +
-             '<p class="intro-desc">Vídeos e tutoriais na ordem certa. Marque cada aula como concluída — o seu progresso fica salvo neste navegador.</p>';
+  const s = DATA.settings;
+  const passo = proximoPasso();
+  const geral = progressoGeral();
+  const destaque = cursoDestaque();
 
-  if (last) {
-    const c = courseById(last.courseId);
-    const l = c && lessonById(c, last.lessonId);
-    if (c && l) {
-      html += '<div class="tr-resume" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
-                '<div class="tr-resume-ico">▶</div>' +
-                '<div style="min-width:0">' +
-                  '<div class="tr-resume-lbl">Continuar de onde parou</div>' +
-                  '<div class="tr-resume-name">' + esc(l.title) + '</div>' +
-                  '<div class="tr-resume-sub">' + esc(c.name) + '</div>' +
-                '</div></div>';
-    }
+  // ── capa: os textos vêm do painel admin, com um padrão sensato ──
+  let html = '<section class="tr-hero">' +
+    '<div class="tr-hero-lbl">' + esc(s.trLbl || '🎓 Comece por aqui') + '</div>' +
+    '<h1 class="tr-hero-title">' + esc(s.trTitle || 'Aprenda a configurar a ' + s.company) + '</h1>' +
+    '<p class="tr-hero-sub">' + esc(s.trSub || 'Vídeos curtos, na ordem certa, do primeiro acesso até a ferramenta rodando. Marque cada aula como concluída — o seu progresso fica salvo neste navegador.') + '</p>' +
+    '<div class="tr-hero-acts">';
+  if (passo) {
+    html += '<button class="tr-hero-cta" onclick="openLesson(\'' + passo.course.id + '\',\'' + passo.lesson.id + '\')">▶ ' +
+            esc(s.trCta || (passo.retomar ? 'Continuar de onde parei' : 'Começar agora')) +
+            ' · ' + esc(passo.lesson.title) + '</button>';
   }
+  html += '<button class="tr-hero-2nd" onclick="goCentral()">Central de Ajuda</button>' +
+          '</div>';
+  if (geral.total) {
+    html += '<div class="tr-hero-prog"><div class="tr-bar"><span style="width:' + geral.pct + '%"></span></div>' +
+            '<b>' + geral.done + ' de ' + geral.total + ' aulas · ' + geral.pct + '%</b></div>';
+  }
+  html += '</section>';
 
   if (isAdmin()) {
     html += '<div class="admin-edit-bar"><button class="edit-pencil" onclick="openCourseFormInline()">➕ Novo treinamento</button></div>';
@@ -2940,17 +3254,17 @@ function renderTreinamentosIndex() {
     html += '<div class="tr-empty">Nenhum treinamento publicado ainda.' +
             (isAdmin() ? '<br>Clique em <strong>Novo treinamento</strong> para criar o primeiro.' : '') + '</div>';
   } else {
-    html += '<div class="tr-grid">' + list.map(c => {
-      const st = courseStats(c);
-      return '<button class="tr-card" onclick="openCourse(\'' + c.id + '\')">' +
-               '<div class="tr-card-name">' + esc(c.name) + '</div>' +
-               (c.desc ? '<div class="tr-card-desc">' + esc(c.desc) + '</div>' : '<div class="tr-card-desc"></div>') +
-               '<div class="tr-card-meta">' + plural(st.total, 'aula', 'aulas') +
-                 (st.done ? ' · ' + st.done + ' concluída' + (st.done === 1 ? '' : 's') : '') + '</div>' +
-               progressBarHtml(st.pct) +
-             '</button>';
-    }).join('') + '</div>';
+    if (destaque) {
+      html += '<div class="tr-sect">Comece por aqui</div>' + cursoDestaqueHtml(destaque);
+    }
+    const resto = list.filter(c => c !== destaque);
+    if (resto.length) {
+      html += '<div class="tr-sect">' + (destaque ? 'Depois, aprofunde' : 'Treinamentos') + '</div>' +
+              '<div class="tr-grid">' + resto.map(cursoCardHtml).join('') + '</div>';
+    }
   }
+
+  html += faixaCentralHtml();
 
   document.getElementById('mainContent').innerHTML = html;
   enhanceContent();
@@ -2963,8 +3277,19 @@ function renderCoursePage() {
   const st = courseStats(c);
   const nx = nextPendingLesson(c);
 
-  let html = '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span><span>' + esc(c.name) + '</span></div>' +
-             '<h1 class="page-title">' + esc(c.name) + '</h1>';
+  const acc = courseAccent(c);
+  let html = '<div style="--acc:' + esc(acc) + '">';
+  html += '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span><span>' + esc(courseTitle(c)) + '</span></div>';
+  if (c.cover) html += '<div class="tr-banner"' + coverStyle(c) + '></div>';
+  html += '<h1 class="page-title">' + esc(c.name) + '</h1>';
+
+  const chips = [];
+  if (c.badge) chips.push(c.badge);
+  if (st.total) chips.push(plural(st.total, 'aula', 'aulas'));
+  if (c.audience) chips.push(c.audience);
+  if (chips.length) {
+    html += '<div class="tr-chips">' + chips.map(t => '<span class="tr-chip">' + esc(t) + '</span>').join('') + '</div>';
+  }
   if (c.desc) html += '<p class="intro-desc" style="margin-bottom:18px">' + esc(c.desc) + '</p>';
   html += progressBarHtml(st.pct) +
           '<div class="tr-count">' + st.done + ' de ' + plural(st.total, 'aula concluída', 'aulas concluídas') + '</div>';
@@ -2972,6 +3297,14 @@ function renderCoursePage() {
     html += '<button class="btn btn-primary" onclick="openLesson(\'' + c.id + '\',\'' + nx.id + '\')">▶ ' +
             (st.done ? 'Continuar de onde parou' : 'Começar o treinamento') + '</button>';
   }
+
+  const aprende = linhas(c.learn);
+  if (aprende.length) {
+    html += '<div class="tr-learn"><div class="tr-learn-t">O que você vai aprender</div><ul>' +
+            aprende.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>';
+  }
+  if (c.prereq) html += '<div class="tr-note"><b>Antes de começar:</b> ' + esc(c.prereq) + '</div>';
+
   if (isAdmin()) {
     html += '<div class="admin-edit-bar" style="margin-top:18px"><button class="edit-pencil" onclick="openCourseFormInline(\'' + c.id + '\')">✏️ Editar treinamento e aulas</button></div>';
   }
@@ -3000,6 +3333,7 @@ function renderCoursePage() {
   if (!courseLessons(c).length && !isAdmin()) {
     html += '<div class="tr-empty" style="margin-top:20px">Este treinamento ainda não tem aulas publicadas.</div>';
   }
+  html += '</div>';
 
   document.getElementById('mainContent').innerHTML = html;
   enhanceContent();
@@ -3017,8 +3351,10 @@ function renderLessonPage() {
   const st = courseStats(c);
   const done = isDone(l.id);
 
-  let html = '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span>' +
-             '<a onclick="openCourse(\'' + c.id + '\')">' + esc(c.name) + '</a></div>';
+  let html = '<div style="--acc:' + esc(courseAccent(c)) + '">';
+  html += '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span>' +
+          '<a onclick="openCourse(\'' + c.id + '\')">' + esc(courseTitle(c)) + '</a></div>';
+  html += '<div class="player"><div class="player-main">';
   html += lessonVideoHtml(l);
   html += '<h1 class="lesson-title">' + esc(l.title) + '</h1>' +
           '<div class="lesson-meta">' + (mod && mod.name ? esc(mod.name) + ' · ' : '') +
@@ -3051,9 +3387,52 @@ function renderLessonPage() {
     html += '</div>';
   }
 
+  html += '</div>' + playlistHtml(c, l.id) + '</div></div>';
+
   document.getElementById('mainContent').innerHTML = html;
   enhanceContent();
   window.scrollTo(0, 0);
+  // em tela estreita a playlist começa recolhida, para o vídeo aparecer primeiro
+  const pl = document.getElementById('playlist');
+  if (pl && window.matchMedia('(max-width:1080px)').matches) pl.classList.add('closed');
+  // deixa a aula atual visível na playlist sem rolar a página
+  const at = document.querySelector('.pl-item.active');
+  if (at && at.scrollIntoView) at.scrollIntoView({ block: 'nearest' });
+}
+
+// Lista de aulas ao lado do vídeo — é o que dá a sensação de área de membros:
+// o aluno vê onde está, o que já fez e o que falta sem sair da aula.
+function playlistHtml(c, lessonId) {
+  const st = courseStats(c);
+  let itens = '';
+  let n = 0;
+  (c.modules || []).forEach(m => {
+    const lessons = m.lessons || [];
+    if (!lessons.length) return;
+    if (m.name) itens += '<div class="pl-mod">' + esc(m.name) + '</div>';
+    lessons.forEach(l => {
+      n++;
+      const cls = 'pl-item' + (isDone(l.id) ? ' done' : '') + (l.id === lessonId ? ' active' : '');
+      itens += '<button class="' + cls + '" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
+                 '<span class="pl-tick">' + (l.id === lessonId && !isDone(l.id) ? '▶' : '✓') + '</span>' +
+                 '<span class="pl-tx">' + n + '. ' + esc(l.title) + '</span>' +
+                 (l.duration ? '<span class="pl-dur">' + esc(l.duration) + '</span>' : '') +
+               '</button>';
+    });
+  });
+  return '<aside class="pl" id="playlist">' +
+    '<button class="pl-toggle" onclick="togglePlaylist()">☰ Aulas deste treinamento · ' + st.done + '/' + st.total + '</button>' +
+    '<div class="pl-hdr">' +
+      '<div class="pl-name">' + esc(courseTitle(c)) + '</div>' +
+      '<div class="tr-bar"><span style="width:' + st.pct + '%"></span></div>' +
+    '</div>' +
+    '<div class="pl-scroll">' + itens + '</div>' +
+    '<div class="pl-foot">' + st.done + ' de ' + plural(st.total, 'aula concluída', 'aulas concluídas') + '</div>' +
+    '</aside>';
+}
+function togglePlaylist() {
+  const el = document.getElementById('playlist');
+  if (el) el.classList.toggle('closed');
 }
 
 // ── menu lateral ──
@@ -3173,9 +3552,42 @@ function openCourseForm(id) {
   document.getElementById('courseFormName').value = c ? c.name : '';
   document.getElementById('courseFormDesc').value = c ? (c.desc || '') : '';
   document.getElementById('courseFormSlug').value = c ? (c.slug || '') : '';
+  document.getElementById('courseFormCover').value = c ? (c.cover || '') : '';
+  document.getElementById('courseFormColor').value = c ? (c.color || '') : '';
+  document.getElementById('courseFormColorPick').value = (c && c.color) || DATA.settings.color || '#5A64F2';
+  document.getElementById('courseFormBadge').value = c ? (c.badge || '') : '';
+  document.getElementById('courseFormFeatured').checked = !!(c && c.featured);
+  document.getElementById('courseFormLearn').value = c ? (c.learn || '') : '';
+  document.getElementById('courseFormPrereq').value = c ? (c.prereq || '') : '';
+  document.getElementById('courseFormAudience').value = c ? (c.audience || '') : '';
   document.getElementById('courseBuilderWrap').style.display = c ? '' : 'none';
   courseSlugPreview();
+  courseCoverPreview();
   renderCourseBuilder();
+}
+
+// mostra a capa escolhida do jeito que ela vai aparecer no card
+function courseCoverPreview() {
+  const box = document.getElementById('courseCoverPreview');
+  if (!box) return;
+  const url = document.getElementById('courseFormCover').value.trim();
+  box.innerHTML = url
+    ? '<div style="width:210px;aspect-ratio:16/9;border-radius:8px;border:1px solid var(--bd);background:var(--bg2) center/cover url(' + esc(url) + ')"></div>'
+    : '';
+}
+async function uploadCourseCover(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!file.type || !file.type.startsWith('image/')) { alert('O arquivo não é uma imagem.'); return; }
+  showToast('Enviando capa…');
+  try {
+    document.getElementById('courseFormCover').value = await uploadImage(file);
+    courseCoverPreview();
+    showToast('Capa enviada — clique em Salvar treinamento.');
+  } catch (e) {
+    alert(e.message || 'Não foi possível enviar a imagem.');
+  }
 }
 function openCourseFormInline(id) {
   if (!isAdmin()) return;
@@ -3204,15 +3616,27 @@ function saveCourse() {
   const id = document.getElementById('courseFormId').value;
   const desc = document.getElementById('courseFormDesc').value.trim();
   const slug = slugify(document.getElementById('courseFormSlug').value.trim());
+  const extra = {
+    cover: document.getElementById('courseFormCover').value.trim(),
+    color: document.getElementById('courseFormColor').value.trim(),
+    badge: document.getElementById('courseFormBadge').value.trim(),
+    featured: document.getElementById('courseFormFeatured').checked,
+    learn: document.getElementById('courseFormLearn').value.trim(),
+    prereq: document.getElementById('courseFormPrereq').value.trim(),
+    audience: document.getElementById('courseFormAudience').value.trim(),
+  };
   if (!Array.isArray(DATA.courses)) DATA.courses = [];
+  // só um treinamento fica em destaque — marcar um desmarca o anterior
+  if (extra.featured) DATA.courses.forEach(x => { if (x.id !== id) x.featured = false; });
   if (id) {
     const c = courseById(id);
     if (!c) return;
     c.name = name; c.desc = desc; c.slug = slug;
+    Object.assign(c, extra);
     saveData(DATA); render(); renderAdminCourses(); renderCourseBuilder();
     showToast('Treinamento atualizado!');
   } else {
-    const c = { id: uid('c'), name, desc, slug, order: DATA.courses.length, modules: [{ id: uid('m'), name: 'Módulo 1', lessons: [] }] };
+    const c = Object.assign({ id: uid('c'), name, desc, slug, order: DATA.courses.length, modules: [{ id: uid('m'), name: 'Módulo 1', lessons: [] }] }, extra);
     DATA.courses.push(c);
     saveData(DATA); render(); renderAdminCourses();
     // reabre em modo edição para liberar o construtor de módulos/aulas
