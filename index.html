@@ -1236,9 +1236,16 @@ function renderCurrent() {
   const r = resolvePath(location.pathname);
   applyRoute(r);
   render();
+  const primeiraVez = !bootRendered;
   bootRendered = true;
   hideBootLoader();
   if (r.faqId) setTimeout(() => scrollToAnchor('faq-' + r.faqId), 120);
+  // link aberto direto com âncora (ex.: /equipe#principais-funcoes) — só no 1º render,
+  // para a revalidação do conteúdo não puxar o leitor de volta pro ponto de partida
+  else if (primeiraVez && location.hash.length > 1) {
+    const anchor = decodeURIComponent(location.hash.slice(1));
+    setTimeout(() => scrollToAnchor(anchor), 120);
+  }
 }
 
 async function loadFromServer() {
@@ -1913,6 +1920,32 @@ function jumpToFaq(faqId) {
   closeMobileSearch();
   closeSidebar();
 }
+
+// Links internos escritos dentro do conteúdo (/secao ou /secao#ancora) navegam
+// sem recarregar a página. O conteúdo veio do GitBook e muitos desses links
+// carregam target="_blank" — aqui isso é ignorado, para não abrir aba nova.
+document.addEventListener('click', e => {
+  if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a');
+  if (!a || a.hasAttribute('download')) return;
+  const href = a.getAttribute('href');
+  if (!href || href[0] !== '/' || href[1] === '/') return;   // só caminho interno
+  if (href.indexOf('/api/') === 0) return;                   // imagens e API continuam normais
+  e.preventDefault();
+  const hashAt = href.indexOf('#');
+  const pathname = hashAt >= 0 ? href.slice(0, hashAt) : href;
+  const anchor = hashAt >= 0 ? href.slice(hashAt + 1) : '';
+  const r = resolvePath(pathname);
+  applyRoute(r);
+  renderContent();
+  renderRpLinks();
+  renderSidebar();
+  history.pushState({ secId: r.secId, faqId: r.faqId }, '', href);
+  closeSidebar();
+  if (anchor) setTimeout(() => scrollToAnchor(anchor), 80);
+  else if (r.faqId) setTimeout(() => scrollToAnchor('faq-' + r.faqId), 80);
+  else window.scrollTo({ top: 0 });
+});
 
 // botão voltar/avançar do navegador
 window.addEventListener('popstate', () => {

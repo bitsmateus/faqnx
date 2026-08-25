@@ -48,6 +48,7 @@ async function initDb() {
   }
   try { await migrateInlineImages(); } catch (e) { console.error('Falha na migração de imagens:', e); }
   try { await migrateBrand(); } catch (e) { console.error('Falha na migração de marca:', e); }
+  try { await migrateHelpLinks(); } catch (e) { console.error('Falha na migração de links:', e); }
 }
 
 // Troca toda menção a Z-PRO / ZPRO / z-pro / zpro por "NX Digital" no conteúdo salvo.
@@ -62,6 +63,141 @@ async function migrateBrand() {
   const out = json.replace(re, 'NX Digital');
   await setDoc(JSON.parse(out));
   console.log('Marca: substituídas ' + matches.length + ' ocorrência(s) de Z-PRO por "NX Digital".');
+}
+
+// ─── Migração de links internos ───
+// O conteúdo veio do GitBook da ZDG, então os links de "veja também" ainda
+// apontavam para ajuda.zdg.com.br e tiravam o visitante da nossa central.
+// Aqui cada link vira um caminho interno (/slug-da-secao#ancora), usando o
+// mesmo slug que o front-end gera a partir do nome da seção.
+// As imagens (/~gitbook/image) não são tocadas — só links de navegação.
+const HELP_HOST = 'ajuda.nxsystems.com.br';
+
+// Páginas da ZDG cujo endereço não bate com o nome da nossa seção
+// (ou que não existem aqui e vão para a página equivalente mais próxima).
+const LINK_ALIAS = {
+  'equipes': 'equipe',
+  'tela-de-atendimento': 'tela-de-atendimentos',
+  'barra-de-mensagem': 'tela-de-atendimentos',
+  'wavoip': 'wavoip-gestao-comercial',
+  'webchat': 'habilitar-webchat',
+  'whatsapp-oficial-oauth-app-nx': 'whatsapp-oficial-oauth-app-nx-digital-com-coexistencia',
+  'whatsapp-oficial-oauth-login': 'whatsapp-oficial-oauth-app-nx-digital-com-coexistencia',
+  'api-oficial-cadastro-incorporado-e-coexistencia-waba-beta': 'whatsapp-oficial-oauth-app-nx-digital-com-coexistencia',
+  'canal-dialog360-bsp': 'bsp-dialog360-e-gupshup',
+  'canal-gupshup-bsp': 'bsp-dialog360-e-gupshup',
+  'instalacao-evolution-api': 'canal-evolution-api-nao-oficial',
+  'proxy-ipv4-no-proxy-seller': 'canais-de-comunicacao',
+  'api': 'api-configuracoes',
+  'referencia-da-api': 'api-configuracoes',
+  'waba-interativo': 'atendimento-waba-api-oficial',
+  'api-oficial-waba': 'whatsapp-oficial-via-api-cloud-waba',
+  'api-oficial-do-whatsapp-vs-apis-nao-oficiais': 'whatsapp-oficial-via-api-cloud-waba',
+  'cobrancas-da-meta-whatsapp-business-platform': 'whatsapp-oficial-via-api-cloud-waba',
+  'ligacoes-no-nx': 'ligacoes-no-nx-digital-telefonia-e-voz',
+  'ligacoes-de-voz-na-api-oficial-waba': 'ligacoes-no-nx-digital-telefonia-e-voz',
+  'funil-de-oportunidades': 'funil-de-vendas',
+  'configuracao': 'configuracoes-painel-admin',
+  'log-de-auditoria': 'log-auditoria-admin',
+  'linkedin-superadmin': 'linkedin-configuracao-apps',
+  'mercado-livre-superadmin': 'mercado-livre-configuracao-apps',
+  'olx-superadmin': 'olx-configuracao-apps',
+  'tiktok-superadmin': 'tiktok-configuracao-apps',
+  'woocommerce-superadmin': 'woocommerce-configuracao-apps',
+  'google-superadmin': 'google-configuracao-apps',
+  'rocketchat-superadmin': 'rocketchat-configuracao-apps',
+  'facebook-login-incorporado-waba-insta-messenger': 'instagram-e-facebook-messenger-via-oauth-login',
+  'canal-facebook-messenger-nativo-beta': 'facebook-contas-meta',
+  'canal-instagram-nativo-beta': 'instagram-contas-meta',
+  'gerenciar-licenca-nx': 'visao-geral-admin',
+  'como-funciona-o-nx': '',          // '' = home
+  'conheca-o-nx-digital': '',
+};
+
+// mesma regra de slug do front-end (index.html), para os links baterem com as URLs reais
+function slugifyName(str) {
+  return (str || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\s-]/g, '').trim().toLowerCase()
+    .replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+// Devolve uma função que traduz um pedaço da URL antiga no slug da nossa seção.
+// Tenta, em ordem: apelido conhecido → slug exato → sem hífens → sem a marca.
+function buildSectionResolver(sections) {
+  const bySlug = {}, flat = {}, noBrand = {};
+  const used = new Set();
+  (sections || []).forEach(s => {
+    let base = (s.slug && slugifyName(s.slug)) || slugifyName(s.name) || s.id;
+    if (!base) base = s.id;
+    let slug = base, n = 2;
+    while (used.has(slug)) { slug = base + '-' + n; n++; }
+    used.add(slug);
+    bySlug[slug] = true;
+  });
+  const brand = /nxdigital|nx|zdg|zpro/g;
+  const put = (o, k, v) => { o[k] = o[k] === undefined ? v : null; };   // null = ambíguo, não serve
+  Object.keys(bySlug).forEach(slug => {
+    const f = slug.replace(/-/g, '');
+    put(flat, f, slug);
+    put(noBrand, f.replace(brand, ''), slug);
+  });
+  return function resolveSegment(segment) {
+    const key = slugifyName(segment);
+    if (LINK_ALIAS[key] !== undefined) return LINK_ALIAS[key];
+    if (bySlug[key]) return key;
+    const f = key.replace(/-/g, '');
+    if (flat[f]) return flat[f];
+    const b = noBrand[f.replace(brand, '')];
+    if (b) return b;
+    return null;
+  };
+}
+
+// URL antiga -> caminho interno. Se a página exata não existir aqui, sobe para
+// a categoria pai da URL; em último caso cai na home.
+function helpUrlToInternal(url, resolveSegment) {
+  let rest = url.slice(url.indexOf('zdg.com.br') + 'zdg.com.br'.length);
+  const h = rest.indexOf('#');
+  const hash = h >= 0 ? rest.slice(h) : '';
+  if (h >= 0) rest = rest.slice(0, h);
+  rest = rest.split('?')[0].replace(/[/]+$/, '');
+  const segs = rest.split('/').filter(Boolean).map(x => {
+    try { return decodeURIComponent(x); } catch (e) { return x; }
+  });
+  for (let i = segs.length - 1; i >= 0; i--) {
+    const target = resolveSegment(segs[i]);
+    if (target !== null) return (target ? '/' + target : '/') + hash;
+  }
+  return '/' + hash;
+}
+
+async function migrateHelpLinks() {
+  const doc = await getDoc();
+  if (!doc) return;
+  const resolveSegment = buildSectionResolver(doc.sections);
+  const json = JSON.stringify(doc);
+  let n = 0;
+
+  // 1) links embrulhados em redirect do Google (google.com/url?...q=<url antiga>)
+  const RE_GOOGLE = /https:[/][/]www[.]google[.]com[/]url[?][A-Za-z0-9_.~%#?&=+:*/ -]*ajuda[.]zdg[.]com[.]br[A-Za-z0-9_.~%#?&=+:*/ -]*/g;
+  let out = json.replace(RE_GOOGLE, (m) => {
+    const i = m.indexOf('ajuda.zdg.com.br');
+    if (i < 0) return m;
+    n++;
+    return helpUrlToInternal(decodeURIComponent(m.slice(i).replace(/ /g, '%20')), resolveSegment);
+  });
+
+  // 2) links diretos para a central antiga. O " Digital" no meio do caminho existe
+  //    porque a migração de marca trocou "Z-PRO" por "NX Digital" dentro das URLs.
+  const RE_LINK = /https:[/][/]ajuda[.]zdg[.]com[.]br(?![/]~gitbook)(?:[A-Za-z0-9_.~%#?&=+:*/-]| Digital)*/g;
+  out = out.replace(RE_LINK, (m) => { n++; return helpUrlToInternal(m, resolveSegment); });
+
+  // 3) o domínio antigo aparecendo como texto visível
+  out = out.replace(/ajuda[.]zdg[.]com[.]br(?![/]~gitbook)/g, () => { n++; return HELP_HOST; });
+
+  if (out === json) return;   // nada a migrar (já rodou antes)
+  await setDoc(JSON.parse(out));
+  console.log('Links: ' + n + ' link(s) da central antiga passaram a apontar para páginas internas.');
 }
 
 // Migra imagens embutidas em base64 (data:) para a tabela images, trocando por links leves.
