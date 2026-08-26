@@ -1953,10 +1953,7 @@ function renderContent() {
                </div>
              </div>`;
   } else {
-    let rootGrp = sec.group;
-    let walk = sec;
-    while (walk && walk.parentId) { walk = DATA.sections.find(s => s.id === walk.parentId); if (walk) rootGrp = walk.group; }
-    const grpLabel = GROUP_LABELS[rootGrp] || 'Central de Ajuda';
+    const grpLabel = secGroupLabel(sec);
     html += `<div class="eyebrow">${grpLabel} · ${DATA.settings.company}</div>
              <h1 class="page-title"><span class="ti">${svgIcon(iconFor(sec.name))}</span><span>${cleanName(sec.name)}</span></h1>`;
     if (sec.desc) html += `<p class="intro-desc">${sec.desc}</p>`;
@@ -2243,6 +2240,31 @@ function scrollToAnchor(id) {
   if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 }
 
+// categoria mostrada no breadcrumb e nos resultados de busca: usa o grupo do
+// ancestral raiz, não o da própria seção (subseções herdam o grupo do topo)
+function secGroupLabel(sec) {
+  let rootGrp = sec.group;
+  let walk = sec;
+  while (walk && walk.parentId) { walk = DATA.sections.find(s => s.id === walk.parentId); if (walk) rootGrp = walk.group; }
+  return GROUP_LABELS[rootGrp] || 'Central de Ajuda';
+}
+function jumpToSec(secId) {
+  const sec = DATA.sections.find(s => s.id === secId);
+  if (!sec) return;
+  currentView = 'sec'; currentCourse = null; currentLesson = null;
+  currentSec = secId;
+  openAncestors(secId);
+  openSecs.add(secId);
+  renderContent();
+  renderRpLinks();
+  renderSidebar();
+  history.pushState({ secId }, '', urlForSec(secId));
+  document.getElementById('searchDrop').style.display = 'none';
+  document.getElementById('searchInput').value = '';
+  closeMobileSearch();
+  closeSidebar();
+  window.scrollTo(0, 0);
+}
 function jumpToFaq(faqId) {
   const faq = DATA.faqs.find(f => f.id === faqId);
   if (!faq) return;
@@ -2389,6 +2411,16 @@ function doSearch(val) {
   const secMap = {};
   DATA.sections.forEach(s => secMap[s.id] = s.name);
 
+  // as páginas da Central de Ajuda (título e corpo) são o grosso do conteúdo —
+  // sem isso a busca só achava FAQ e treinamento, ignorando a documentação em si
+  const secHits = [];
+  DATA.sections.forEach(s => {
+    if (s.id === 'intro') return;
+    if (cleanName(s.name).toLowerCase().includes(v) || stripHtml(s.body).toLowerCase().includes(v)) {
+      secHits.push({ kind: 'sec', id: s.id, title: cleanName(s.name), cat: secGroupLabel(s) });
+    }
+  });
+
   const faqHits = [];
   DATA.faqs.forEach(f => {
     if (f.q.toLowerCase().includes(v) || (f.tags || '').toLowerCase().includes(v) || f.a.toLowerCase().includes(v)) {
@@ -2410,9 +2442,10 @@ function doSearch(val) {
     });
   });
 
-  // as perguntas são muitas — sem uma cota, os treinamentos nunca apareceriam
+  // as perguntas são muitas — sem uma cota, treinamentos e seções nunca apareceriam
   const trTop = trHits.slice(0, 3);
-  const top = trTop.concat(faqHits.slice(0, 8 - trTop.length));
+  const central = secHits.concat(faqHits);
+  const top = trTop.concat(central.slice(0, 8 - trTop.length));
   drop.style.display = 'block';
   if (!top.length) { drop.innerHTML = '<div class="sd-empty">Nenhum resultado encontrado.</div>'; return; }
 
@@ -2422,6 +2455,7 @@ function doSearch(val) {
     top.map(h => {
       const go = h.kind === 'lesson' ? "openLesson('" + h.courseId + "','" + h.id + "')"
                 : h.kind === 'course' ? "openCourse('" + h.courseId + "')"
+                : h.kind === 'sec' ? "jumpToSec('" + h.id + "')"
                 : "jumpToFaq('" + h.id + "')";
       return '<div class="sd-item" onclick="' + go + ';closeSearchDrop()">' +
              '<div class="sd-q">' + esc(h.title).replace(re, s => '<mark>' + s + '</mark>') + '</div>' +
@@ -3137,6 +3171,7 @@ function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+function stripHtml(html) { return String(html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(); }
 function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 // ── consultas ──
