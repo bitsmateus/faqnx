@@ -504,6 +504,8 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 
 /* nas telas de treinamento o painel "Nesta página" some — a coluna pode crescer */
 .content.tr-mode{max-width:1080px}
+/* faixa de treinamentos na Central de Ajuda: cards precisam de mais espaço que texto corrido */
+.content.home-mode{max-width:1080px}
 
 /* ─── tela da aula: player + playlist ao lado ─── */
 .content.player-mode{max-width:1240px}
@@ -1906,12 +1908,15 @@ function renderContent() {
   if (main) {
     main.classList.toggle('player-mode', currentView === 'lesson');
     main.classList.toggle('tr-mode', currentView === 'treinamentos' || currentView === 'course');
+    if (currentView !== 'sec') main.classList.remove('home-mode');
   }
   if (currentView === 'treinamentos') { renderTreinamentosIndex(); return; }
   if (currentView === 'course')  { renderCoursePage(); return; }
   if (currentView === 'lesson')  { renderLessonPage(); return; }
   const sec = DATA.sections.find(s => s.id === currentSec) || DATA.sections.sort((a,b)=>a.order-b.order)[0];
   if (!sec) return;
+  // a faixa de treinamentos (cards) precisa de mais largura do que o texto corrido do artigo
+  if (main) main.classList.toggle('home-mode', sec.id === introSecId());
   const faqs = DATA.faqs.filter(f => f.secId === sec.id);
   let html = `<div id="sec-${sec.id}">`;
 
