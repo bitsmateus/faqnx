@@ -513,9 +513,13 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .player-main{min-width:0}
 .player .video-embed{max-width:100%;margin:0 0 18px}
 .pl{border:1px solid var(--bd);border-radius:12px;overflow:hidden;background:var(--bg);position:sticky;top:calc(var(--hh) + 24px);max-height:calc(100vh - var(--hh) - 48px);display:flex;flex-direction:column}
-.pl-hdr{padding:14px 16px 12px;border-bottom:1px solid var(--bd);background:var(--bg2)}
-.pl-name{font-size:14.5px;font-weight:700;color:var(--t1);line-height:1.35;margin-bottom:8px}
 .pl-scroll{overflow-y:auto;flex:1}
+.pl-course{border-bottom:1px solid var(--bd)}
+.pl-course:last-child{border-bottom:none}
+.pl-chdr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 8px;background:var(--bg2);position:sticky;top:0;z-index:1}
+.pl-course.current .pl-chdr{background:var(--brand-bg)}
+.pl-cname{font-size:13.5px;font-weight:700;color:var(--t1);line-height:1.35}
+.pl-cprog{font-size:11.5px;color:var(--t4);flex-shrink:0;font-variant-numeric:tabular-nums}
 .pl-mod{font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t4);padding:14px 16px 5px;background:var(--bg)}
 .pl-item{display:flex;align-items:flex-start;gap:10px;width:100%;padding:9px 16px;border:none;background:none;cursor:pointer;text-align:left;font-family:var(--font);border-left:3px solid transparent;transition:background .12s}
 .pl-item:hover{background:var(--bg2)}
@@ -537,7 +541,7 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
   .pl{position:static;max-height:none}
   .pl-scroll{max-height:52vh}
   .pl-toggle{display:block;width:100%;padding:13px 16px;border:none;background:var(--bg2);font-family:var(--font);font-size:14px;font-weight:600;color:var(--t1);cursor:pointer;text-align:left}
-  .pl.closed .pl-scroll,.pl.closed .pl-foot,.pl.closed .pl-hdr{display:none}
+  .pl.closed .pl-scroll,.pl.closed .pl-foot{display:none}
 }
 @media(max-width:760px){
   .tr-feat{grid-template-columns:1fr}
@@ -2199,6 +2203,17 @@ function applyRoute(r) {
   } else {
     currentCourse = r.courseId || null;
     currentLesson = r.lessonId || null;
+    // acessar a URL de um treinamento (sem aula) também vai direto pro player
+    if (currentView === 'course') {
+      const c = courseById(currentCourse);
+      const lessons = c ? courseLessons(c) : [];
+      if (lessons.length) {
+        const last = readLast();
+        const alvo = (last && last.courseId === currentCourse && lessonById(c, last.lessonId)) ? last.lessonId : nextPendingLesson(c).id;
+        currentView = 'lesson'; currentLesson = alvo;
+        history.replaceState({ view: 'lesson', courseId: currentCourse, lessonId: alvo }, '', urlForLesson(currentCourse, alvo));
+      }
+    }
   }
 }
 
@@ -3175,14 +3190,23 @@ function goCentral() {
   closeSidebar();
   window.scrollTo(0, 0);
 }
+// clicar num treinamento vai direto pro player: retoma a última aula vista
+// nele, ou começa a 1ª pendente — a tela "sobre o curso" só aparece se ainda
+// não tem nenhuma aula cadastrada.
 function openCourse(id, push) {
   const c = courseById(id);
   if (!c) return goTreinamentos(push);
-  currentView = 'course'; currentCourse = id; currentLesson = null;
-  render();
-  if (push !== false) history.pushState({ view: 'course', id }, '', urlForCourse(id));
-  // com aulas na lista, a gaveta continua aberta para o aluno escolher
-  if (!courseLessons(c).length) closeSidebar();
+  const lessons = courseLessons(c);
+  if (!lessons.length) {
+    currentView = 'course'; currentCourse = id; currentLesson = null;
+    render();
+    if (push !== false) history.pushState({ view: 'course', id }, '', urlForCourse(id));
+    closeSidebar();
+    return;
+  }
+  const last = readLast();
+  const alvo = (last && last.courseId === id && lessonById(c, last.lessonId)) ? last.lessonId : nextPendingLesson(c).id;
+  openLesson(id, alvo, push);
 }
 function openLesson(courseId, lessonId, push) {
   currentView = 'lesson'; currentCourse = courseId; currentLesson = lessonId;
@@ -3536,33 +3560,40 @@ function renderLessonPage() {
 }
 
 // Lista de aulas ao lado do vídeo — é o que dá a sensação de área de membros:
-// o aluno vê onde está, o que já fez e o que falta sem sair da aula.
+// o aluno vê onde está, o que já fez e o que falta sem sair da aula. Mostra
+// TODOS os treinamentos, um embaixo do outro, para dar pra trocar sem voltar.
 function playlistHtml(c, lessonId) {
-  const st = courseStats(c);
-  let itens = '';
-  let n = 0;
-  (c.modules || []).forEach(m => {
-    const lessons = m.lessons || [];
-    if (!lessons.length) return;
-    if (m.name) itens += '<div class="pl-mod">' + esc(m.name) + '</div>';
-    lessons.forEach(l => {
-      n++;
-      const cls = 'pl-item' + (isDone(l.id) ? ' done' : '') + (l.id === lessonId ? ' active' : '');
-      itens += '<button class="' + cls + '" onclick="openLesson(\'' + c.id + '\',\'' + l.id + '\')">' +
-                 '<span class="pl-tick">' + (l.id === lessonId && !isDone(l.id) ? '▶' : '✓') + '</span>' +
-                 '<span class="pl-tx">' + n + '. ' + esc(l.title) + '</span>' +
-                 (l.duration ? '<span class="pl-dur">' + esc(l.duration) + '</span>' : '') +
-               '</button>';
+  let body = '';
+  allCourses().forEach(course => {
+    const st = courseStats(course);
+    let itens = '';
+    let n = 0;
+    (course.modules || []).forEach(m => {
+      const lessons = m.lessons || [];
+      if (!lessons.length) return;
+      if (m.name) itens += '<div class="pl-mod">' + esc(m.name) + '</div>';
+      lessons.forEach(l => {
+        n++;
+        const cls = 'pl-item' + (isDone(l.id) ? ' done' : '') + (l.id === lessonId ? ' active' : '');
+        itens += '<button class="' + cls + '" onclick="openLesson(\'' + course.id + '\',\'' + l.id + '\')">' +
+                   '<span class="pl-tick">' + (l.id === lessonId && !isDone(l.id) ? '▶' : '✓') + '</span>' +
+                   '<span class="pl-tx">' + n + '. ' + esc(l.title) + '</span>' +
+                   (l.duration ? '<span class="pl-dur">' + esc(l.duration) + '</span>' : '') +
+                 '</button>';
+      });
     });
+    if (!itens) return;
+    body += '<div class="pl-course' + (course.id === c.id ? ' current' : '') + '">' +
+      '<div class="pl-chdr"><span class="pl-cname">' + esc(courseTitle(course)) + '</span>' +
+        '<span class="pl-cprog">' + st.done + '/' + st.total + '</span></div>' +
+      itens +
+    '</div>';
   });
+  const geral = progressoGeral();
   return '<aside class="pl" id="playlist">' +
-    '<button class="pl-toggle" onclick="togglePlaylist()">☰ Aulas deste treinamento · ' + st.done + '/' + st.total + '</button>' +
-    '<div class="pl-hdr">' +
-      '<div class="pl-name">' + esc(courseTitle(c)) + '</div>' +
-      '<div class="tr-bar"><span style="width:' + st.pct + '%"></span></div>' +
-    '</div>' +
-    '<div class="pl-scroll">' + itens + '</div>' +
-    '<div class="pl-foot">' + st.done + ' de ' + plural(st.total, 'aula concluída', 'aulas concluídas') + '</div>' +
+    '<button class="pl-toggle" onclick="togglePlaylist()">☰ Todos os treinamentos · ' + geral.done + '/' + geral.total + '</button>' +
+    '<div class="pl-scroll">' + body + '</div>' +
+    '<div class="pl-foot">' + geral.done + ' de ' + plural(geral.total, 'aula concluída', 'aulas concluídas') + ' no total</div>' +
     '</aside>';
 }
 function togglePlaylist() {
