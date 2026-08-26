@@ -345,6 +345,28 @@ h2.sec-heading .edit-pencil{margin-left:10px;font-size:12px;padding:2px 9px}
 .sb-treinos{border-bottom:1px solid var(--bd);padding-bottom:10px;margin-bottom:2px}
 .sb-treinos .sb-group{color:var(--brand);padding-top:14px}
 
+/* ícone que substitui o emoji na capa dos cards de treinamento */
+.tr-cover-ic{display:inline-flex;align-items:center;justify-content:center}
+.tr-card-cover .tr-cover-ic svg{width:46px;height:46px;stroke-width:1.6}
+.tr-feat-cover .tr-cover-ic svg{width:54px;height:54px;stroke-width:1.5}
+
+/* ─── card de destaque de Treinamentos no topo do menu lateral ───
+   É a porta de entrada do site, então no menu ele não é um item de lista:
+   é um cartão com a cor da marca, contagem de aulas e progresso. */
+.sb-cta{display:block;width:calc(100% - 24px);margin:12px 12px 14px;padding:13px 14px;border:1px solid var(--brand-bd);border-radius:11px;
+  background:linear-gradient(135deg,var(--brand-bg),var(--bg));cursor:pointer;text-align:left;font-family:var(--font);
+  transition:border-color .15s,box-shadow .15s}
+.sb-cta:hover{border-color:var(--brand);box-shadow:var(--sh1)}
+.sb-cta.active{border-color:var(--brand);box-shadow:0 0 0 3px rgba(90,100,242,.12)}
+.sb-cta-top{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.sb-cta-ic{flex-shrink:0;width:30px;height:30px;border-radius:8px;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center}
+.sb-cta-ic svg{width:17px;height:17px;stroke-width:2}
+.sb-cta-t{font-size:13.5px;font-weight:650;color:var(--t1);line-height:1.25}
+.sb-cta-sub{font-size:11.5px;color:var(--t3);line-height:1.4;margin-left:39px}
+.sb-cta-prog{display:flex;align-items:center;gap:8px;margin:9px 0 0 39px}
+.sb-cta-prog .tr-bar{flex:1;height:5px}
+.sb-cta-prog b{font-size:11px;font-weight:600;color:var(--brand);white-space:nowrap;font-variant-numeric:tabular-nums}
+
 /* barra de progresso (usada em vários lugares) */
 .tr-bar{height:6px;border-radius:99px;background:var(--bd2);overflow:hidden}
 .tr-bar span{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .3s}
@@ -564,6 +586,20 @@ html.nav-open,body.nav-open{overflow:hidden}
 
 /* conteúdo do usuário nunca pode estourar a largura */
 .content-body,.acc-body{overflow-wrap:break-word}
+/* O conteúdo importado do GitBook grava largura FIXA no style inline
+   (width:768px e max-width:696px no mesmo <div>). Em tela estreita isso empurra
+   a página inteira para o lado. Como estilo inline vence folha de estilo, aqui
+   o !important é necessário — é o único jeito de limitar sem reescrever os 165
+   artigos salvos no banco.
+   O max-width sozinho não resolvia: os wrappers são flex e item de flex nasce
+   com min-width:auto, que se recusa a encolher abaixo do conteúdo e vence o
+   max-width. Por isso destravamos o min-width junto. As células do GitBook
+   mantêm largura mínima pelo próprio clamp() que já vem no width. */
+.content-body *,.acc-body *,.lesson-body *{max-width:100%!important;min-width:0!important}
+.content-body img,.acc-body img,.lesson-body img{height:auto!important}
+/* a tabela de verdade (editor do admin) continua rolando: o enhanceContent()
+   grava min-width inline com !important, que vence a regra acima */
+.tbl-scroll{max-width:100%}
 .content-body iframe,.acc-body iframe,.content-body video,.acc-body video{max-width:100%}
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;margin:14px 0}
 .tbl-scroll table{margin:0}
@@ -859,7 +895,7 @@ html.nav-open,body.nav-open{overflow:hidden}
         <div class="form-hint" style="margin-bottom:12px">É a primeira coisa que o cliente vê ao abrir o site. Deixe em branco para usar o texto padrão.</div>
         <div class="form-group">
           <label class="form-label">Etiqueta pequena</label>
-          <input class="form-input" id="cfgTrLbl" type="text" placeholder="🎓 Comece por aqui">
+          <input class="form-input" id="cfgTrLbl" type="text" placeholder="Comece por aqui">
         </div>
         <div class="form-group">
           <label class="form-label">Título</label>
@@ -1068,8 +1104,8 @@ html.nav-open,body.nav-open{overflow:hidden}
       <input type="hidden" id="courseFormId">
       <div class="form-group">
         <label class="form-label">Nome do treinamento *</label>
-        <input class="form-input" id="courseFormName" type="text" placeholder="Ex: 🎓 Primeiros passos na NX" oninput="courseSlugPreview()">
-        <div class="form-hint">Use um emoji no início para ficar igual ao padrão do menu.</div>
+        <input class="form-input" id="courseFormName" type="text" placeholder="Ex: Primeiros passos na NX" oninput="courseSlugPreview()">
+        <div class="form-hint">O ícone é escolhido sozinho a partir do nome. Se você digitar um emoji no início, ele fica salvo mas não aparece.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Descrição curta (opcional)</label>
@@ -1701,7 +1737,10 @@ function iconFor(name, fallback) {
 }
 
 // compatibilidade com o resto do arquivo (admin, treinamentos)
-function startsWithEmoji(s) { return EMOJI_RE.test(s || ''); }
+// EMOJI_RE tem flag /g e .test() avança o lastIndex, alternando o resultado a
+// cada chamada. Testamos numa cópia sem o /g para a resposta ser estável.
+const EMOJI_RE_ONE = new RegExp(EMOJI_RE.source, 'u');
+function startsWithEmoji(s) { return EMOJI_RE_ONE.test(s || ''); }
 function withEmoji(name) { return name; }
 
 function renderNavNode(sec, depth) {
@@ -1950,12 +1989,30 @@ function enhanceContent() {
   root.querySelectorAll('table').forEach(t => {
     const cols = t.rows[0] ? t.rows[0].cells.length : 0;
     // 2 colunas cabem em qualquer tela; de 3 em diante é melhor rolar do que espremer
-    if (cols >= 3) t.style.minWidth = Math.min(cols * 160, 900) + 'px';
+    // !important porque a regra que destrava o conteúdo importado zera o
+    // min-width de tudo dentro de .content-body — aqui ele precisa sobreviver
+    if (cols >= 3) t.style.setProperty('min-width', Math.min(cols * 160, 900) + 'px', 'important');
     if (t.parentElement && t.parentElement.classList.contains('tbl-scroll')) return;
     const w = document.createElement('div');
     w.className = 'tbl-scroll';
     t.parentNode.insertBefore(w, t);
     w.appendChild(t);
+  });
+  // O conteúdo do GitBook não usa <table>: monta a grade com divs role="table",
+  // dentro de um container que já tem overflow-x:auto. O problema é a trilha do
+  // grid em volta: ela é do tipo "auto", então dimensiona pelo conteúdo e estica
+  // o container além da página em vez de deixar a tabela rolar. Aqui a trilha
+  // passa a poder encolher — só nos grids que realmente seguram uma tabela, para
+  // não mexer nos 405 grids "auto 1fr" que o resto do conteúdo usa.
+  root.querySelectorAll('[role="table"]').forEach(t => {
+    let sc = t.parentElement;
+    while (sc && sc !== root && getComputedStyle(sc).overflowX !== 'auto') sc = sc.parentElement;
+    if (!sc || sc === root) return;
+    const g = sc.parentElement;
+    if (g && getComputedStyle(g).display === 'grid') {
+      g.style.setProperty('grid-template-columns', 'minmax(0,1fr)', 'important');
+    }
+    sc.style.setProperty('max-width', '100%', 'important');
   });
   root.querySelectorAll('iframe').forEach(f => {
     if (f.closest('.video-embed')) return;
@@ -2323,12 +2380,12 @@ function doSearch(val) {
   const trHits = [];
   allCourses().forEach(c => {
     if (c.name.toLowerCase().includes(v) || (c.desc || '').toLowerCase().includes(v)) {
-      trHits.push({ kind: 'course', courseId: c.id, title: c.name, cat: 'Treinamento · ' + plural(courseLessons(c).length, 'aula', 'aulas') });
+      trHits.push({ kind: 'course', courseId: c.id, title: courseTitle(c), cat: 'Treinamento · ' + plural(courseLessons(c).length, 'aula', 'aulas') });
     }
     courseLessons(c).forEach(x => {
       const l = x.lesson;
       if (l.title.toLowerCase().includes(v) || (l.body || '').toLowerCase().includes(v)) {
-        trHits.push({ kind: 'lesson', id: l.id, courseId: c.id, title: l.title, cat: '🎓 ' + c.name });
+        trHits.push({ kind: 'lesson', id: l.id, courseId: c.id, title: l.title, cat: 'Aula · ' + courseTitle(c) });
       }
     });
   });
@@ -3138,7 +3195,7 @@ function completeAndNext(courseId, lessonId) {
   if (nb.next) { openLesson(courseId, nb.next.id); return; }
   render();
   const st = courseStats(c);
-  showToast(st.done === st.total ? 'Treinamento concluído! 🎉' : 'Aula concluída!');
+  showToast(st.done === st.total ? 'Treinamento concluído!' : 'Aula concluída!');
 }
 
 // ── vídeo e materiais ──
@@ -3180,28 +3237,21 @@ function progressBarHtml(pct) {
 
 // ── personalização de cada treinamento (definida no painel admin) ──
 function courseAccent(c) { return (c && c.color) || DATA.settings.color || '#5A64F2'; }
-// emoji do início do nome; serve de capa quando não há imagem.
-// Mesma separação emoji/texto que o menu lateral já usa.
-function courseEmoji(c) {
-  const n = (c && c.name || '').trim();
-  if (!startsWithEmoji(n)) return '🎓';
-  const i = n.indexOf(' ');
-  return i > 0 ? n.slice(0, i) : n;
-}
-function courseTitle(c) {
-  const n = (c && c.name || '').trim();
-  if (!startsWithEmoji(n)) return n;
-  const i = n.indexOf(' ');
-  return i > 0 ? n.slice(i + 1).trim() : n;
-}
+// Ícone do treinamento, pelas mesmas regras dos menus da central. O emoji que
+// estiver salvo no nome continua no banco — some só na hora de exibir.
+function courseIcon(c) { return iconFor((c && c.name) || '', 'graduation-cap'); }
+function courseTitle(c) { return cleanName((c && c.name) || ''); }
 // Com imagem, a capa é a imagem. Sem imagem, vira um fundo com a cor do
-// treinamento e o emoji do nome no meio — nunca um retângulo cinza vazio.
+// treinamento e o ícone no meio — nunca um retângulo cinza vazio.
 function coverStyle(c) {
   if (c && c.cover) return ' style="background-image:url(' + esc(c.cover) + ')"';
   const a = esc(courseAccent(c));
   return ' style="background:linear-gradient(135deg,' + a + '1f,' + a + '08)"';
 }
-function coverInner(c) { return c && c.cover ? '' : courseEmoji(c); }
+function coverInner(c) {
+  if (c && c.cover) return '';
+  return '<span class="tr-cover-ic" style="color:' + esc(courseAccent(c)) + '">' + svgIcon(courseIcon(c)) + '</span>';
+}
 // um item por linha, ignorando linhas vazias
 function linhas(txt) {
   return String(txt || '').split('\n').map(s => s.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
@@ -3290,7 +3340,7 @@ function homeHeroHtml() {
   }
 
   return '<section class="home-hero">' +
-    '<div class="hh-lbl">🎓 Comece por aqui</div>' +
+    '<div class="hh-lbl">Comece por aqui</div>' +
     '<h2 class="hh-title">Treinamentos em vídeo</h2>' +
     '<p class="hh-sub">Aprenda a usar o sistema seguindo os vídeos na ordem certa. Marque cada aula como concluída — o seu progresso fica salvo.</p>' +
     resume + corpo +
@@ -3308,7 +3358,7 @@ function renderTreinamentosIndex() {
 
   // ── capa: os textos vêm do painel admin, com um padrão sensato ──
   let html = '<section class="tr-hero">' +
-    '<div class="tr-hero-lbl">' + esc(s.trLbl || '🎓 Comece por aqui') + '</div>' +
+    '<div class="tr-hero-lbl">' + esc(s.trLbl || 'Comece por aqui') + '</div>' +
     '<h1 class="tr-hero-title">' + esc(s.trTitle || 'Aprenda a configurar a ' + s.company) + '</h1>' +
     '<p class="tr-hero-sub">' + esc(s.trSub || 'Vídeos curtos, na ordem certa, do primeiro acesso até a ferramenta rodando. Marque cada aula como concluída — o seu progresso fica salvo neste navegador.') + '</p>' +
     '<div class="tr-hero-acts">';
@@ -3360,7 +3410,8 @@ function renderCoursePage() {
   let html = '<div style="--acc:' + esc(acc) + '">';
   html += '<div class="tr-crumb"><a onclick="goTreinamentos()">Treinamentos</a><span>›</span><span>' + esc(courseTitle(c)) + '</span></div>';
   if (c.cover) html += '<div class="tr-banner"' + coverStyle(c) + '></div>';
-  html += '<h1 class="page-title">' + esc(c.name) + '</h1>';
+  html += '<h1 class="page-title"><span class="ti">' + svgIcon(courseIcon(c)) + '</span>' +
+          '<span>' + esc(courseTitle(c)) + '</span></h1>';
 
   const chips = [];
   if (c.badge) chips.push(c.badge);
@@ -3518,18 +3569,37 @@ function togglePlaylist() {
 function renderCoursesNav() {
   const list = allCourses();
   if (!list.length && !isAdmin()) return '';
-  let html = '<div class="sb-treinos"><div class="sb-group">Treinamentos</div>';
+  const nTurmas = list.length;
+  const nAulas = list.reduce((n, c) => n + courseLessons(c).length, 0);
+  const geral = progressoGeral();
+
+  // Cartão de entrada: Treinamentos é o principal do site, então no menu ele
+  // vem antes de tudo e com peso visual de card, não de item de lista.
+  let html = '<div class="sb-treinos">';
+  html += '<button class="sb-cta' + (currentView !== 'sec' ? ' active' : '') + '" onclick="goTreinamentos()">' +
+            '<div class="sb-cta-top">' +
+              '<span class="sb-cta-ic">' + svgIcon('play') + '</span>' +
+              '<span class="sb-cta-t">Treinamentos em vídeo</span>' +
+            '</div>' +
+            '<div class="sb-cta-sub">' +
+              (nAulas ? plural(nAulas, 'aula', 'aulas') + ' em ' + plural(nTurmas, 'treinamento', 'treinamentos')
+                      : 'Configure a ferramenta passo a passo') +
+            '</div>' +
+            (geral.total
+              ? '<div class="sb-cta-prog"><div class="tr-bar"><span style="width:' + geral.pct + '%"></span></div><b>' + geral.pct + '%</b></div>'
+              : '') +
+          '</button>';
+  html += '<div class="sb-group">Treinamentos</div>';
   html += '<div class="sb-row"><button class="sb-item' + (currentView === 'treinamentos' ? ' active' : '') +
-          '" onclick="goTreinamentos()"><span class="sb-ic">🎓</span><span class="sb-tx">Todos os treinamentos</span></button></div>';
+          '" onclick="goTreinamentos()"><span class="sb-ic">' + svgIcon('layout-grid') + '</span>' +
+          '<span class="sb-tx">Todos os treinamentos</span></button></div>';
 
   list.forEach(c => {
     const inThis = (currentView === 'course' || currentView === 'lesson') && currentCourse === c.id;
     const st = courseStats(c);
-    // mesma separação emoji/texto usada pelos menus da central de ajuda
-    const named = withEmoji(c.name, '🎓');
-    const already = (named === c.name);
-    const emoji = already ? '' : named.slice(0, named.indexOf(' '));
-    const label = already ? c.name : named.slice(named.indexOf(' ') + 1);
+    // ícone pelas mesmas regras dos menus da central; o emoji salvo no nome some
+    const emoji = svgIcon(courseIcon(c), 'i');
+    const label = courseTitle(c);
     html += '<div class="sb-row"><button class="sb-item' + (inThis ? ' active open' : '') +
             '" onclick="openCourse(\'' + c.id + '\')">' +
             '<span class="sb-ic">' + emoji + '</span><span class="sb-tx">' + esc(label) + '</span>' +
